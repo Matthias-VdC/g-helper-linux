@@ -233,6 +233,16 @@ public class ModeControl
             Helpers.Logger.WriteLine($"AutoPower: PL2 = {pl2}W (max={maxTotal}W)");
         }
 
+        // fPPT (fast boost)
+        int fppt = Helpers.AppConfig.GetMode("limit_fppt");
+        if (fppt > maxTotal || fppt < MinTotal) fppt = -1;
+        if (fppt > 0 && wmi.IsFeatureSupported("ppt_fppt"))
+        {
+            wmi.SetPptLimit("ppt_fppt", fppt);
+            if (fppt > _customPower) _customPower = fppt;
+            Helpers.Logger.WriteLine($"AutoPower: fPPT = {fppt}W (max={maxTotal}W)");
+        }
+
         // NVIDIA dynamic boost
         int nvBoost = Helpers.AppConfig.GetMode("gpu_boost");
         if (nvBoost > maxGpuBoost) nvBoost = maxGpuBoost;

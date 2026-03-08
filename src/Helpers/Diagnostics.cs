@@ -200,6 +200,8 @@ public static class Diagnostics
             // Keyboard
             "/sys/class/leds/asus::kbd_backlight/brightness",
             "/sys/class/leds/asus::kbd_backlight/multi_intensity",
+            "/sys/class/leds/asus::kbd_backlight/kbd_rgb_mode",
+            "/sys/class/leds/asus::kbd_backlight/kbd_rgb_state",
             // Platform profile
             "/sys/firmware/acpi/platform_profile",
             "/sys/firmware/acpi/platform_profile_choices",
@@ -226,6 +228,27 @@ public static class Diagnostics
                 .Replace("/sys/module/pcie_aspm/parameters/", "pcie_aspm/");
 
             sb.AppendLine($"  {shortPath}: {perms} = {value}");
+        }
+
+        // Keyboard backlight directory listing (TUF kbd_rgb_mode/state diagnostics)
+        const string kbdDir = "/sys/class/leds/asus::kbd_backlight";
+        if (Directory.Exists(kbdDir))
+        {
+            sb.AppendLine();
+            sb.AppendLine("  kbd_backlight attributes:");
+            try
+            {
+                foreach (var file in Directory.GetFiles(kbdDir).OrderBy(f => f))
+                {
+                    var name = Path.GetFileName(file);
+                    var perms = GetFilePermissions(file);
+                    sb.AppendLine($"    {name}: {perms}");
+                }
+            }
+            catch (Exception ex)
+            {
+                sb.AppendLine($"    (error: {ex.Message})");
+            }
         }
 
         // Resolved WMI attributes (may be legacy sysfs or firmware-attributes)
@@ -317,6 +340,32 @@ public static class Diagnostics
         var lsusb = Platform.Linux.SysfsHelper.RunCommand("bash",
             "-c \"lsusb 2>/dev/null | grep -i '0b05' || echo '(none found)'\"");
         sb.AppendLine(lsusb ?? "(lsusb failed)");
+        sb.AppendLine();
+
+        // Also scan native hidraw devices (catches I2C-HID that lsusb misses)
+        sb.AppendLine("--- HID Raw Devices (ASUS, incl. I2C-HID) ---");
+        try
+        {
+            var devices = USB.HidrawHelper.EnumerateAsusDevices();
+            if (devices.Count == 0)
+            {
+                sb.AppendLine("(none found)");
+            }
+            else
+            {
+                foreach (var dev in devices)
+                {
+                    sb.AppendLine($"  {dev.Path}: VID=0x{dev.Vendor:X4} PID=0x{dev.Product:X4} Bus={dev.BusName} Aura={dev.HasAuraReport}");
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            sb.AppendLine($"  (error: {ex.Message})");
+        }
+
+        sb.AppendLine($"AsusHid.IsAvailable: {USB.AsusHid.IsAvailable()}");
+        sb.AppendLine($"AsusHid.UsingI2cHidraw: {USB.AsusHid.UsingI2cHidraw}");
         sb.AppendLine();
     }
 

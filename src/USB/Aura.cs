@@ -80,7 +80,18 @@ public static class Aura
     private static bool _backlight = true;
     private static bool _initDirect = false;
 
-    // Model detection (cached)
+    // Model detection
+    //
+    // _isACPI controls whether we use the sysfs kbd_rgb_mode path (TUF)
+    // in addition to the HID AURA protocol. On Windows, G-Helper always
+    // sends BOTH HID and WMI/ACPI commands for TUF models simultaneously.
+    // The WMI/ACPI path (sysfs kbd_rgb_mode on Linux) is what actually
+    // controls the keyboard on TUF hardware. The HID commands also fire
+    // (via AsusHid.Write) but may or may not take effect.
+    //
+    // Previously we tried to override this to false when an I2C-HID AURA
+    // device was detected (FA608PP), but that disabled the sysfs path
+    // which is the one that actually works.
     private static bool _isACPI = AppConfig.IsTUF() || AppConfig.IsVivoZenPro();
     private static bool _isStrix = AppConfig.IsAdvancedRGB() && !AppConfig.IsNoDirectRGB();
     private static bool _isStrix4Zone = AppConfig.Is4ZoneRGB();

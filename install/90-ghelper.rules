@@ -105,9 +105,15 @@ SUBSYSTEM=="hwmon", ATTR{name}=="asus_custom_fan_curve", \
 SUBSYSTEM=="input", ATTRS{name}=="Asus WMI hotkeys", TAG+="uaccess"
 
 # ── ASUS HID devices (AURA RGB keyboard control) ──
-# Grant read/write access to ASUS HID raw devices for non-root AURA control
+# Grant read/write access to ASUS HID raw devices for non-root AURA control.
+# USB-HID: match via USB parent's idVendor attribute
 SUBSYSTEM=="hidraw", ATTRS{idVendor}=="0b05", MODE="0666"
 SUBSYSTEM=="usb", ATTRS{idVendor}=="0b05", MODE="0666"
+# I2C-HID: ASUS keyboards connected via I2C (e.g., FA608PP: ITE51368:00 0B05:19B6)
+# have no USB parent, so ATTRS{idVendor} won't match. Match via the HID device
+# uevent which contains the vendor ID in HID_ID field.
+SUBSYSTEM=="hidraw", ACTION=="add", \
+  RUN+="/bin/sh -c 'grep -q 00000B05 /sys%p/device/uevent 2>/dev/null && chmod 0666 /dev/%k'"
 
 # ── Backlight ──
 SUBSYSTEM=="backlight", ACTION=="add", \

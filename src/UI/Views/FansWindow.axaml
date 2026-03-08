@@ -83,6 +83,19 @@
                                VerticalAlignment="Center" />
                 </Grid>
 
+                <!-- PPT fPPT (fast boost) -->
+                <Grid x:Name="gridFppt" ColumnDefinitions="120,*,50" Margin="0,4" IsVisible="False">
+                    <TextBlock Grid.Column="0" Text="CPU fPPT (Fast)"
+                               Classes="label-dim" VerticalAlignment="Center" />
+                    <Slider Grid.Column="1" x:Name="sliderFppt"
+                            Minimum="5" Maximum="150" Value="65"
+                            TickFrequency="5"
+                            ValueChanged="SliderFppt_ValueChanged" />
+                    <TextBlock Grid.Column="2" x:Name="labelFppt" Classes="value"
+                               Text="65W" HorizontalAlignment="Center"
+                               VerticalAlignment="Center" />
+                </Grid>
+
                 <!-- CPU Boost -->
                 <Grid ColumnDefinitions="120,*" Margin="0,8,0,0">
                     <TextBlock Grid.Column="0" Text="CPU Boost"
@@ -94,6 +107,12 @@
                                 Content="On" Click="ButtonBoostOn_Click" />
                     </StackPanel>
                 </Grid>
+
+                <!-- Auto-apply power -->
+                <CheckBox x:Name="checkApplyPower"
+                          Content="Auto-apply power limits on mode change" Margin="0,8,0,0"
+                          Checked="CheckApplyPower_Changed"
+                          Unchecked="CheckApplyPower_Changed" />
 
                 <!-- Sensor readings -->
                 <TextBlock x:Name="labelSensors" Classes="label-dim"

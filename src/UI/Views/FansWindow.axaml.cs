@@ -130,6 +130,12 @@ public partial class FansWindow : Window
         Helpers.AppConfig.SetMode("auto_apply_fans", enabled ? 1 : 0);
     }
 
+    private void CheckApplyPower_Changed(object? sender, RoutedEventArgs e)
+    {
+        bool enabled = checkApplyPower.IsChecked ?? false;
+        Helpers.AppConfig.SetMode("auto_apply_power", enabled ? 1 : 0);
+    }
+
     // ── Power Limits ──
 
     private void LoadPowerLimits()
@@ -137,8 +143,12 @@ public partial class FansWindow : Window
         var wmi = App.Wmi;
         if (wmi == null) return;
 
+        // Read from hardware, fall back to saved config
         int pl1 = wmi.GetPptLimit("ppt_pl1_spl");
+        if (pl1 <= 0) pl1 = Helpers.AppConfig.GetMode("limit_slow");
+
         int pl2 = wmi.GetPptLimit("ppt_pl2_sppt");
+        if (pl2 <= 0) pl2 = Helpers.AppConfig.GetMode("limit_fast");
 
         if (pl1 > 0)
         {
@@ -151,6 +161,22 @@ public partial class FansWindow : Window
             sliderPL2.Value = pl2;
             labelPL2.Text = $"{pl2}W";
         }
+
+        // fPPT (fast boost) — only show if supported
+        bool hasFppt = wmi.IsFeatureSupported("ppt_fppt");
+        gridFppt.IsVisible = hasFppt;
+        if (hasFppt)
+        {
+            int fppt = wmi.GetPptLimit("ppt_fppt");
+            if (fppt <= 0) fppt = Helpers.AppConfig.GetMode("limit_fppt");
+            if (fppt > 0)
+            {
+                sliderFppt.Value = fppt;
+                labelFppt.Text = $"{fppt}W";
+            }
+        }
+
+        checkApplyPower.IsChecked = Helpers.AppConfig.IsMode("auto_apply_power");
     }
 
     private void SliderPL1_ValueChanged(object? sender,
@@ -159,6 +185,7 @@ public partial class FansWindow : Window
         int watts = (int)e.NewValue;
         labelPL1.Text = $"{watts}W";
         App.Wmi?.SetPptLimit("ppt_pl1_spl", watts);
+        Helpers.AppConfig.SetMode("limit_slow", watts);
     }
 
     private void SliderPL2_ValueChanged(object? sender,
@@ -167,6 +194,16 @@ public partial class FansWindow : Window
         int watts = (int)e.NewValue;
         labelPL2.Text = $"{watts}W";
         App.Wmi?.SetPptLimit("ppt_pl2_sppt", watts);
+        Helpers.AppConfig.SetMode("limit_fast", watts);
+    }
+
+    private void SliderFppt_ValueChanged(object? sender,
+        Avalonia.Controls.Primitives.RangeBaseValueChangedEventArgs e)
+    {
+        int watts = (int)e.NewValue;
+        labelFppt.Text = $"{watts}W";
+        App.Wmi?.SetPptLimit("ppt_fppt", watts);
+        Helpers.AppConfig.SetMode("limit_fppt", watts);
     }
 
     // ── CPU Boost ──

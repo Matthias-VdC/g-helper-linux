@@ -700,11 +700,25 @@ public partial class MainWindow : Window
 
         Helpers.Logger.WriteLine("AURA HID device found — initializing RGB controls");
 
-        // Load saved values
+        // Send AURA HID init handshake (wake up the LED controller).
+        // This is critical for I2C-HID keyboards (e.g., FA608PP) that need
+        // the handshake before they respond to any RGB commands.
+        // On Windows, G-Helper's Aura.Init() does this in InputDispatcher.AutoKeyboard().
+        Aura.Init();
+
+        // Load saved values into static fields BEFORE applying to hardware
         Aura.Mode = (AuraMode)Helpers.AppConfig.Get("aura_mode");
         Aura.Speed = (AuraSpeed)Helpers.AppConfig.Get("aura_speed");
         Aura.SetColor(Helpers.AppConfig.Get("aura_color", unchecked((int)0xFFFFFFFF)));
         Aura.SetColor2(Helpers.AppConfig.Get("aura_color2", 0));
+
+        // Apply saved power state + mode so the keyboard lights up on startup
+        // (runs on background thread after config values are loaded above)
+        Task.Run(() =>
+        {
+            Aura.ApplyPower();
+            Aura.ApplyAura();
+        });
 
         _suppressAuraEvents = true;
 
