@@ -1353,19 +1353,12 @@ public class GpuModeController
             // writing dgpu_disable=1 would cause a black screen (impossible state).
             if (WouldCreateImpossibleState(target))
             {
-                Logger.WriteLine("GpuModeController: WriteDriverBlock REFUSED — Eco + MUX=0 is impossible state, removing any stale artifacts instead");
+                Logger.WriteLine("GpuModeController: WriteDriverBlock REFUSED — Eco + MUX=0 is impossible state");
                 RemoveDriverBlock();
                 return;
             }
 
             Logger.WriteLine("GpuModeController: writing driver block (modprobe + udev + trigger) for Eco boot");
-
-            // Write file contents to /tmp (no privilege needed, no shell quoting issues)
-            string tmpModprobe = Path.Combine(Path.GetTempPath(), "ghelper-gpu-block.conf");
-            string tmpUdev = Path.Combine(Path.GetTempPath(), "50-ghelper-remove-dgpu.rules");
-
-            File.WriteAllText(tmpModprobe, ModprobeBlockContent);
-            File.WriteAllText(tmpUdev, UdevRemoveContent);
 
             // Try sudo helper first (works from autostart, no tty needed)
             // Falls back to pkexec (needs graphical polkit agent or tty)
@@ -1380,24 +1373,18 @@ public class GpuModeController
             };
 
             string? helper = FindHelperScript();
-            if (helper != null)
+            if (helper == null)
             {
-                Logger.WriteLine($"GpuModeController: using sudo helper: {helper}");
-                SysfsHelper.RunCommandWithTimeout("sudo", $"{helper} write {tmpModprobe} {tmpUdev} {modeStr}", 120000);
-            }
-            else
-            {
-                Logger.WriteLine("GpuModeController: using pkexec fallback");
-                SysfsHelper.RunCommandWithTimeout("pkexec",
-                    $"bash -c 'mkdir -p /etc/ghelper && " +
-                    $"install -m 644 {tmpModprobe} {ModprobeBlockPath} && " +
-                    $"install -m 644 {tmpUdev} {UdevRemovePath} && " +
-                    $"echo {modeStr} > {TriggerPath}'", 120000);
+                Logger.WriteLine($"GpuModeController: cannot write block - helper script is missing");
+                return;
             }
 
-            // Clean up temp files
-            try { File.Delete(tmpModprobe); } catch { }
-            try { File.Delete(tmpUdev); } catch { }
+            // Try sudo helper first (works from autostart, no tty needed)
+            // Falls back to pkexec (needs graphical polkit agent or tty)
+            if (SysfsHelper.RunCommandWithTimeout("sudo", $"{helper} write {modeStr}", 120000) == null)
+            {
+                SysfsHelper.RunCommandWithTimeout("pkexec", $"{helper} write {modeStr}", 120000);
+            }
 
             if (File.Exists(TriggerPath))
             {
@@ -1441,7 +1428,10 @@ public class GpuModeController
             if (helper != null)
             {
                 // Helper already handles both current and legacy files (Phase 6)
-                SysfsHelper.RunCommandWithTimeout("sudo", $"{helper} clean", 120000);
+                if (SysfsHelper.RunCommandWithTimeout("sudo", $"{helper} clean", 120000) == null)
+                {
+                    SysfsHelper.RunCommandWithTimeout("pkexec", $"{helper} clean", 120000);
+                }
             }
             else
             {
