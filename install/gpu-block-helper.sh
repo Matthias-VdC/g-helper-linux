@@ -1,12 +1,29 @@
 #!/bin/bash
 # ╔══════════════════════════════════════════════════════════════════════╗
-# ║  G-HELPER GPU BLOCK HELPER                                          ║
+# ║  G-HELPER GPU BLOCK HELPER                                           ║
 # ║  Manages GPU block artifacts (vendor-aware: nvidia + amdgpu)         ║
 # ║  for Eco mode boot transitions.                                      ║
 # ║  Called by ghelper via sudo (NOPASSWD via /etc/sudoers.d/ghelper).   ║
 # ║                                                                      ║
+# ║  The EnvyControl-proven approach (1.8k+ stars, no systemd service):  ║
+# ║                                                                      ║
+# ║  1. modprobe.d `install /bin/false` — the STRONGEST modprobe block.  ║
+# ║     Unlike `blacklist` (which only prevents autoload and can be      ║
+# ║     overridden by dependencies), `install /bin/false` replaces       ║
+# ║     `modprobe nvidia` with a no-op. Blocks both NVIDIA and AMD dGPU  ║
+# ║     modules.                                                         ║
+# ║                                                                      ║
+# ║  2. udev rule `ATTR{remove}="1"` — belt and suspenders.              ║
+# ║     Physically removes all dGPU PCI devices from the bus when they   ║
+# ║     appear. Even if the modprobe block somehow fails                 ║
+# ║     (e.g. nvidia in initramfs),                                      ║
+# ║     there's no PCI device for the driver to bind to.                 ║
+# ║                                                                      ║
+# ║  3. Trigger file `/etc/ghelper/pending-gpu-mode` — tells ghelper     ║
+# ║     on startup to write dgpu_disable=1 and clean up.                 ║
+# ║                                                                      ║
 # ║  Usage:                                                              ║
-# ║    sudo /usr/local/lib/ghelper/gpu-block-helper.sh write SRC1 SRC2  ║
+# ║    sudo /usr/local/lib/ghelper/gpu-block-helper.sh write [MODE]      ║
 # ║    sudo /usr/local/lib/ghelper/gpu-block-helper.sh clean             ║
 # ╚══════════════════════════════════════════════════════════════════════╝
 set -euo pipefail

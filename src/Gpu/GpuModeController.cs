@@ -1334,29 +1334,8 @@ public class GpuModeController
     }
 
     /// <summary>
-    /// Write three artifacts that prevent dGPU drivers from loading on the next boot,
-    /// allowing ghelper to safely write dgpu_disable=1 at startup.
-    ///
-    /// The EnvyControl-proven approach (1.8k+ stars, no systemd service):
-    ///
-    /// 1. modprobe.d `install /bin/false` — the STRONGEST modprobe block.
-    ///    Unlike `blacklist` (which only prevents autoload and can be overridden
-    ///    by dependencies), `install /bin/false` replaces `modprobe nvidia` with
-    ///    a no-op. Blocks both NVIDIA and AMD dGPU modules.
-    ///
-    /// 2. udev rule `ATTR{remove}="1"` — belt and suspenders.
-    ///    Physically removes all dGPU PCI devices from the bus when they appear.
-    ///    Even if the modprobe block somehow fails (e.g. nvidia in initramfs),
-    ///    there's no PCI device for the driver to bind to.
-    ///
-    /// 3. Trigger file `/etc/ghelper/pending-gpu-mode` — tells ghelper on
-    ///    startup to write dgpu_disable=1 and clean up.
-    ///
-    /// Prefers the sudo helper script (installed by install-local.sh) which needs
-    /// no tty/polkit and works from autostart. Falls back to pkexec if the helper
-    /// is not installed.
-    ///
-    /// Only Eco needs the block. All other modes want the dGPU driver available.
+    /// Write artifacts that prevent dGPU drivers from loading on the next boot.
+    /// Uses the helper script which has the rules hardcoded for security.
     /// </summary>
     private void WriteDriverBlock(GpuMode target)
     {
