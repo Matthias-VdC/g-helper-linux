@@ -70,15 +70,12 @@ ACTION==\"add\", SUBSYSTEM==\"pci\", ATTR{vendor}==\"0x1002\", ATTR{class}==\"0x
 
 case "${1:-}" in
     write)
-        # Args: $2 = temp modprobe file, $3 = temp udev file, $4 = mode name (optional)
-        if [[ -z "${2:-}" || -z "${3:-}" ]]; then
-            echo "Usage: $0 write <modprobe-src> <udev-src> [mode]" >&2
-            exit 1
-        fi
-        MODE="${4:-eco}"
+        # Arg: $2 = mode name (optional)
+        MODE="${2:-eco}"
         mkdir -p "$TRIGGER_DIR"
-        install -m 644 "$2" "$MODPROBE_DEST"
-        install -m 644 "$3" "$UDEV_DEST"
+        echo "$MODPROBE_CONTENT" > "$MODPROBE_DEST"
+        echo "$UDEV_CONTENT" > "$UDEV_DEST"
+        chmod 644 "$MODPROBE_DEST" "$UDEV_DEST"
         echo "$MODE" > "$TRIGGER_DEST"
         ;;
     clean)
