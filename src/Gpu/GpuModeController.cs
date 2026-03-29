@@ -1322,43 +1322,6 @@ public class GpuModeController
         return null;
     }
 
-    /// <summary>Content for the modprobe.d block file (vendor-aware: NVIDIA + AMD).</summary>
-    private const string ModprobeBlockContent =
-        "# ghelper: block dGPU driver modules so dGPU can be safely disabled on next boot\n" +
-        "# Auto-generated — will be removed after Eco mode is applied\n" +
-        "# Uses 'install /bin/false' (strongest block — prevents loading by ANY means)\n" +
-        "# NVIDIA modules\n" +
-        "install nvidia /bin/false\n" +
-        "install nvidia_drm /bin/false\n" +
-        "install nvidia_modeset /bin/false\n" +
-        "install nvidia_uvm /bin/false\n" +
-        "install nvidia_wmi_ec_backlight /bin/false\n" +
-        "# Open-source NVIDIA driver\n" +
-        "install nouveau /bin/false\n" +
-        "# AMD dGPU driver\n" +
-        "install amdgpu /bin/false\n";
-
-    /// <summary>Content for the udev rule that PCI-removes dGPU devices (NVIDIA + AMD) on add.</summary>
-    private const string UdevRemoveContent =
-        "# ghelper: remove dGPU PCI devices so no driver can bind\n" +
-        "# Auto-generated — will be removed after Eco mode is applied\n" +
-        "# Remove NVIDIA VGA controller\n" +
-        "ACTION==\"add\", SUBSYSTEM==\"pci\", ATTR{vendor}==\"0x10de\", ATTR{class}==\"0x030000\", ATTR{power/control}=\"auto\", ATTR{remove}=\"1\"\n" +
-        "# Remove NVIDIA 3D controller\n" +
-        "ACTION==\"add\", SUBSYSTEM==\"pci\", ATTR{vendor}==\"0x10de\", ATTR{class}==\"0x030200\", ATTR{power/control}=\"auto\", ATTR{remove}=\"1\"\n" +
-        "# Remove NVIDIA Audio devices (HDMI audio on dGPU)\n" +
-        "ACTION==\"add\", SUBSYSTEM==\"pci\", ATTR{vendor}==\"0x10de\", ATTR{class}==\"0x040300\", ATTR{power/control}=\"auto\", ATTR{remove}=\"1\"\n" +
-        "# Remove NVIDIA USB xHCI Host Controller\n" +
-        "ACTION==\"add\", SUBSYSTEM==\"pci\", ATTR{vendor}==\"0x10de\", ATTR{class}==\"0x0c0330\", ATTR{power/control}=\"auto\", ATTR{remove}=\"1\"\n" +
-        "# Remove NVIDIA USB Type-C UCSI devices\n" +
-        "ACTION==\"add\", SUBSYSTEM==\"pci\", ATTR{vendor}==\"0x10de\", ATTR{class}==\"0x0c8000\", ATTR{power/control}=\"auto\", ATTR{remove}=\"1\"\n" +
-        "# Remove AMD dGPU VGA controller (boot_vga!=1 protects the iGPU)\n" +
-        "ACTION==\"add\", SUBSYSTEM==\"pci\", ATTR{vendor}==\"0x1002\", ATTR{class}==\"0x030000\", ATTR{boot_vga}!=\"1\", ATTR{power/control}=\"auto\", ATTR{remove}=\"1\"\n" +
-        "# Remove AMD dGPU 3D controller\n" +
-        "ACTION==\"add\", SUBSYSTEM==\"pci\", ATTR{vendor}==\"0x1002\", ATTR{class}==\"0x030200\", ATTR{boot_vga}!=\"1\", ATTR{power/control}=\"auto\", ATTR{remove}=\"1\"\n" +
-        "# Remove AMD dGPU Audio devices\n" +
-        "ACTION==\"add\", SUBSYSTEM==\"pci\", ATTR{vendor}==\"0x1002\", ATTR{class}==\"0x040300\", ATTR{power/control}=\"auto\", ATTR{remove}=\"1\"\n";
-
     /// <summary>
     /// True if any driver block artifacts (current or legacy) exist on disk.
     /// Used to decide if cleanup is needed — avoids unnecessary pkexec prompts.
