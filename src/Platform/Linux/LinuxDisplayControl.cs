@@ -71,7 +71,7 @@ public class LinuxDisplayControl : IDisplayControl
 
         // Use xrandr to get current refresh rate
         var output = SysfsHelper.RunCommand("xrandr", $"--output {displayName} --verbose");
-        if (output == null)
+        if (string.IsNullOrEmpty(output))
         {
             // Fallback: parse basic xrandr output
             output = SysfsHelper.RunCommand("xrandr", "");
