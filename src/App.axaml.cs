@@ -34,6 +34,9 @@ public class App : Application
     public static MainWindow? MainWindowInstance { get; set; }
     public static TrayIcon? TrayIconInstance { get; set; }
 
+    // Single-instance lock that prevents duplicate tray icons
+    private static FileStream? _lockFile;
+
     // Legacy event codes for non-configurable keys
     private const int EventKbBrightnessUp = 196;   // Fn+F3
     private const int EventKbBrightnessDown = 197;  // Fn+F2
@@ -83,6 +86,14 @@ public class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
+        // Exit if another ghelper is already running
+        if (!TryAcquireSingleInstanceLock())
+        {
+            Console.Error.WriteLine("g-helper: another instance is already running — exiting");
+            Environment.Exit(0);
+            return;
+        }
+
         // Initialize Linux platform backends
         InitializePlatform();
 
@@ -247,6 +258,21 @@ public class App : Application
         {
             bool supported = Wmi?.IsFeatureSupported(attr) ?? false;
             Logger.WriteLine($"  {name}: {(supported ? "YES" : "no")}");
+        }
+
+        // Raw WMI: probe all GPU ACPI endpoints in a single pkexec call (only when enabled)
+        if (Helpers.AppConfig.Is("raw_wmi"))
+        {
+            Logger.WriteLine("  Raw WMI mode: ENABLED (user opt-in)");
+            if (AsusWmiDebugfs.IsAvailable())
+            {
+                AsusWmiDebugfs.ProbeAll();      // 1 pkexec call — probes + caches all device IDs
+                AsusWmiDebugfs.LogProbeResults(); // reads from cache, no pkexec
+            }
+            else
+            {
+                Logger.WriteLine("  Raw WMI debugfs: not available");
+            }
         }
     }
 
@@ -594,10 +620,10 @@ public class App : Application
 
         menu.Add(new NativeMenuItemSeparator());
 
-        // GPU modes — only show if dGPU is present (dgpu_disable sysfs attribute exists).
-        // All sysfs writes run in Task.Run via GpuModeController
+        // GPU modes — show if GPU Eco is available (sysfs or raw WMI debugfs).
+        // All writes run in Task.Run via GpuModeController
         // (dgpu_disable writes can block in the kernel for 30-60 seconds)
-        if (Wmi?.IsFeatureSupported(AsusAttributes.DgpuDisable) == true)
+        if (Wmi?.IsGpuEcoAvailable() == true)
         {
             var eco = new NativeMenuItem("GPU: Eco (iGPU only)");
             eco.Click += (_, _) => TrayGpuModeSwitch(GpuMode.Eco);
@@ -832,5 +858,32 @@ public class App : Application
         Wmi?.Dispose();
 
         desktop.Shutdown();
+    }
+
+    /// <summary>
+    /// Try to acquire a single-instance lock file. Returns false if another
+    /// instance is already running. Uses XDG_RUNTIME_DIR (per-user) to avoid
+    /// multi-user conflicts. The OS releases the lock automatically on exit/crash.
+    /// </summary>
+    private static bool TryAcquireSingleInstanceLock()
+    {
+        string lockDir = Environment.GetEnvironmentVariable("XDG_RUNTIME_DIR") ?? "/tmp";
+        string lockPath = Path.Combine(lockDir, "ghelper.lock");
+
+        for (int attempt = 0; attempt < 2; attempt++)
+        {
+            try
+            {
+                _lockFile = new FileStream(lockPath, FileMode.OpenOrCreate,
+                    FileAccess.ReadWrite, FileShare.None);
+                return true;
+            }
+            catch (IOException)
+            {
+                if (attempt == 0)
+                    Thread.Sleep(500); // retry once — covers app restart race
+            }
+        }
+        return false;
     }
 }

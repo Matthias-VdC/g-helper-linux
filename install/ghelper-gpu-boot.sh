@@ -170,8 +170,59 @@ fi
 # ══════════════════════════════════════════════════════════════════════════════
 case "$MODE" in
     eco)
+        # Unload NVIDIA dGPU drivers if loaded despite modprobe block.
+        # On Ubuntu/Fedora with nvidia-drm.modeset=1, nvidia may be in the
+        # initramfs and loaded before modprobe.d is read. This script runs
+        # before display-manager.service so refcnt should be 0.
+        # Note: amdgpu is NOT unloaded here because it may be the iGPU driver
+        # (AMD iGPU and AMD dGPU both use the amdgpu module).
+        if [[ -d /sys/module/nvidia_drm ]] || [[ -d /sys/module/nouveau ]]; then
+            log "eco: nvidia driver loaded despite modprobe block, attempting rmmod"
+            rmmod nvidia_drm nvidia_modeset nvidia_uvm nvidia 2>/dev/null
+            rmmod nouveau 2>/dev/null
+            sleep 0.2
+            if [[ -d /sys/module/nvidia_drm ]] || [[ -d /sys/module/nouveau ]]; then
+                log "eco: rmmod failed, leaving trigger for app to handle"
+                exit 0
+            fi
+            log "eco: rmmod succeeded"
+        elif [[ -d /sys/module/amdgpu ]]; then
+            log "eco: amdgpu loaded, cannot rmmod (may be iGPU), leaving trigger for app"
+            exit 0
+        fi
+
         if [[ -z "$dgpu_path" ]]; then
-            log "eco: dgpu_disable sysfs not found — skipping, app will handle"
+            # No sysfs — try debugfs raw WMI if available
+            # The trigger file only exists because the user enabled raw_wmi and clicked Eco
+            if [[ -d /sys/kernel/debug/asus-nb-wmi ]]; then
+                local DEBUGFS="/sys/kernel/debug/asus-nb-wmi"
+                # Try ROG endpoint (0x00090020), fall back to Vivobook (0x00090120)
+                local DEVID="0x00090020"
+                echo $DEVID > $DEBUGFS/dev_id 2>/dev/null
+                local probe=$(cat $DEBUGFS/dsts 2>&1)
+                if echo "$probe" | grep -q "No such device"; then
+                    DEVID="0x00090120"
+                    log "eco: ROG endpoint not supported, trying Vivobook ($DEVID)"
+                fi
+                log "eco: no sysfs, using debugfs raw WMI (DEVS $DEVID, 1)"
+                # Double-write pattern (from kernel comment in dgpu_disable_store):
+                # "A user may be required to store the value twice, typical store first,
+                #  then rescan PCI bus to activate power, then store a second time to
+                #  save correctly."
+                echo $DEVID > $DEBUGFS/dev_id 2>/dev/null
+                echo 1 > $DEBUGFS/ctrl_param 2>/dev/null
+                result=$(cat $DEBUGFS/devs 2>&1)
+                log "eco: raw WMI first write: $result"
+                sleep 0.1
+                echo 1 > /sys/bus/pci/rescan 2>/dev/null
+                sleep 0.1
+                echo $DEVID > $DEBUGFS/dev_id 2>/dev/null
+                echo 1 > $DEBUGFS/ctrl_param 2>/dev/null
+                result=$(cat $DEBUGFS/devs 2>&1)
+                log "eco: raw WMI second write: $result"
+            else
+                log "eco: no sysfs or debugfs — app will handle"
+            fi
         else
             # Check MUX — cannot set Eco when MUX=0
             if [[ -n "$mux_path" ]]; then
@@ -187,12 +238,6 @@ case "$MODE" in
             if [[ "$current" == "1" ]]; then
                 log "eco: dgpu_disable already 1 — already in Eco"
             else
-                # Check dGPU driver is NOT loaded (should be blocked by modprobe.d)
-                if [[ -d /sys/module/nvidia_drm ]] || [[ -d /sys/module/nouveau ]] || [[ -d /sys/module/amdgpu ]]; then
-                    log "eco: WARNING — dGPU driver is loaded (nvidia_drm, nouveau, or amdgpu), cannot safely write dgpu_disable=1"
-                    log "eco: leaving trigger for ghelper app to handle"
-                    exit 0
-                fi
                 # Write dgpu_disable=1
                 log "eco: writing dgpu_disable=1"
                 echo 1 > "$dgpu_path" 2>/dev/null
@@ -223,6 +268,22 @@ case "$MODE" in
             else
                 log "$MODE: dgpu already enabled (dgpu_disable=0)"
             fi
+        elif [[ -d /sys/kernel/debug/asus-nb-wmi ]]; then
+            # No sysfs — try debugfs raw WMI to enable dGPU
+            local DEBUGFS="/sys/kernel/debug/asus-nb-wmi"
+            # Try ROG endpoint first, fall back to Vivobook
+            local DEVID="0x00090020"
+            echo $DEVID > $DEBUGFS/dev_id 2>/dev/null
+            local probe=$(cat $DEBUGFS/dsts 2>&1)
+            if echo "$probe" | grep -q "No such device"; then
+                DEVID="0x00090120"
+                log "$MODE: ROG endpoint not supported, trying Vivobook ($DEVID)"
+            fi
+            log "$MODE: no sysfs, using debugfs raw WMI (DEVS $DEVID, 0)"
+            echo $DEVID > $DEBUGFS/dev_id 2>/dev/null
+            echo 0 > $DEBUGFS/ctrl_param 2>/dev/null
+            result=$(cat $DEBUGFS/devs 2>&1)
+            log "$MODE: raw WMI result: $result"
         fi
         ;;
 
