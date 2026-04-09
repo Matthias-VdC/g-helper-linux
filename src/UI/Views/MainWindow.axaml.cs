@@ -18,6 +18,7 @@ namespace GHelper.Linux.UI.Views;
 public partial class MainWindow : Window
 {
     private readonly DispatcherTimer _refreshTimer;
+    private int _batteryRefreshCounter;
     private int _currentPerfMode = -1;
     private int _currentGpuMode = -1;  // 0=Eco, 1=Standard, 2=Optimized (auto), 3=Ultimate (MUX=0)
 
@@ -37,7 +38,16 @@ public partial class MainWindow : Window
         {
             Interval = TimeSpan.FromSeconds(2)
         };
-        _refreshTimer.Tick += (_, _) => RefreshSensorData();
+        _refreshTimer.Tick += (_, _) =>
+        {
+            RefreshSensorData();
+            // Refresh battery every ~60s (30 ticks × 2s)
+            if (++_batteryRefreshCounter >= 30)
+            {
+                _batteryRefreshCounter = 0;
+                RefreshBattery();
+            }
+        };
 
         // On close: let the window actually close (dispose).
         // Don't cancel — this allows KDE logout/reboot to proceed.
@@ -49,11 +59,13 @@ public partial class MainWindow : Window
             App.MainWindowInstance = null;
         };
 
-        // Initial load
+        // Start sensor refresh timer immediately (works even in tray-only mode)
+        _refreshTimer.Start();
+
+        // Populate UI controls when the window becomes visible
         Loaded += (_, _) =>
         {
             RefreshAll();
-            _refreshTimer.Start();
         };
     }
 
@@ -198,6 +210,7 @@ public partial class MainWindow : Window
 
     /// <summary>Public wrapper for RefreshGpuMode — called from App.cs on power state changes.</summary>
     public void RefreshGpuModePublic() => RefreshGpuMode();
+    public void RefreshBatteryPublic() => RefreshBattery();
 
     private void RefreshGpuMode()
     {
@@ -657,7 +670,9 @@ public partial class MainWindow : Window
     // ── Keyboard / AURA ──
 
     private bool _auraInitialized = false;
+    private static bool _auraHardwareInitialized = false;
     private bool _suppressAuraEvents = false;
+    private bool _suppressEvents = false;
 
     public void RefreshKeyboard()
     {
@@ -681,18 +696,18 @@ public partial class MainWindow : Window
         InitAura();
     }
 
-    private void InitAura()
+    /// <summary>
+    /// Initialize AURA hardware — HID handshake, load config, apply RGB.
+    /// </summary>
+    public static bool InitAuraHardware()
     {
-        if (_auraInitialized) return;
-        _auraInitialized = true;
+        if (_auraHardwareInitialized) return Aura.IsAvailable();
+        _auraHardwareInitialized = true;
 
-        bool hasAura = Aura.IsAvailable();
-        panelAura.IsVisible = hasAura;
-
-        if (!hasAura)
+        if (!Aura.IsAvailable())
         {
             Helpers.Logger.WriteLine("No AURA HID device found — RGB controls hidden");
-            return;
+            return false;
         }
 
         Helpers.Logger.WriteLine("AURA HID device found — initializing RGB controls");
@@ -710,12 +725,21 @@ public partial class MainWindow : Window
         Aura.SetColor2(Helpers.AppConfig.Get("aura_color2", 0));
 
         // Apply saved power state + mode so the keyboard lights up on startup
-        // (runs on background thread after config values are loaded above)
-        Task.Run(() =>
-        {
-            Aura.ApplyPower();
-            Aura.ApplyAura();
-        });
+        Aura.ApplyPower();
+        Aura.ApplyAura();
+
+        return true;
+    }
+
+    private void InitAura()
+    {
+        if (_auraInitialized) return;
+        _auraInitialized = true;
+
+        // Run hardware init if not already done (normal startup path)
+        bool hasAura = InitAuraHardware();
+        panelAura.IsVisible = hasAura;
+        if (!hasAura) return;
 
         _suppressAuraEvents = true;
 
@@ -1142,8 +1166,10 @@ public partial class MainWindow : Window
         // Version + model in footer
         labelVersion.Text = $"v{Helpers.AppConfig.AppVersion} — {model}";
 
-        // Check autostart status
-        checkStartup.IsChecked = sys.IsAutostartEnabled();
+        // Check autostart status from config (suppress to avoid re-writing .desktop file)
+        _suppressEvents = true;
+        checkStartup.IsChecked = Helpers.AppConfig.IsNotFalse("autostart");
+        _suppressEvents = false;
 
         // System info (same as ExtraWindow)
         labelSysModel.Text = $"Model: {model}";
@@ -1173,7 +1199,9 @@ public partial class MainWindow : Window
 
     private void CheckStartup_Changed(object? sender, RoutedEventArgs e)
     {
+        if (_suppressEvents) return;
         bool enabled = checkStartup.IsChecked ?? false;
+        Helpers.AppConfig.Set("autostart", enabled ? 1 : 0);
         App.System?.SetAutostart(enabled);
     }
 

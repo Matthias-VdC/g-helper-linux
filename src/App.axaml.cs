@@ -105,8 +105,11 @@ public class App : Application
             MainWindowInstance = new MainWindow();
             if (AppConfig.Is("topmost")) MainWindowInstance.Topmost = true;
 
-            // Show main window on startup (like Windows G-Helper)
-            desktop.MainWindow = MainWindowInstance;
+            // Show main window on startup unless "Start minimized to tray" is enabled
+            if (!AppConfig.Is("silent_start"))
+            {
+                desktop.MainWindow = MainWindowInstance;
+            }
 
             // Set up tray icon (secondary access method)
             SetupTrayIcon(desktop);
@@ -133,6 +136,13 @@ public class App : Application
                     "udev rules not installed. Run install.sh for full functionality (battery limit, fan control, etc.)",
                     "dialog-warning");
             }
+
+            // Initialize AURA hardware (RGB) on background thread regardless of window visibility.
+            Task.Run(() => MainWindow.InitAuraHardware());
+
+            // Ensure autostart .desktop file matches config preference and current binary path
+            bool autostart = AppConfig.IsNotFalse("autostart");
+            System?.SetAutostart(autostart);
 
             // Update tray icon to match current mode
             UpdateTrayIcon();
@@ -796,7 +806,10 @@ public class App : Application
             }
 
             Avalonia.Threading.Dispatcher.UIThread.Post(() =>
-                MainWindowInstance?.RefreshGpuModePublic());
+            {
+                MainWindowInstance?.RefreshGpuModePublic();
+                MainWindowInstance?.RefreshBatteryPublic();
+            });
         });
 
         // Auto performance mode (if configured)
