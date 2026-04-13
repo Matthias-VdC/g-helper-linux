@@ -52,11 +52,7 @@ public class LinuxPowerManager : IPowerManager
 
                 bool currentAc = IsOnAcPower();
                 if (_lastAcState.HasValue && currentAc != _lastAcState.Value)
-                {
-                    Helpers.Logger.WriteLine($"Power state changed: AC={currentAc}");
-                    _lastAcState = currentAc;
                     PowerStateChanged?.Invoke(currentAc);
-                }
                 _lastAcState = currentAc;
             }
             catch (Exception ex)

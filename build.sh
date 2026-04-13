@@ -38,6 +38,38 @@ if ! command -v clang &>/dev/null; then
     [[ "$ans" =~ ^[Yy] ]] || exit 1
 fi
 
+# Build wlr-randr (Wayland display tool — vendored v0.5.0, MIT license)
+WLR_RANDR_DIR="$SCRIPT_DIR/vendor/wlr-randr"
+WLR_RANDR_BIN=""
+
+if command -v wayland-scanner &>/dev/null && command -v cc &>/dev/null; then
+    WLR_VERSION=$(cat "$WLR_RANDR_DIR/VERSION" 2>/dev/null || echo "unknown")
+    echo ""
+    echo "Building wlr-randr v${WLR_VERSION}..."
+    (
+        cd "$WLR_RANDR_DIR"
+        wayland-scanner client-header \
+            protocol/wlr-output-management-unstable-v1.xml \
+            wlr-output-management-unstable-v1-client-protocol.h
+        wayland-scanner private-code \
+            protocol/wlr-output-management-unstable-v1.xml \
+            wlr-output-management-unstable-v1-protocol.c
+        cc -O2 -o wlr-randr main.c wlr-output-management-unstable-v1-protocol.c \
+            -I. -lwayland-client -lm
+        strip wlr-randr
+    )
+    if [[ -f "$WLR_RANDR_DIR/wlr-randr" ]]; then
+        WLR_RANDR_BIN="$WLR_RANDR_DIR/wlr-randr"
+        echo "  wlr-randr built: $(du -sh "$WLR_RANDR_BIN" | cut -f1)"
+    else
+        echo "WARNING: wlr-randr build failed (Wayland refresh rate switching unavailable)"
+    fi
+else
+    echo ""
+    echo "NOTE: wayland-scanner not found, skipping wlr-randr build."
+    echo "  Install with: sudo apt install libwayland-dev"
+fi
+
 # Clean previous build artifacts
 echo ""
 echo "[1/4] Cleaning previous build..."
@@ -76,6 +108,13 @@ for lib in libSkiaSharp.so libHarfBuzzSharp.so; do
         cp "$PUBLISH_DIR/$lib" "$DIST_DIR/"
     fi
 done
+
+# Clean wlr-randr build artifacts from vendor dir (binary is embedded in ghelper)
+if [[ -n "$WLR_RANDR_BIN" ]]; then
+    rm -f "$WLR_RANDR_DIR/wlr-randr" \
+          "$WLR_RANDR_DIR/wlr-output-management-unstable-v1-client-protocol.h" \
+          "$WLR_RANDR_DIR/wlr-output-management-unstable-v1-protocol.c"
+fi
 
 # Summary
 BINARY_SIZE=$(du -sh "$DIST_DIR/ghelper" | cut -f1)

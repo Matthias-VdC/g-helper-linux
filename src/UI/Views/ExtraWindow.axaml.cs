@@ -118,6 +118,7 @@ public partial class ExtraWindow : Window
         labelKbdBrightness.Text = level.ToString();
         Helpers.AppConfig.Set("keyboard_brightness", level);
         Aura.ApplyBrightness(level, "KbdSlider");
+        App.MainWindowInstance?.RefreshKeyboard();
     }
 
     private void ComboKbdSpeed_Changed(object? sender, SelectionChangedEventArgs e)
@@ -225,11 +226,27 @@ public partial class ExtraWindow : Window
         var display = App.Display as LinuxDisplayControl;
         if (display == null) return;
 
+        // Populate backlight controller dropdown
+        var backlights = LinuxDisplayControl.GetAvailableBacklights();
+        if (backlights.Count > 1)
+        {
+            _suppressEvents = true;
+            comboBacklight.ItemsSource = backlights;
+            var active = display.ActiveBacklightName;
+            if (active != null && backlights.Contains(active))
+                comboBacklight.SelectedItem = active;
+            _suppressEvents = false;
+            rowBacklightSelector.IsVisible = true;
+        }
+        else
+        {
+            rowBacklightSelector.IsVisible = false;
+        }
+
         if (display.HasBacklight)
         {
-            // Backlight available — show slider, hide button/hint
+            // Backlight available — show slider
             rowBrightnessSlider.IsVisible = true;
-            buttonEnableBacklight.IsVisible = false;
             labelBacklightHint.IsVisible = false;
 
             int brightness = display.GetBrightness();
@@ -237,6 +254,19 @@ public partial class ExtraWindow : Window
             {
                 sliderBrightness.Value = Math.Max(brightness, LinuxDisplayControl.MinBrightnessPercent);
                 labelBrightness.Text = $"{brightness}%";
+            }
+
+            // Even with a backlight, offer module load if nvidia is active but nvidia backlight is missing
+            _pendingBacklightModule = LinuxDisplayControl.GetMissingBacklightModule();
+            if (_pendingBacklightModule != null)
+            {
+                buttonEnableBacklight.Content = $"Load {_pendingBacklightModule}";
+                buttonEnableBacklight.IsVisible = true;
+                buttonEnableBacklight.IsEnabled = true;
+            }
+            else
+            {
+                buttonEnableBacklight.IsVisible = false;
             }
         }
         else
@@ -294,6 +324,29 @@ public partial class ExtraWindow : Window
                 }
             });
         });
+    }
+
+    private void ComboBacklight_SelectionChanged(object? sender,
+        Avalonia.Controls.SelectionChangedEventArgs e)
+    {
+        if (_suppressEvents) return;
+        var display = App.Display as LinuxDisplayControl;
+        if (display == null) return;
+
+        var selected = comboBacklight.SelectedItem as string;
+        if (selected == null || selected == display.ActiveBacklightName) return;
+
+        display.SetActiveBacklight(selected);
+
+        // Refresh slider to show brightness from the new controller
+        _suppressEvents = true;
+        int brightness = display.GetBrightness();
+        if (brightness >= 0)
+        {
+            sliderBrightness.Value = Math.Max(brightness, LinuxDisplayControl.MinBrightnessPercent);
+            labelBrightness.Text = $"{brightness}%";
+        }
+        _suppressEvents = false;
     }
 
     private void SliderBrightness_ValueChanged(object? sender,
@@ -585,6 +638,7 @@ public partial class ExtraWindow : Window
         {
             App.Power?.SetPlatformProfile(profile);
             Helpers.Logger.WriteLine($"Platform profile → {profile}");
+            App.MainWindowInstance?.RefreshPerformanceMode();
         }
     }
 
@@ -677,6 +731,8 @@ public partial class ExtraWindow : Window
         bool enabled = checkScreenAuto.IsChecked ?? false;
         Helpers.AppConfig.Set("screen_auto", enabled ? 1 : 0);
         Helpers.Logger.WriteLine($"Screen auto refresh → {enabled}");
+        if (enabled) (App.Current as App)?.AutoScreen();
+        App.MainWindowInstance?.RefreshScreenPublic();
     }
 
     private void CheckRawWmi_Changed(object? sender, RoutedEventArgs e)

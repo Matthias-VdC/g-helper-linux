@@ -493,6 +493,9 @@ public class App : Application
         var display = Display;
         if (display == null) return;
 
+        // Hotkey cycle disables auto mode (manual override)
+        AppConfig.Set("screen_auto", 0);
+
         var rates = display.GetAvailableRefreshRates();
         if (rates.Count < 2) return;
 
@@ -512,6 +515,44 @@ public class App : Application
 
         display.SetRefreshRate(nextRate);
         System?.ShowNotification("Display", $"Refresh rate: {nextRate}Hz", "video-display");
+
+        Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+            MainWindowInstance?.RefreshScreenPublic());
+    }
+
+    /// <summary>
+    /// Auto-switch screen refresh rate based on AC/battery power.
+    /// AC → max refresh + overdrive ON, Battery → 60Hz + overdrive OFF.
+    /// Called on power state change and when user enables auto mode.
+    /// </summary>
+    public void AutoScreen()
+    {
+        if (!AppConfig.Is("screen_auto")) return;
+
+        var display = Display;
+        if (display == null) return;
+
+        var rates = display.GetAvailableRefreshRates();
+        bool onAc = Power?.IsOnAcPower() ?? true;
+
+        if (onAc)
+        {
+            int maxHz = rates.Count > 0 ? rates[0] : 120;
+            display.SetRefreshRate(maxHz);
+            Wmi?.SetPanelOverdrive(true);
+            Logger.WriteLine($"AutoScreen: AC power → {maxHz}Hz + overdrive ON");
+            System?.ShowNotification("Display", $"Auto: {maxHz}Hz, overdrive on", "video-display");
+        }
+        else
+        {
+            display.SetRefreshRate(60);
+            Wmi?.SetPanelOverdrive(false);
+            Logger.WriteLine("AutoScreen: Battery → 60Hz + overdrive OFF");
+            System?.ShowNotification("Display", "Auto: 60Hz, overdrive off", "video-display");
+        }
+
+        Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+            MainWindowInstance?.RefreshScreenPublic());
     }
 
     private void CycleKeyboardBrightness(bool up)
@@ -528,6 +569,9 @@ public class App : Application
             _ => $"Level {next}"
         };
         System?.ShowNotification("Keyboard", level, "keyboard-brightness");
+
+        Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+            MainWindowInstance?.RefreshKeyboard());
     }
 
     private void SetupTrayIcon(IClassicDesktopStyleApplicationLifetime desktop)
@@ -632,15 +676,15 @@ public class App : Application
 
         // Performance modes
         var silent = new NativeMenuItem("Silent");
-        silent.Click += (_, _) => { Mode?.SetPerformanceMode(2, true); UpdateTrayIcon(); };
+        silent.Click += (_, _) => { Mode?.SetPerformanceMode(2, true); UpdateTrayIcon(); MainWindowInstance?.RefreshPerformanceMode(); };
         menu.Add(silent);
 
         var balanced = new NativeMenuItem("Balanced");
-        balanced.Click += (_, _) => { Mode?.SetPerformanceMode(0, true); UpdateTrayIcon(); };
+        balanced.Click += (_, _) => { Mode?.SetPerformanceMode(0, true); UpdateTrayIcon(); MainWindowInstance?.RefreshPerformanceMode(); };
         menu.Add(balanced);
 
         var turbo = new NativeMenuItem("Turbo");
-        turbo.Click += (_, _) => { Mode?.SetPerformanceMode(1, true); UpdateTrayIcon(); };
+        turbo.Click += (_, _) => { Mode?.SetPerformanceMode(1, true); UpdateTrayIcon(); MainWindowInstance?.RefreshPerformanceMode(); };
         menu.Add(turbo);
 
         menu.Add(new NativeMenuItemSeparator());
@@ -782,12 +826,19 @@ public class App : Application
         });
     }
 
+    /// <summary>Debounce guard, skip power events within 3 seconds of the last one.</summary>
+    private long _lastPowerChangeMs;
+
     /// <summary>
     /// Handle power state change (AC plugged/unplugged).
     /// Triggers auto GPU mode switch and auto performance mode.
     /// </summary>
     private void OnPowerStateChanged(bool onAc)
     {
+        long now = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+        if (Math.Abs(now - _lastPowerChangeMs) < 3000) return;
+        _lastPowerChangeMs = now;
+
         Logger.WriteLine($"Power state changed: AC={onAc}");
 
         // Auto GPU mode (Optimized = auto Eco/Standard based on AC power)
@@ -820,6 +871,11 @@ public class App : Application
 
         // Auto performance mode (if configured)
         Mode?.AutoPerformance(powerChanged: true);
+        Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+            MainWindowInstance?.RefreshPerformanceMode());
+
+        // Auto screen refresh rate (if configured)
+        AutoScreen();
     }
 
     // Unix signal handlers for clean shutdown on SIGTERM/SIGINT (logout/reboot)

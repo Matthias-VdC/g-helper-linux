@@ -208,9 +208,10 @@ public partial class MainWindow : Window
 
     // ── GPU Mode ──
 
-    /// <summary>Public wrapper for RefreshGpuMode — called from App.cs on power state changes.</summary>
+    /// <summary>Public wrappers for refresh methods — called from App.cs on power state changes.</summary>
     public void RefreshGpuModePublic() => RefreshGpuMode();
     public void RefreshBatteryPublic() => RefreshBattery();
+    public void RefreshScreenPublic() => RefreshScreen();
 
     private void RefreshGpuMode()
     {
@@ -609,20 +610,24 @@ public partial class MainWindow : Window
         if (display == null) return;
 
         int hz = display.GetRefreshRate();
+        var rates = display.GetAvailableRefreshRates();
+        int maxHz = rates.Count > 0 ? rates[0] : 120;
+        bool isAuto = Helpers.AppConfig.Is("screen_auto");
+
         if (hz > 0)
         {
-            // Combined header: "Laptop Screen: 60Hz" (matches Windows layout)
-            labelScreen.Text = $"Laptop Screen: {hz}Hz";
+            string suffix = isAuto ? " (Auto)" : "";
+            labelScreen.Text = $"Laptop Screen: {hz}Hz{suffix}";
             labelScreenHz.Text = $"{hz} Hz";
-
-            // Update max refresh button label
-            var rates = display.GetAvailableRefreshRates();
-            if (rates.Count > 0)
-            {
-                int maxHz = rates[0];
-                labelHighRefresh.Text = $"{maxHz}Hz";
-            }
         }
+
+        // Update max refresh button label
+        labelHighRefresh.Text = $"{maxHz}Hz";
+
+        // Highlight active button
+        SetButtonActive(buttonScreenAuto, isAuto);
+        SetButtonActive(button60Hz, !isAuto && hz == 60);
+        SetButtonActive(button120Hz, !isAuto && hz > 60);
 
         // Check for MiniLED support
         bool hasMiniLed = App.Wmi?.IsFeatureSupported(AsusAttributes.MiniLedMode) ?? false;
@@ -631,18 +636,32 @@ public partial class MainWindow : Window
 
     private void ButtonScreenAuto_Click(object? sender, RoutedEventArgs e)
     {
-        // TODO: Toggle auto screen refresh rate
-        Helpers.Logger.WriteLine("Screen auto not yet implemented");
+        bool wasAuto = Helpers.AppConfig.Is("screen_auto");
+        if (wasAuto)
+        {
+            // Toggle off, keep current rate, just disable auto
+            Helpers.AppConfig.Set("screen_auto", 0);
+            Helpers.Logger.WriteLine("Screen auto: disabled");
+        }
+        else
+        {
+            // Enable auto and apply immediately
+            Helpers.AppConfig.Set("screen_auto", 1);
+            (App.Current as App)?.AutoScreen();
+        }
+        RefreshScreen();
     }
 
     private void Button60Hz_Click(object? sender, RoutedEventArgs e)
     {
+        Helpers.AppConfig.Set("screen_auto", 0);
         App.Display?.SetRefreshRate(60);
         RefreshScreen();
     }
 
     private void Button120Hz_Click(object? sender, RoutedEventArgs e)
     {
+        Helpers.AppConfig.Set("screen_auto", 0);
         var rates = App.Display?.GetAvailableRefreshRates();
         if (rates != null && rates.Count > 0)
             App.Display?.SetRefreshRate(rates[0]); // Use max available

@@ -104,6 +104,15 @@
                         <TextBlock Classes="header" Text="Display" />
                     </Border>
 
+                    <!-- Backlight controller selector (visible when multiple backlight devices) -->
+                    <Grid x:Name="rowBacklightSelector" ColumnDefinitions="120,*" Margin="0,4" IsVisible="False">
+                        <TextBlock Grid.Column="0" Text="Controller"
+                                   Classes="label-dim" VerticalAlignment="Center" />
+                        <ComboBox Grid.Column="1" x:Name="comboBacklight"
+                                  HorizontalAlignment="Stretch"
+                                  SelectionChanged="ComboBacklight_SelectionChanged" />
+                    </Grid>
+
                     <!-- Brightness slider (visible when backlight device exists) -->
                     <Grid x:Name="rowBrightnessSlider" ColumnDefinitions="120,*,50" Margin="0,4">
                         <TextBlock Grid.Column="0" Text="Brightness"
