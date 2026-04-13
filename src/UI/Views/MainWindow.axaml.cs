@@ -24,6 +24,11 @@ public partial class MainWindow : Window
     private int _currentPerfMode = -1;
     private int _currentGpuMode = -1;  // 0=Eco, 1=Standard, 2=Optimized (auto), 3=Ultimate (MUX=0)
 
+    // Easter egg: click version label 7 times → arcade game
+    private int _versionClickCount;
+    private DateTime _versionClickStart;
+    private ArcadeWindow? _arcadeWindow;
+
     // Donate button state
     private int _coinClickCount;
     private bool _coinMuted;
@@ -1274,6 +1279,33 @@ public partial class MainWindow : Window
 
         _coinTransform = new TranslateTransform();
         buttonDonate.RenderTransform = _coinTransform;
+
+        // Easter egg: 7 clicks on version label within 3 seconds
+        labelVersion.PointerPressed += (_, _) =>
+        {
+            var now = DateTime.UtcNow;
+            if ((now - _versionClickStart).TotalSeconds > 3)
+            {
+                _versionClickCount = 0;
+                _versionClickStart = now;
+            }
+            _versionClickCount++;
+            if (_versionClickCount == 5)
+                Helpers.Logger.WriteLine("Easter egg: 🎮 getting close...");
+            if (_versionClickCount >= 7)
+            {
+                _versionClickCount = 0;
+                if (_arcadeWindow == null || !_arcadeWindow.IsVisible)
+                {
+                    _arcadeWindow = new ArcadeWindow();
+                    _arcadeWindow.Show();
+                }
+                else
+                {
+                    _arcadeWindow.Activate();
+                }
+            }
+        };
 
         // Hover events
         buttonDonate.PointerEntered += ButtonDonate_PointerEntered;
