@@ -61,6 +61,25 @@
         <Setter Property="Background" Value="#454545" />
     </Style>
 
+    <!-- Gold coin donate button -->
+    <Style Selector="Button.ghelper-coin">
+        <Setter Property="Background" Value="#FFD700" />
+        <Setter Property="Foreground" Value="#4A3800" />
+        <Setter Property="CornerRadius" Value="5" />
+        <Setter Property="Padding" Value="8,4" />
+        <Setter Property="BorderThickness" Value="2" />
+        <Setter Property="BorderBrush" Value="#DAA520" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="FontWeight" Value="Bold" />
+    </Style>
+
+    <Style Selector="Button.ghelper-coin:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="#FFE44D" />
+    </Style>
+
     <!-- ComboBox styling -->
     <Style Selector="ComboBox">
         <Setter Property="Background" Value="#373737" />

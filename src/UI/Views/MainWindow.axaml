@@ -290,24 +290,58 @@
                                    TextWrapping="Wrap" />
                     </StackPanel>
 
-                    <!-- Version + Updates + Quit -->
-                    <Grid ColumnDefinitions="*,Auto,Auto">
-                        <TextBlock Grid.Column="0" x:Name="labelVersion" Classes="label-dim"
-                                   Text="G-Helper Linux v1.0.0" VerticalAlignment="Center"
-                                   FontSize="12" />
-                        <Button Grid.Column="1" x:Name="buttonUpdates" Classes="ghelper"
+                    <!-- Version -->
+                    <TextBlock x:Name="labelVersion" Classes="label-dim"
+                               Text="G-Helper Linux v1.0.0" FontSize="12" Margin="0,0,0,6" />
+
+                    <!-- Donate + Updates + Quit -->
+                    <Grid ColumnDefinitions="Auto,*,Auto,Auto">
+                        <Button Grid.Column="0" x:Name="buttonDonate" Classes="ghelper-coin"
+                                Margin="0,0,6,0" Height="36" MinWidth="160"
+                                Click="ButtonDonate_Click">
+                            <Grid>
+                                <StackPanel Orientation="Horizontal" Spacing="6"
+                                            HorizontalAlignment="Center" VerticalAlignment="Center"
+                                            Margin="0,0,24,0">
+                                    <Border CornerRadius="12" Width="24" Height="24"
+                                            Background="#B8860B" BorderBrush="#8B6914"
+                                            BorderThickness="2" VerticalAlignment="Center">
+                                        <TextBlock Text="$" FontWeight="Black" FontSize="15"
+                                                   Foreground="#FFD700" FontFamily="monospace"
+                                                   HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                   Margin="1,0,0,0" />
+                                    </Border>
+                                    <TextBlock Text="Donate" FontSize="12" FontWeight="Bold"
+                                               Foreground="#4A3800" VerticalAlignment="Center" />
+                                    <TextBlock x:Name="labelCoinCount" Text="" FontSize="12"
+                                               VerticalAlignment="Center" FontWeight="Bold"
+                                               Foreground="#8B6914" />
+                                </StackPanel>
+                                <!-- Mute toggle: ♪ when unmuted, M when muted -->
+                                <Border x:Name="borderCoinMute" CornerRadius="3"
+                                        Background="#B8860B" Padding="4,1"
+                                        HorizontalAlignment="Right" VerticalAlignment="Center"
+                                        Margin="0,0,3,0" Cursor="Hand">
+                                    <TextBlock x:Name="labelCoinMute" Text="&#x266A;"
+                                               FontSize="12" FontWeight="Bold"
+                                               Foreground="#FFD700"
+                                               HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                </Border>
+                            </Grid>
+                        </Button>
+                        <Button Grid.Column="2" x:Name="buttonUpdates" Classes="ghelper"
                                 Margin="0,0,4,0" Height="32"
                                 Click="ButtonUpdates_Click">
                             <StackPanel Orientation="Horizontal" Spacing="4">
-                                <TextBlock Text="📦" FontSize="12" VerticalAlignment="Center" />
+                                <TextBlock Text="&#x1F4E6;" FontSize="12" VerticalAlignment="Center" />
                                 <TextBlock Text="Updates" FontSize="11" VerticalAlignment="Center" />
                             </StackPanel>
                         </Button>
-                        <Button Grid.Column="2" x:Name="buttonQuit" Classes="ghelper"
+                        <Button Grid.Column="3" x:Name="buttonQuit" Classes="ghelper"
                                 Height="32"
                                 Click="ButtonQuit_Click">
                             <StackPanel Orientation="Horizontal" Spacing="4">
-                                <TextBlock Text="⏻" FontSize="12" VerticalAlignment="Center" />
+                                <TextBlock Text="&#x23FB;" FontSize="12" VerticalAlignment="Center" />
                                 <TextBlock Text="Quit" FontSize="11" VerticalAlignment="Center" />
                             </StackPanel>
                         </Button>

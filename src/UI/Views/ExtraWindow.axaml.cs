@@ -27,6 +27,7 @@ public partial class ExtraWindow : Window
             InitKeyboardBacklight();
             InitKeyBindings();
             RefreshDisplay();
+            RefreshGpuTuning();
             RefreshOther();
             RefreshPower();
             RefreshSystemInfo();
@@ -588,6 +589,85 @@ public partial class ExtraWindow : Window
             "preferences-desktop-touchscreen");
     }
 
+
+    private LinuxNvidiaGpuControl? _nvidiaGpu;
+
+    private void RefreshGpuTuning()
+    {
+        _nvidiaGpu = App.GpuControl as LinuxNvidiaGpuControl;
+        if (_nvidiaGpu == null || !_nvidiaGpu.IsAvailable())
+        {
+            panelGpuTuning.IsVisible = false;
+            return;
+        }
+
+        panelGpuTuning.IsVisible = true;
+        labelGpuTuningInfo.Text = _nvidiaGpu.GetGpuName() ?? "NVIDIA GPU";
+
+        var limits = _nvidiaGpu.GetPowerLimits();
+        if (limits != null)
+        {
+            var (defW, minW, maxW, enfW) = limits.Value;
+            sliderGpuPowerLimit.Minimum = minW;
+            sliderGpuPowerLimit.Maximum = maxW;
+            sliderGpuPowerLimit.Value = enfW > 0 ? enfW : defW;
+            labelGpuPowerLimit.Text = $"{(int)sliderGpuPowerLimit.Value}W";
+            labelGpuTuningInfo.Text += $"  ·  Default: {defW}W  ·  Range: {minW}–{maxW}W";
+        }
+
+        checkGpuClockLock.IsChecked = false;
+        sliderGpuClockLock.IsEnabled = false;
+        labelGpuClockLock.Text = "Off";
+    }
+
+    private void SliderGpuPowerLimit_ValueChanged(object? sender,
+        Avalonia.Controls.Primitives.RangeBaseValueChangedEventArgs e)
+    {
+        if (_suppressEvents) return;
+        labelGpuPowerLimit.Text = $"{(int)e.NewValue}W";
+    }
+
+    private void CheckGpuClockLock_Changed(object? sender, RoutedEventArgs e)
+    {
+        if (_suppressEvents) return;
+        bool enabled = checkGpuClockLock.IsChecked ?? false;
+        sliderGpuClockLock.IsEnabled = enabled;
+        labelGpuClockLock.Text = enabled ? $"{(int)sliderGpuClockLock.Value} MHz" : "Off";
+    }
+
+    private void SliderGpuClockLock_ValueChanged(object? sender,
+        Avalonia.Controls.Primitives.RangeBaseValueChangedEventArgs e)
+    {
+        if (_suppressEvents) return;
+        labelGpuClockLock.Text = $"{(int)e.NewValue} MHz";
+    }
+
+    private void ButtonGpuApply_Click(object? sender, RoutedEventArgs e)
+    {
+        if (_nvidiaGpu == null) return;
+
+        buttonGpuApply.IsEnabled = false;
+        buttonGpuApply.Content = "Applying...";
+
+        int powerW = (int)sliderGpuPowerLimit.Value;
+        bool clockLock = checkGpuClockLock.IsChecked ?? false;
+        int clockMhz = (int)sliderGpuClockLock.Value;
+
+        Task.Run(() =>
+        {
+            _nvidiaGpu.ApplyGpuSettings(powerW, clockLock ? clockMhz : 0);
+
+            Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+            {
+                buttonGpuApply.Content = "Apply GPU Settings";
+                buttonGpuApply.IsEnabled = true;
+                App.System?.ShowNotification("GPU Tuning",
+                    $"Power: {powerW}W" + (clockLock ? $", Clock lock: {clockMhz} MHz" : ""),
+                    "dialog-information");
+            });
+        });
+    }
+
     // ═══════════════════ POWER MANAGEMENT ═══════════════════
 
     private void RefreshPower()
@@ -649,6 +729,22 @@ public partial class ExtraWindow : Window
         {
             App.Power?.SetAspmPolicy(policy);
             Helpers.Logger.WriteLine($"ASPM policy → {policy}");
+        }
+    }
+
+    private BatteryInfoWindow? _batteryInfoWindow;
+
+    private void ButtonBatteryInfo_Click(object? sender, RoutedEventArgs e)
+    {
+        if (_batteryInfoWindow == null || !_batteryInfoWindow.IsVisible)
+        {
+            _batteryInfoWindow = new BatteryInfoWindow();
+            if (Helpers.AppConfig.Is("topmost")) _batteryInfoWindow.Topmost = true;
+            _batteryInfoWindow.Show();
+        }
+        else
+        {
+            _batteryInfoWindow.Activate();
         }
     }
 

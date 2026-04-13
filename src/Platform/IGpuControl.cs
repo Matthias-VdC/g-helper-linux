@@ -28,9 +28,6 @@ public interface IGpuControl
     /// <summary>Get GPU power draw in watts. null if unavailable.</summary>
     int? GetCurrentPower();
 
-    /// <summary>Set maximum GPU clock limit in MHz. 0 to reset.</summary>
-    void SetClockLimit(int maxMhz);
-
     /// <summary>Set core clock offset in MHz (overclocking).</summary>
     void SetCoreClockOffset(int offsetMhz);
 

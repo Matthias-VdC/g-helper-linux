@@ -127,39 +127,6 @@ public class LinuxAmdGpuControl : IGpuControl
         return null;
     }
 
-    // ── Clock Control ──
-
-    public void SetClockLimit(int maxMhz)
-    {
-        if (_deviceDir == null) return;
-
-        var ppOdPath = Path.Combine(_deviceDir, "pp_od_clk_voltage");
-        var perfLevelPath = Path.Combine(_deviceDir, "power_dpm_force_performance_level");
-
-        if (maxMhz <= 0)
-        {
-            // Reset to automatic
-            SysfsHelper.WriteAttribute(perfLevelPath, "auto");
-            SysfsHelper.WriteAttribute(ppOdPath, "r"); // reset
-            SysfsHelper.WriteAttribute(ppOdPath, "c"); // commit
-            Helpers.Logger.WriteLine("AMD GPU: Reset clock limits to auto");
-        }
-        else
-        {
-            maxMhz = Math.Clamp(maxMhz, 200, 3000);
-
-            // Set manual performance level to allow overriding
-            SysfsHelper.WriteAttribute(perfLevelPath, "manual");
-
-            // Write to pp_od_clk_voltage: "s 1 <maxMhz>"
-            // s = sclk, 1 = highest state
-            SysfsHelper.WriteAttribute(ppOdPath, $"s 1 {maxMhz}");
-            SysfsHelper.WriteAttribute(ppOdPath, "c"); // commit
-
-            Helpers.Logger.WriteLine($"AMD GPU: Set max clock to {maxMhz} MHz");
-        }
-    }
-
     public void SetCoreClockOffset(int offsetMhz)
     {
         if (_deviceDir == null) return;

@@ -1,0 +1,91 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="GHelper.Linux.UI.Views.BatteryInfoWindow"
+        Title="Battery Information"
+        Width="380"
+        Height="420"
+        MinWidth="320"
+        MinHeight="350"
+        WindowStartupLocation="CenterScreen"
+        CanResize="True"
+        Background="#1C1C1C"
+        Icon="avares://ghelper/UI/Assets/standard.ico">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="12" Spacing="6">
+
+            <!-- Health overview -->
+            <Border Classes="panel">
+                <StackPanel>
+                    <Border Classes="panel-header" Margin="0,0,0,8">
+                        <TextBlock Classes="header" Text="Health" />
+                    </Border>
+
+                    <Grid ColumnDefinitions="130,*" RowDefinitions="Auto,Auto,Auto,Auto" Margin="0,2">
+                        <TextBlock Grid.Row="0" Grid.Column="0" Classes="label-dim" Text="Health" />
+                        <TextBlock Grid.Row="0" Grid.Column="1" x:Name="labelHealth" Classes="value" Text="--" />
+
+                        <TextBlock Grid.Row="1" Grid.Column="0" Classes="label-dim" Text="Cycle Count" Margin="0,4,0,0" />
+                        <TextBlock Grid.Row="1" Grid.Column="1" x:Name="labelCycles" Classes="value" Text="--" Margin="0,4,0,0" />
+
+                        <TextBlock Grid.Row="2" Grid.Column="0" Classes="label-dim" Text="Status" Margin="0,4,0,0" />
+                        <TextBlock Grid.Row="2" Grid.Column="1" x:Name="labelStatus" Classes="value" Text="--" Margin="0,4,0,0" />
+
+                        <TextBlock Grid.Row="3" Grid.Column="0" Classes="label-dim" Text="Capacity Level" Margin="0,4,0,0" />
+                        <TextBlock Grid.Row="3" Grid.Column="1" x:Name="labelCapLevel" Classes="value" Text="--" Margin="0,4,0,0" />
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- Energy -->
+            <Border Classes="panel">
+                <StackPanel>
+                    <Border Classes="panel-header" Margin="0,0,0,8">
+                        <TextBlock Classes="header" Text="Energy" />
+                    </Border>
+
+                    <Grid ColumnDefinitions="130,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto" Margin="0,2">
+                        <TextBlock Grid.Row="0" Grid.Column="0" Classes="label-dim" Text="Remaining" />
+                        <TextBlock Grid.Row="0" Grid.Column="1" x:Name="labelEnergyNow" Classes="value" Text="--" />
+
+                        <TextBlock Grid.Row="1" Grid.Column="0" Classes="label-dim" Text="Full Charge" Margin="0,4,0,0" />
+                        <TextBlock Grid.Row="1" Grid.Column="1" x:Name="labelEnergyFull" Classes="value" Text="--" Margin="0,4,0,0" />
+
+                        <TextBlock Grid.Row="2" Grid.Column="0" Classes="label-dim" Text="Design Capacity" Margin="0,4,0,0" />
+                        <TextBlock Grid.Row="2" Grid.Column="1" x:Name="labelEnergyDesign" Classes="value" Text="--" Margin="0,4,0,0" />
+
+                        <TextBlock Grid.Row="3" Grid.Column="0" Classes="label-dim" Text="Power Draw" Margin="0,4,0,0" />
+                        <TextBlock Grid.Row="3" Grid.Column="1" x:Name="labelPowerDraw" Classes="value" Text="--" Margin="0,4,0,0" />
+
+                        <TextBlock Grid.Row="4" Grid.Column="0" Classes="label-dim" Text="Voltage" Margin="0,4,0,0" />
+                        <TextBlock Grid.Row="4" Grid.Column="1" x:Name="labelVoltage" Classes="value" Text="--" Margin="0,4,0,0" />
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- Hardware -->
+            <Border Classes="panel">
+                <StackPanel>
+                    <Border Classes="panel-header" Margin="0,0,0,8">
+                        <TextBlock Classes="header" Text="Hardware" />
+                    </Border>
+
+                    <Grid ColumnDefinitions="130,*" RowDefinitions="Auto,Auto,Auto,Auto" Margin="0,2">
+                        <TextBlock Grid.Row="0" Grid.Column="0" Classes="label-dim" Text="Manufacturer" />
+                        <TextBlock Grid.Row="0" Grid.Column="1" x:Name="labelManufacturer" Classes="value" Text="--" />
+
+                        <TextBlock Grid.Row="1" Grid.Column="0" Classes="label-dim" Text="Model" Margin="0,4,0,0" />
+                        <TextBlock Grid.Row="1" Grid.Column="1" x:Name="labelModel" Classes="value" Text="--" Margin="0,4,0,0" />
+
+                        <TextBlock Grid.Row="2" Grid.Column="0" Classes="label-dim" Text="Technology" Margin="0,4,0,0" />
+                        <TextBlock Grid.Row="2" Grid.Column="1" x:Name="labelTechnology" Classes="value" Text="--" Margin="0,4,0,0" />
+
+                        <TextBlock Grid.Row="3" Grid.Column="0" Classes="label-dim" Text="Design Voltage" Margin="0,4,0,0" />
+                        <TextBlock Grid.Row="3" Grid.Column="1" x:Name="labelDesignVoltage" Classes="value" Text="--" Margin="0,4,0,0" />
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+        </StackPanel>
+    </ScrollViewer>
+</Window>
