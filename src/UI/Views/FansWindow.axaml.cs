@@ -2,6 +2,7 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Threading;
+using GHelper.Linux.I18n;
 
 namespace GHelper.Linux.UI.Views;
 
@@ -21,6 +22,9 @@ public partial class FansWindow : Window
     public FansWindow()
     {
         InitializeComponent();
+
+        Labels.LanguageChanged += ApplyLabels;
+        ApplyLabels();
 
         // Wire up curve change events
         chartCPU.CurveChanged += (_, curve) => OnCurveChanged(0, curve);
@@ -43,6 +47,27 @@ public partial class FansWindow : Window
         };
 
         Closing += (_, _) => _sensorTimer.Stop();
+    }
+
+    private void ApplyLabels()
+    {
+        Title = Labels.Get("fans_title");
+        headerFanCurves.Text = Labels.Get("fan_curves");
+        buttonApplyFans.Content = Labels.Get("apply");
+        buttonReset.Content = Labels.Get("reset");
+        buttonDisable.Content = Labels.Get("disable");
+        checkApplyFans.Content = Labels.Get("auto_apply");
+        headerPowerLimits.Text = Labels.Get("power_limits");
+        labelPL1Label.Text = Labels.Get("cpu_pl1");
+        labelPL2Label.Text = Labels.Get("cpu_pl2");
+        labelFpptLabel.Text = Labels.Get("cpu_fppt");
+        labelCpuBoostLabel.Text = Labels.Get("cpu_boost");
+        buttonBoostOff.Content = Labels.Get("off");
+        buttonBoostOn.Content = Labels.Get("on");
+        checkApplyPower.Content = Labels.Get("auto_apply_power_limits");
+        chartCPU.FanLabel = Labels.Get("cpu_fan");
+        chartGPU.FanLabel = Labels.Get("gpu_fan");
+        chartMid.FanLabel = Labels.Get("mid_fan");
     }
 
     // ── Fan Curves ──
@@ -105,12 +130,12 @@ public partial class FansWindow : Window
         int mode = App.Wmi?.GetThrottleThermalPolicy() ?? -1;
         string modeName = mode switch
         {
-            0 => "Balanced",
-            1 => "Turbo",
-            2 => "Silent",
-            _ => "Unknown"
+            0 => Labels.Get("mode_balanced"),
+            1 => Labels.Get("mode_turbo"),
+            2 => Labels.Get("mode_silent"),
+            _ => Labels.Get("mode_unknown")
         };
-        labelMode.Text = $"Mode: {modeName}";
+        labelMode.Text = Labels.Format("mode_prefix", modeName);
 
         checkApplyFans.IsChecked = Helpers.AppConfig.IsMode("auto_apply_fans");
 

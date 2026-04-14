@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using GHelper.Linux.I18n;
 
 namespace GHelper.Linux.Platform.Linux;
 
@@ -22,7 +23,7 @@ public class LinuxSystemIntegration : ISystemIntegration
     public string GetModelName()
     {
         return SysfsHelper.ReadAttribute(Path.Combine(SysfsHelper.DmiId, "product_name"))
-            ?? "Unknown ASUS Laptop";
+            ?? Labels.Get("unknown_asus");
     }
 
     public string GetBiosVersion()
@@ -61,8 +62,8 @@ public class LinuxSystemIntegration : ISystemIntegration
             var desktop = $"""
                 [Desktop Entry]
                 Type=Application
-                Name=G-Helper
-                Comment=ASUS Laptop Control (Linux)
+                Name={Labels.Get("ghelper")}
+                Comment={Labels.Get("asus_laptop_control")}
                 Exec={exePath}
                 Icon=ghelper
                 Terminal=false

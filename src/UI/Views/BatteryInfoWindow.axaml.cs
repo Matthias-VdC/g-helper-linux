@@ -1,5 +1,6 @@
 using Avalonia.Controls;
 using Avalonia.Threading;
+using GHelper.Linux.I18n;
 using GHelper.Linux.Platform.Linux;
 
 namespace GHelper.Linux.UI.Views;
@@ -18,6 +19,9 @@ public partial class BatteryInfoWindow : Window
         InitializeComponent();
         _batteryDir = SysfsHelper.FindBattery();
 
+        Labels.LanguageChanged += ApplyLabels;
+        ApplyLabels();
+
         _refreshTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(2) };
         _refreshTimer.Tick += (_, _) => RefreshLive();
 
@@ -31,19 +35,40 @@ public partial class BatteryInfoWindow : Window
         Closing += (_, _) => _refreshTimer.Stop();
     }
 
+    private void ApplyLabels()
+    {
+        Title = Labels.Get("battery_info_title");
+        headerHealth.Text = Labels.Get("health_header");
+        labelHealthLabel.Text = Labels.Get("health");
+        labelCycleCountLabel.Text = Labels.Get("cycle_count");
+        labelStatusLabel.Text = Labels.Get("status");
+        labelCapLevelLabel.Text = Labels.Get("capacity_level");
+        headerEnergy.Text = Labels.Get("energy_header");
+        labelRemainingLabel.Text = Labels.Get("remaining");
+        labelFullChargeLabel.Text = Labels.Get("full_charge");
+        labelDesignCapLabel.Text = Labels.Get("design_capacity");
+        labelPowerDrawLabel.Text = Labels.Get("power_draw");
+        labelVoltageLabel.Text = Labels.Get("voltage");
+        headerHardware.Text = Labels.Get("hardware_header");
+        labelManufacturerLabel.Text = Labels.Get("manufacturer");
+        labelModelLabel.Text = Labels.Get("model");
+        labelTechnologyLabel.Text = Labels.Get("technology");
+        labelDesignVoltageLabel.Text = Labels.Get("design_voltage");
+    }
+
     /// <summary>Read values that don't change while the window is open.</summary>
     private void RefreshStatic()
     {
         if (_batteryDir == null)
         {
-            labelHealth.Text = "No battery found";
+            labelHealth.Text = Labels.Get("no_battery");
             return;
         }
 
         // Manufacturer / model / technology
-        labelManufacturer.Text = ReadAttr("manufacturer") ?? "Unknown";
-        labelModel.Text = ReadAttr("model_name") ?? "Unknown";
-        labelTechnology.Text = ReadAttr("technology") ?? "Unknown";
+        labelManufacturer.Text = ReadAttr("manufacturer") ?? Labels.Get("unknown");
+        labelModel.Text = ReadAttr("model_name") ?? Labels.Get("unknown");
+        labelTechnology.Text = ReadAttr("technology") ?? Labels.Get("unknown");
 
         // Design voltage
         int vDesign = ReadInt("voltage_min_design");
@@ -59,7 +84,7 @@ public partial class BatteryInfoWindow : Window
 
         // Cycle count
         int cycles = ReadInt("cycle_count");
-        labelCycles.Text = cycles >= 0 ? cycles.ToString() : "N/A";
+        labelCycles.Text = cycles >= 0 ? cycles.ToString() : Labels.Get("n_a");
     }
 
     /// <summary>Read values that change in real-time.</summary>
@@ -101,7 +126,7 @@ public partial class BatteryInfoWindow : Window
         if (powerUw > 0)
         {
             double powerW = powerUw / 1_000_000.0;
-            string dir = status == "Discharging" ? "discharging" : "charging";
+            string dir = status == "Discharging" ? Labels.Get("discharging") : Labels.Get("charging");
             labelPowerDraw.Text = $"{powerW:F1}W ({dir})";
         }
         else

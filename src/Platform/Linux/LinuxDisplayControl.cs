@@ -1,3 +1,4 @@
+using GHelper.Linux.I18n;
 using GHelper.Linux.Platform.Linux.Display;
 
 namespace GHelper.Linux.Platform.Linux;
@@ -139,13 +140,13 @@ public class LinuxDisplayControl : IDisplayControl
     public static string GetBacklightHint()
     {
         if (Directory.Exists("/sys/module/nvidia"))
-            return "NVIDIA GPU detected but no backlight module available.\nTry kernel parameter: acpi_backlight=native";
+            return Labels.Get("hint_nvidia");
         if (Directory.Exists("/sys/module/i915"))
-            return "Intel GPU detected but no backlight registered.\nTry: acpi_backlight=native or i915.enable_dpcd_backlight=1";
+            return Labels.Get("hint_intel");
         if (Directory.Exists("/sys/module/amdgpu"))
-            return "AMD GPU detected but no backlight registered.\nTry kernel parameter: acpi_backlight=native";
+            return Labels.Get("hint_amd");
 
-        return "No backlight device found.";
+        return Labels.Get("hint_none");
     }
 
     /// <summary>

@@ -1,3 +1,5 @@
+using GHelper.Linux.I18n;
+
 namespace GHelper.Linux.Mode;
 
 /// <summary>
@@ -167,7 +169,7 @@ public class ModeControl
 
         if (notify)
         {
-            App.System?.ShowNotification("Performance", Modes.GetName(mode), "preferences-system-performance");
+            App.System?.ShowNotification(Labels.Get("performance"), Modes.GetName(mode), "preferences-system-performance");
         }
     }
 

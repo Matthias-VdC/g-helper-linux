@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
+using GHelper.Linux.I18n;
 
 namespace GHelper.Linux.UI.Controls;
 
@@ -137,7 +138,7 @@ public class FanCurveChart : Control
             var overlayBrush = new SolidColorBrush(Color.Parse("#CC1C1C1C")); // 80% opaque dark
             context.FillRectangle(overlayBrush, bounds);
 
-            var overlayText = new FormattedText("Firmware control",
+            var overlayText = new FormattedText(Labels.Get("firmware_control"),
                 System.Globalization.CultureInfo.InvariantCulture,
                 FlowDirection.LeftToRight,
                 new Typeface("Segoe UI, Ubuntu, sans-serif", FontStyle.Normal, FontWeight.SemiBold),

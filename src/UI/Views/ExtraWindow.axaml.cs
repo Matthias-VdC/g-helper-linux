@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using GHelper.Linux.I18n;
 using GHelper.Linux.Platform.Linux;
 using GHelper.Linux.USB;
 
@@ -21,9 +22,16 @@ public partial class ExtraWindow : Window
     public ExtraWindow()
     {
         InitializeComponent();
+        Labels.LanguageChanged += () => Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+        {
+            _suppressEvents = true;
+            ApplyLabels();
+            _suppressEvents = false;
+        });
         Loaded += (_, _) =>
         {
             _suppressEvents = true;
+            InitLanguage();
             InitKeyboardBacklight();
             InitKeyBindings();
             RefreshDisplay();
@@ -32,8 +40,159 @@ public partial class ExtraWindow : Window
             RefreshPower();
             RefreshSystemInfo();
             RefreshAdvanced();
+            ApplyLabels();
             _suppressEvents = false;
         };
+    }
+
+    // ═══════════════════ LANGUAGE ═══════════════════
+
+    private void InitLanguage()
+    {
+        comboLanguage.Items.Clear();
+
+        // First item: Auto (system locale)
+        comboLanguage.Items.Add(new ComboBoxItem { Content = Labels.Get("language_auto"), Tag = "" });
+
+        // All available languages
+        int selectedIdx = 0;
+        int idx = 1;
+        string? savedLang = Helpers.AppConfig.GetString("language");
+
+        foreach (var (code, name) in Labels.AvailableLanguages)
+        {
+            comboLanguage.Items.Add(new ComboBoxItem { Content = name, Tag = code });
+            if (!string.IsNullOrEmpty(savedLang) && code == savedLang)
+                selectedIdx = idx;
+            idx++;
+        }
+
+        comboLanguage.SelectedIndex = selectedIdx;
+    }
+
+    private void ComboLanguage_Changed(object? sender, SelectionChangedEventArgs e)
+    {
+        if (_suppressEvents) return;
+        if (comboLanguage.SelectedItem is not ComboBoxItem item) return;
+
+        string code = item.Tag as string ?? "";
+
+        if (string.IsNullOrEmpty(code))
+            Labels.ResetToAuto();
+        else
+            Labels.SetLanguage(code);
+    }
+
+    private void ApplyLabels()
+    {
+        Title = Labels.Get("extra_title");
+
+        // Language section
+        labelLanguageHeader.Text = Labels.Get("language_header");
+        labelLanguageLabel.Text = Labels.Get("language_header");
+
+        // Keyboard Backlight
+        headerKbdBacklight.Text = Labels.Get("kbd_backlight_header");
+        labelKbdBrightnessLabel.Text = Labels.Get("brightness");
+        labelAnimSpeed.Text = Labels.Get("animation_speed");
+        labelPowerZones.Text = Labels.Get("power_zones");
+        labelColAwake.Text = Labels.Get("awake");
+        labelColBoot.Text = Labels.Get("boot");
+        labelColSleep.Text = Labels.Get("sleep");
+        labelColShutdown.Text = Labels.Get("shutdown");
+        labelColBattery.Text = Labels.Get("battery");
+        labelRowKeyboard.Text = Labels.Get("kbd_keyboard");
+        labelRowLogo.Text = Labels.Get("kbd_logo");
+        labelRowLightbar.Text = Labels.Get("kbd_lightbar");
+        labelRowLid.Text = Labels.Get("kbd_lid");
+
+        // Display
+        headerDisplay.Text = Labels.Get("display_header");
+        labelControllerLabel.Text = Labels.Get("controller");
+        labelDisplayBrightnessLabel.Text = Labels.Get("brightness");
+        checkOverdrive.Content = Labels.Get("panel_overdrive_check");
+        labelGammaLabel.Text = Labels.Get("gamma");
+
+        // GPU Tuning
+        headerGpuTuning.Text = Labels.Get("gpu_tuning_header");
+        labelPowerLimitLabel.Text = Labels.Get("power_limit");
+        labelClockLockLabel.Text = Labels.Get("clock_lock");
+        buttonGpuApply.Content = Labels.Get("apply_gpu_settings");
+
+        // Other
+        headerOther.Text = Labels.Get("other_header");
+        checkBootSound.Content = Labels.Get("boot_sound");
+        checkPerKeyRGB.Content = Labels.Get("per_key_rgb");
+        checkTopmost.Content = Labels.Get("window_topmost");
+        checkBWIcon.Content = Labels.Get("bw_tray_icon");
+        checkClamshell.Content = Labels.Get("clamshell_mode");
+        checkSilentStart.Content = Labels.Get("start_minimized");
+        checkCamera.Content = Labels.Get("camera");
+        checkTouchpad.Content = Labels.Get("touchpad");
+        checkTouchscreen.Content = Labels.Get("touchscreen");
+
+        // Key Bindings
+        headerKeyBindings.Text = Labels.Get("key_bindings_header");
+        labelKeyM4.Text = Labels.Get("key_rog_m5");
+        labelKeyFnF4.Text = Labels.Get("key_fnf4_aura");
+        labelKeyFnF5.Text = Labels.Get("key_fnf5_m4");
+
+        // Power Management
+        headerPowerMgmt.Text = Labels.Get("power_mgmt_header");
+        labelPlatformProfileLabel.Text = Labels.Get("platform_profile");
+        labelAspmLabel.Text = Labels.Get("pcie_aspm");
+        labelBatteryDetails.Text = Labels.Get("details");
+
+        // System Info
+        headerSystemInfo.Text = Labels.Get("system_info_header");
+
+        // Advanced
+        headerAdvanced.Text = Labels.Get("advanced_header");
+        checkAutoApplyPower.Content = Labels.Get("auto_apply_power");
+        checkRawWmi.Content = Labels.Get("raw_wmi_mode");
+        labelRawWmiHint.Text = Labels.Get("raw_wmi_hint");
+        checkScreenAuto.Content = Labels.Get("auto_switch_refresh");
+        labelCpuCoresLabel.Text = Labels.Get("cpu_cores");
+        buttonOpenLog.Content = Labels.Get("open_log");
+
+        // Rebuild combo items with new language strings
+        RefreshSpeedCombo();
+        RefreshKeyBindingCombos();
+        RefreshLanguageComboAuto();
+
+        // Refresh dynamic content with new labels
+        RefreshSystemInfo();
+        RefreshPower();
+        RefreshGpuTuning();
+    }
+
+    /// <summary>Rebuild keyboard speed combo with current language strings.</summary>
+    private void RefreshSpeedCombo()
+    {
+        int savedSpeed = comboKbdSpeed.SelectedItem is ComboBoxItem sel && sel.Tag is int s ? s : (int)Aura.Speed;
+        comboKbdSpeed.Items.Clear();
+        int selectedIdx = 0, idx = 0;
+        foreach (var kv in Aura.GetSpeeds())
+        {
+            comboKbdSpeed.Items.Add(new ComboBoxItem { Content = kv.Value, Tag = (int)kv.Key });
+            if ((int)kv.Key == savedSpeed) selectedIdx = idx;
+            idx++;
+        }
+        comboKbdSpeed.SelectedIndex = selectedIdx;
+    }
+
+    /// <summary>Rebuild key binding combos with current language strings.</summary>
+    private void RefreshKeyBindingCombos()
+    {
+        foreach (var (combo, bindingName) in _keyBindingCombos)
+            PopulateKeyBindingCombo(combo, bindingName);
+    }
+
+    /// <summary>Update the "Auto (system)" label in the language combo.</summary>
+    private void RefreshLanguageComboAuto()
+    {
+        if (comboLanguage.Items.Count > 0 && comboLanguage.Items[0] is ComboBoxItem first)
+            first.Content = Labels.Get("language_auto");
     }
 
     // ═══════════════════ KEYBOARD BACKLIGHT ═══════════════════
@@ -196,9 +355,9 @@ public partial class ExtraWindow : Window
         int selectedIdx = 0;
         int idx = 0;
 
-        foreach (var (actionId, displayName) in App.AvailableKeyActions)
+        foreach (var (actionId, _) in App.AvailableKeyActions)
         {
-            combo.Items.Add(new ComboBoxItem { Content = displayName, Tag = actionId });
+            combo.Items.Add(new ComboBoxItem { Content = App.GetKeyActionDisplayName(actionId), Tag = actionId });
             if (actionId == currentAction) selectedIdx = idx;
             idx++;
         }
@@ -261,7 +420,7 @@ public partial class ExtraWindow : Window
             _pendingBacklightModule = LinuxDisplayControl.GetMissingBacklightModule();
             if (_pendingBacklightModule != null)
             {
-                buttonEnableBacklight.Content = $"Load {_pendingBacklightModule}";
+                buttonEnableBacklight.Content = Labels.Format("load_module", _pendingBacklightModule);
                 buttonEnableBacklight.IsVisible = true;
                 buttonEnableBacklight.IsEnabled = true;
             }
@@ -278,7 +437,7 @@ public partial class ExtraWindow : Window
             _pendingBacklightModule = LinuxDisplayControl.GetMissingBacklightModule();
             if (_pendingBacklightModule != null)
             {
-                buttonEnableBacklight.Content = $"Enable display backlight (load {_pendingBacklightModule})";
+                buttonEnableBacklight.Content = Labels.Format("enable_backlight_load", _pendingBacklightModule);
                 buttonEnableBacklight.IsVisible = true;
                 buttonEnableBacklight.IsEnabled = true;
                 labelBacklightHint.IsVisible = false;
@@ -302,7 +461,7 @@ public partial class ExtraWindow : Window
         if (_pendingBacklightModule == null) return;
 
         string module = _pendingBacklightModule;
-        buttonEnableBacklight.Content = "Loading...";
+        buttonEnableBacklight.Content = Labels.Get("loading");
         buttonEnableBacklight.IsEnabled = false;
 
         // Run modprobe on background thread (pkexec shows password dialog)
@@ -320,7 +479,7 @@ public partial class ExtraWindow : Window
                 if (!success)
                 {
                     buttonEnableBacklight.IsVisible = false;
-                    labelBacklightHint.Text = $"Failed to enable backlight. Module loaded but no device appeared.\n{LinuxDisplayControl.GetBacklightHint()}";
+                    labelBacklightHint.Text = Labels.Get("backlight_failed") + "\n" + LinuxDisplayControl.GetBacklightHint();
                     labelBacklightHint.IsVisible = true;
                 }
             });
@@ -564,8 +723,8 @@ public partial class ExtraWindow : Window
         if (_suppressEvents) return;
         bool enabled = checkCamera.IsChecked ?? true;
         LinuxSystemIntegration.SetCameraEnabled(enabled);
-        App.System?.ShowNotification("Camera",
-            enabled ? "Enabled" : "Disabled",
+        App.System?.ShowNotification(Labels.Get("camera"),
+            enabled ? Labels.Get("enabled") : Labels.Get("disabled"),
             enabled ? "camera-on" : "camera-off");
     }
 
@@ -574,8 +733,8 @@ public partial class ExtraWindow : Window
         if (_suppressEvents) return;
         bool enabled = checkTouchpad.IsChecked ?? true;
         LinuxSystemIntegration.SetTouchpadEnabled(enabled);
-        App.System?.ShowNotification("Touchpad",
-            enabled ? "Enabled" : "Disabled",
+        App.System?.ShowNotification(Labels.Get("touchpad"),
+            enabled ? Labels.Get("enabled") : Labels.Get("disabled"),
             enabled ? "input-touchpad-on" : "input-touchpad-off");
     }
 
@@ -584,8 +743,8 @@ public partial class ExtraWindow : Window
         if (_suppressEvents) return;
         bool enabled = checkTouchscreen.IsChecked ?? true;
         LinuxSystemIntegration.SetTouchscreenEnabled(enabled);
-        App.System?.ShowNotification("Touchscreen",
-            enabled ? "Enabled" : "Disabled",
+        App.System?.ShowNotification(Labels.Get("touchscreen"),
+            enabled ? Labels.Get("enabled") : Labels.Get("disabled"),
             "preferences-desktop-touchscreen");
     }
 
@@ -602,7 +761,7 @@ public partial class ExtraWindow : Window
         }
 
         panelGpuTuning.IsVisible = true;
-        labelGpuTuningInfo.Text = _nvidiaGpu.GetGpuName() ?? "NVIDIA GPU";
+        labelGpuTuningInfo.Text = _nvidiaGpu.GetGpuName() ?? Labels.Get("nvidia_gpu");
 
         var limits = _nvidiaGpu.GetPowerLimits();
         if (limits != null)
@@ -612,12 +771,12 @@ public partial class ExtraWindow : Window
             sliderGpuPowerLimit.Maximum = maxW;
             sliderGpuPowerLimit.Value = enfW > 0 ? enfW : defW;
             labelGpuPowerLimit.Text = $"{(int)sliderGpuPowerLimit.Value}W";
-            labelGpuTuningInfo.Text += $"  ·  Default: {defW}W  ·  Range: {minW}–{maxW}W";
+            labelGpuTuningInfo.Text += Labels.Format("gpu_info_format", defW, minW, maxW);
         }
 
         checkGpuClockLock.IsChecked = false;
         sliderGpuClockLock.IsEnabled = false;
-        labelGpuClockLock.Text = "Off";
+        labelGpuClockLock.Text = Labels.Get("off");
     }
 
     private void SliderGpuPowerLimit_ValueChanged(object? sender,
@@ -632,7 +791,7 @@ public partial class ExtraWindow : Window
         if (_suppressEvents) return;
         bool enabled = checkGpuClockLock.IsChecked ?? false;
         sliderGpuClockLock.IsEnabled = enabled;
-        labelGpuClockLock.Text = enabled ? $"{(int)sliderGpuClockLock.Value} MHz" : "Off";
+        labelGpuClockLock.Text = enabled ? $"{(int)sliderGpuClockLock.Value} MHz" : Labels.Get("off");
     }
 
     private void SliderGpuClockLock_ValueChanged(object? sender,
@@ -647,7 +806,7 @@ public partial class ExtraWindow : Window
         if (_nvidiaGpu == null) return;
 
         buttonGpuApply.IsEnabled = false;
-        buttonGpuApply.Content = "Applying...";
+        buttonGpuApply.Content = Labels.Get("applying");
 
         int powerW = (int)sliderGpuPowerLimit.Value;
         bool clockLock = checkGpuClockLock.IsChecked ?? false;
@@ -659,10 +818,10 @@ public partial class ExtraWindow : Window
 
             Avalonia.Threading.Dispatcher.UIThread.Post(() =>
             {
-                buttonGpuApply.Content = "Apply GPU Settings";
+                buttonGpuApply.Content = Labels.Get("apply_gpu_settings");
                 buttonGpuApply.IsEnabled = true;
-                App.System?.ShowNotification("GPU Tuning",
-                    $"Power: {powerW}W" + (clockLock ? $", Clock lock: {clockMhz} MHz" : ""),
+                App.System?.ShowNotification(Labels.Get("gpu_tuning_notify"),
+                    Labels.Format("gpu_power_format", powerW) + (clockLock ? Labels.Format("gpu_clock_format", clockMhz) : ""),
                     "dialog-information");
             });
         });
@@ -702,13 +861,17 @@ public partial class ExtraWindow : Window
         // Battery health
         int health = power.GetBatteryHealth();
         if (health >= 0)
-            labelBatteryHealth.Text = $"Battery health: {health}%";
+            labelBatteryHealth.Text = Labels.Format("battery_health_format", health);
+        else
+            labelBatteryHealth.Text = Labels.Get("battery_health_unknown");
 
         int drain = power.GetBatteryDrainRate();
         if (drain != 0)
             labelPowerDraw.Text = drain > 0
-                ? $"Power draw: {drain} mW (discharging)"
-                : $"Power draw: {-drain} mW (charging)";
+                ? Labels.Format("power_draw_discharge", drain)
+                : Labels.Format("power_draw_charge", -drain);
+        else
+            labelPowerDraw.Text = Labels.Get("power_draw_unknown");
     }
 
     private void ComboPlatformProfile_Changed(object? sender, SelectionChangedEventArgs e)
@@ -755,36 +918,36 @@ public partial class ExtraWindow : Window
         var sys = App.System;
         if (sys == null) return;
 
-        labelModel.Text = $"Model: {sys.GetModelName()}";
-        labelBios.Text = $"BIOS: {sys.GetBiosVersion()}";
-        labelKernel.Text = $"Kernel: {sys.GetKernelVersion()}";
+        labelModel.Text = Labels.Format("model_prefix", sys.GetModelName());
+        labelBios.Text = Labels.Format("bios_prefix", sys.GetBiosVersion());
+        labelKernel.Text = Labels.Format("kernel_prefix", sys.GetKernelVersion());
 
         bool wmiLoaded = sys.IsAsusWmiLoaded();
-        labelAsusWmi.Text = $"asus-wmi: {(wmiLoaded ? "\u2713 Loaded" : "\u2717 Not loaded")}";
+        labelAsusWmi.Text = wmiLoaded ? Labels.Get("asus_wmi_loaded") : Labels.Get("asus_wmi_not_loaded");
 
         // Feature detection
         var features = new List<string>();
         var wmi = App.Wmi;
         if (wmi != null)
         {
-            if (wmi.IsFeatureSupported(AsusAttributes.ThrottleThermalPolicy)) features.Add("Performance Modes");
-            if (wmi.IsFeatureSupported(AsusAttributes.DgpuDisable)) features.Add("GPU Eco");
-            if (wmi.IsFeatureSupported(AsusAttributes.GpuMuxMode)) features.Add("MUX Switch");
-            if (wmi.IsFeatureSupported(AsusAttributes.PanelOd)) features.Add("Panel Overdrive");
-            if (wmi.IsFeatureSupported(AsusAttributes.MiniLedMode)) features.Add("MiniLED");
-            if (wmi.IsFeatureSupported(AsusAttributes.PptPl1Spl)) features.Add("PPT Limits");
-            if (wmi.IsFeatureSupported(AsusAttributes.NvDynamicBoost)) features.Add("NVIDIA Dynamic Boost");
+            if (wmi.IsFeatureSupported(AsusAttributes.ThrottleThermalPolicy)) features.Add(Labels.Get("feature_perf_modes"));
+            if (wmi.IsFeatureSupported(AsusAttributes.DgpuDisable)) features.Add(Labels.Get("feature_gpu_eco"));
+            if (wmi.IsFeatureSupported(AsusAttributes.GpuMuxMode)) features.Add(Labels.Get("feature_mux"));
+            if (wmi.IsFeatureSupported(AsusAttributes.PanelOd)) features.Add(Labels.Get("feature_overdrive"));
+            if (wmi.IsFeatureSupported(AsusAttributes.MiniLedMode)) features.Add(Labels.Get("feature_miniled"));
+            if (wmi.IsFeatureSupported(AsusAttributes.PptPl1Spl)) features.Add(Labels.Get("feature_ppt"));
+            if (wmi.IsFeatureSupported(AsusAttributes.NvDynamicBoost)) features.Add(Labels.Get("feature_nv_boost"));
         }
 
         labelFeatures.Text = features.Count > 0
-            ? $"Features: {string.Join(", ", features)}"
-            : "No ASUS-specific features detected";
+            ? Labels.Format("features_prefix", string.Join(", ", features))
+            : Labels.Get("no_features");
 
         // Kernel version check
         var kernelVer = sys.GetKernelVersionParsed();
         if (kernelVer < new Version(6, 2))
         {
-            labelFeatures.Text += "\n\u26A0 Kernel 6.2+ recommended for full feature support";
+            labelFeatures.Text += "\n" + Labels.Get("kernel_warning");
         }
     }
 
@@ -805,8 +968,8 @@ public partial class ExtraWindow : Window
             panelCpuCores.IsVisible = true;
             sliderCpuCores.Maximum = total;
             sliderCpuCores.Value = online;
-            labelCpuCores.Text = $"{online}/{total}";
-            labelCpuCoresInfo.Text = $"{online} of {total} threads active";
+            labelCpuCores.Text = Labels.Format("cpu_cores_format", online, total);
+            labelCpuCoresInfo.Text = Labels.Format("cpu_cores_info", online, total);
         }
         else
         {
@@ -855,8 +1018,8 @@ public partial class ExtraWindow : Window
         if (_suppressEvents) return;
         int target = (int)e.NewValue;
         int total = LinuxSystemIntegration.GetCpuCount();
-        labelCpuCores.Text = $"{target}/{total}";
-        labelCpuCoresInfo.Text = $"{target} of {total} threads active";
+        labelCpuCores.Text = Labels.Format("cpu_cores_format", target, total);
+        labelCpuCoresInfo.Text = Labels.Format("cpu_cores_info", target, total);
 
         // Apply in background to avoid UI stall
         Task.Run(() => LinuxSystemIntegration.SetOnlineCpuCount(target));
@@ -883,7 +1046,7 @@ public partial class ExtraWindow : Window
             else
             {
                 Helpers.Logger.WriteLine("Logs are written to stdout — run the app from a terminal to see output");
-                App.System?.ShowNotification("G-Helper", "Logs are written to stdout — run from terminal to see output", "dialog-information");
+                App.System?.ShowNotification(Labels.Get("ghelper"), Labels.Get("log_stdout"), "dialog-information");
             }
         }
         catch (Exception ex)

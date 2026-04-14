@@ -4,6 +4,7 @@ using Avalonia.Controls.Shapes;
 using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Threading;
+using GHelper.Linux.I18n;
 
 namespace GHelper.Linux.UI.Views;
 
@@ -658,15 +659,15 @@ public partial class ArcadeWindow : Window
 
         if (_state == GameState.Menu)
         {
-            DrawText("ROG FIGHTER", CW / 2, 160, 28, TextBrush, true);
-            DrawText("← → ↑ ↓ / W A S D  move", CW / 2, 270, 13, DimBrush, true);
-            DrawText("SPACE  shoot", CW / 2, 292, 13, DimBrush, true);
-            DrawText("ENTER  start", CW / 2, 330, 16, TextBrush, true);
-            DrawText("ESC  quit", CW / 2, 358, 12, DimBrush, true);
+            DrawText(Labels.Get("arcade_game_title"), CW / 2, 160, 28, TextBrush, true);
+            DrawText(Labels.Get("arcade_move"), CW / 2, 270, 13, DimBrush, true);
+            DrawText(Labels.Get("arcade_shoot"), CW / 2, 292, 13, DimBrush, true);
+            DrawText(Labels.Get("arcade_start"), CW / 2, 330, 16, TextBrush, true);
+            DrawText(Labels.Get("arcade_quit"), CW / 2, 358, 12, DimBrush, true);
             // Draw player plane on menu as preview
             DrawPlayerPlane(CW / 2, 220);
             if (_highScore > 0)
-                DrawText($"High Score: {_highScore}", CW / 2, 420, 14, PlayerBody, true);
+                DrawText(Labels.Format("arcade_highscore", _highScore), CW / 2, 420, 14, PlayerBody, true);
             return;
         }
 
@@ -699,27 +700,27 @@ public partial class ArcadeWindow : Window
         }
 
         // HUD
-        DrawText($"Score: {_score}", 10, 10, 14, TextBrush, false);
-        DrawText($"High: {_highScore}", CW - 10, 10, 12, DimBrush, false, true);
-        DrawText($"Wave {_waveNumber}", CW / 2, 10, 12, DimBrush, true);
+        DrawText(Labels.Format("arcade_score", _score), 10, 10, 14, TextBrush, false);
+        DrawText(Labels.Format("arcade_high", _highScore), CW - 10, 10, 12, DimBrush, false, true);
+        DrawText(Labels.Format("arcade_wave", _waveNumber), CW / 2, 10, 12, DimBrush, true);
         for (int i = 0; i < _lives; i++)
             DrawRect(CW / 2 - 24 + i * 14, 30, 8, 8, PlayerBody);
 
         double iy = 48;
-        if (_spreadTimer > 0) { DrawText($"SPREAD {_spreadTimer / 60}s", 10, iy, 10, SpreadColor, false); iy += 13; }
-        if (_rapidTimer > 0) { DrawText($"RAPID {_rapidTimer / 60}s", 10, iy, 10, RapidColor, false); iy += 13; }
-        if (_magnetTimer > 0) { DrawText($"MAGNET {_magnetTimer / 60}s", 10, iy, 10, MagnetColor, false); iy += 13; }
-        if (_hasShield) { DrawText("SHIELD", 10, iy, 10, ShieldColor, false); }
+        if (_spreadTimer > 0) { DrawText(Labels.Format("arcade_spread", _spreadTimer / 60), 10, iy, 10, SpreadColor, false); iy += 13; }
+        if (_rapidTimer > 0) { DrawText(Labels.Format("arcade_rapid", _rapidTimer / 60), 10, iy, 10, RapidColor, false); iy += 13; }
+        if (_magnetTimer > 0) { DrawText(Labels.Format("arcade_magnet", _magnetTimer / 60), 10, iy, 10, MagnetColor, false); iy += 13; }
+        if (_hasShield) { DrawText(Labels.Get("arcade_shield"), 10, iy, 10, ShieldColor, false); }
 
         // Game over
         if (_state == GameState.GameOver)
         {
             DrawRect(CW / 2, CH / 2, CW, 160, new SolidColorBrush(Color.FromArgb(180, 10, 10, 10)));
-            DrawText("GAME OVER", CW / 2, CH / 2 - 30, 28, FighterBody, true);
-            DrawText($"Score: {_score}  Wave: {_waveNumber}", CW / 2, CH / 2 + 10, 16, TextBrush, true);
+            DrawText(Labels.Get("arcade_game_over"), CW / 2, CH / 2 - 30, 28, FighterBody, true);
+            DrawText(Labels.Format("arcade_score_wave", _score, _waveNumber), CW / 2, CH / 2 + 10, 16, TextBrush, true);
             if (_score >= _highScore && _score > 0)
-                DrawText("NEW HIGH SCORE!", CW / 2, CH / 2 + 36, 14, PlayerBody, true);
-            DrawText("ENTER to retry", CW / 2, CH / 2 + 62, 14, DimBrush, true);
+                DrawText(Labels.Get("arcade_new_highscore"), CW / 2, CH / 2 + 36, 14, PlayerBody, true);
+            DrawText(Labels.Get("arcade_retry"), CW / 2, CH / 2 + 62, 14, DimBrush, true);
         }
     }
 

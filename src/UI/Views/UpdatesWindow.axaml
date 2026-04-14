@@ -45,20 +45,20 @@
             <StackPanel Orientation="Horizontal" Spacing="16" Margin="0,4">
                 <StackPanel Orientation="Horizontal" Spacing="4">
                     <Border Width="12" Height="12" CornerRadius="2" Background="#06B48A" />
-                    <TextBlock Text="Up to date" Foreground="#999999" FontSize="11" VerticalAlignment="Center" />
+                    <TextBlock x:Name="labelLegendUpToDate" Text="Up to date" Foreground="#999999" FontSize="11" VerticalAlignment="Center" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Spacing="4">
                     <Border Width="12" Height="12" CornerRadius="2" Background="#FF2020" />
-                    <TextBlock Text="Update available" Foreground="#999999" FontSize="11" VerticalAlignment="Center" />
+                    <TextBlock x:Name="labelLegendUpdateAvailable" Text="Update available" Foreground="#999999" FontSize="11" VerticalAlignment="Center" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Spacing="4">
                     <Border Width="12" Height="12" CornerRadius="2" Background="#666666" />
-                    <TextBlock Text="Can't check" Foreground="#999999" FontSize="11" VerticalAlignment="Center" />
+                    <TextBlock x:Name="labelLegendCantCheck" Text="Can't check" Foreground="#999999" FontSize="11" VerticalAlignment="Center" />
                 </StackPanel>
             </StackPanel>
 
             <!-- G-Helper Linux self-update -->
-            <TextBlock Text="G-Helper Linux" Foreground="#F0F0F0" FontSize="14" FontWeight="SemiBold" Margin="0,8,0,4" />
+            <TextBlock x:Name="labelGHelperSection" Text="G-Helper Linux" Foreground="#F0F0F0" FontSize="14" FontWeight="SemiBold" Margin="0,8,0,4" />
             <Border Background="#262626" CornerRadius="6" Padding="10,6">
                 <StackPanel x:Name="panelSelfUpdate" Spacing="4">
                     <TextBlock x:Name="labelSelfUpdateStatus" Text="Checking for updates..." Foreground="#999999" FontSize="12" />
@@ -66,7 +66,7 @@
             </Border>
 
             <!-- BIOS Section -->
-            <TextBlock Text="BIOS" Foreground="#F0F0F0" FontSize="14" FontWeight="SemiBold" Margin="0,8,0,4" />
+            <TextBlock x:Name="labelBiosSection" Text="BIOS" Foreground="#F0F0F0" FontSize="14" FontWeight="SemiBold" Margin="0,8,0,4" />
             <Border Background="#262626" CornerRadius="6" Padding="8">
                 <StackPanel x:Name="panelBios" Spacing="2">
                     <TextBlock x:Name="labelBiosLoading" Text="Loading..." Foreground="#999999" FontSize="12" />
@@ -74,7 +74,7 @@
             </Border>
 
             <!-- Drivers Section -->
-            <TextBlock Text="Drivers &amp; Software" Foreground="#F0F0F0" FontSize="14" FontWeight="SemiBold" Margin="0,8,0,4" />
+            <TextBlock x:Name="labelDriversSection" Text="Drivers &amp; Software" Foreground="#F0F0F0" FontSize="14" FontWeight="SemiBold" Margin="0,8,0,4" />
             <Border Background="#262626" CornerRadius="6" Padding="8">
                 <StackPanel x:Name="panelDrivers" Spacing="2">
                     <TextBlock x:Name="labelDriversLoading" Text="Loading..." Foreground="#999999" FontSize="12" />

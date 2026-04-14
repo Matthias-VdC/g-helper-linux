@@ -1,5 +1,6 @@
 using System.Text;
 using GHelper.Linux.Helpers;
+using GHelper.Linux.I18n;
 
 namespace GHelper.Linux.USB;
 
@@ -99,36 +100,36 @@ public static class Aura
 
     // ── Mode dictionaries ──
 
-    private static readonly Dictionary<AuraMode, string> ModesSingleColor = new()
+    private static Dictionary<AuraMode, string> ModesSingleColor => new()
     {
-        { AuraMode.AuraStatic, "Static" },
-        { AuraMode.AuraBreathe, "Breathe" },
-        { AuraMode.AuraStrobe, "Strobe" },
+        { AuraMode.AuraStatic, Labels.Get("aura_static") },
+        { AuraMode.AuraBreathe, Labels.Get("aura_breathe") },
+        { AuraMode.AuraStrobe, Labels.Get("aura_strobe") },
     };
 
-    private static readonly Dictionary<AuraMode, string> ModesStandard = new()
+    private static Dictionary<AuraMode, string> ModesStandard => new()
     {
-        { AuraMode.AuraStatic, "Static" },
-        { AuraMode.AuraBreathe, "Breathe" },
-        { AuraMode.AuraColorCycle, "Color Cycle" },
-        { AuraMode.AuraRainbow, "Rainbow" },
-        { AuraMode.AuraStrobe, "Strobe" },
+        { AuraMode.AuraStatic, Labels.Get("aura_static") },
+        { AuraMode.AuraBreathe, Labels.Get("aura_breathe") },
+        { AuraMode.AuraColorCycle, Labels.Get("aura_color_cycle") },
+        { AuraMode.AuraRainbow, Labels.Get("aura_rainbow") },
+        { AuraMode.AuraStrobe, Labels.Get("aura_strobe") },
     };
 
-    private static readonly Dictionary<AuraMode, string> ModesStrix = new()
+    private static Dictionary<AuraMode, string> ModesStrix => new()
     {
-        { AuraMode.AuraStatic, "Static" },
-        { AuraMode.AuraBreathe, "Breathe" },
-        { AuraMode.AuraColorCycle, "Color Cycle" },
-        { AuraMode.AuraRainbow, "Rainbow" },
-        { AuraMode.Star, "Star" },
-        { AuraMode.Rain, "Rain" },
-        { AuraMode.Highlight, "Highlight" },
-        { AuraMode.Laser, "Laser" },
-        { AuraMode.Ripple, "Ripple" },
-        { AuraMode.AuraStrobe, "Strobe" },
-        { AuraMode.Comet, "Comet" },
-        { AuraMode.Flash, "Flash" },
+        { AuraMode.AuraStatic, Labels.Get("aura_static") },
+        { AuraMode.AuraBreathe, Labels.Get("aura_breathe") },
+        { AuraMode.AuraColorCycle, Labels.Get("aura_color_cycle") },
+        { AuraMode.AuraRainbow, Labels.Get("aura_rainbow") },
+        { AuraMode.Star, Labels.Get("aura_star") },
+        { AuraMode.Rain, Labels.Get("aura_rain") },
+        { AuraMode.Highlight, Labels.Get("aura_highlight") },
+        { AuraMode.Laser, Labels.Get("aura_laser") },
+        { AuraMode.Ripple, Labels.Get("aura_ripple") },
+        { AuraMode.AuraStrobe, Labels.Get("aura_strobe") },
+        { AuraMode.Comet, Labels.Get("aura_comet") },
+        { AuraMode.Flash, Labels.Get("aura_flash") },
     };
 
     // ── Properties ──
@@ -175,9 +176,9 @@ public static class Aura
     {
         return new Dictionary<AuraSpeed, string>
         {
-            { AuraSpeed.Slow, "Slow" },
-            { AuraSpeed.Normal, "Normal" },
-            { AuraSpeed.Fast, "Fast" },
+            { AuraSpeed.Slow, Labels.Get("speed_slow") },
+            { AuraSpeed.Normal, Labels.Get("speed_normal") },
+            { AuraSpeed.Fast, Labels.Get("speed_fast") },
         };
     }
 
@@ -484,7 +485,7 @@ public static class Aura
         var modeKeys = new List<AuraMode>(modes.Keys);
 
         if (modeKeys.Count == 0)
-            return "No modes";
+            return Labels.Get("aura_no_modes");
 
         // Current mode
         var current = (AuraMode)AppConfig.Get("aura_mode");

@@ -1,3 +1,5 @@
+using GHelper.Linux.I18n;
+
 namespace GHelper.Linux.Mode;
 
 /// <summary>
@@ -47,10 +49,10 @@ public static class Modes
     {
         return mode switch
         {
-            0 => "Balanced",
-            1 => "Turbo",
-            2 => "Silent",
-            _ => Helpers.AppConfig.GetString($"mode_name_{mode}") ?? $"Custom {mode - 2}"
+            0 => Labels.Get("mode_balanced"),
+            1 => Labels.Get("mode_turbo"),
+            2 => Labels.Get("mode_silent"),
+            _ => Helpers.AppConfig.GetString($"mode_name_{mode}") ?? Labels.Format("mode_custom", mode - 2)
         };
     }
 
@@ -84,9 +86,9 @@ public static class Modes
     {
         var modes = new Dictionary<int, string>
         {
-            { 2, "Silent" },
-            { 0, "Balanced" },
-            { 1, "Turbo" }
+            { 2, Labels.Get("mode_silent") },
+            { 0, Labels.Get("mode_balanced") },
+            { 1, Labels.Get("mode_turbo") }
         };
 
         for (int i = 3; i < MaxModes; i++)
@@ -127,7 +129,7 @@ public static class Modes
             if (Exists(i)) continue;
 
             Helpers.AppConfig.Set($"mode_base_{i}", GetCurrentBase());
-            Helpers.AppConfig.Set($"mode_name_{i}", $"Custom {i - 2}");
+            Helpers.AppConfig.Set($"mode_name_{i}", Labels.Format("mode_custom", i - 2));
 
             return i;
         }

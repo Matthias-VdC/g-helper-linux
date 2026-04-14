@@ -4,6 +4,7 @@ using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Threading;
 using GHelper.Linux.Gpu;
+using GHelper.Linux.I18n;
 using GHelper.Linux.Platform.Linux;
 using GHelper.Linux.USB;
 using System.Collections.Generic;
@@ -49,6 +50,7 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+        Labels.LanguageChanged += () => Avalonia.Threading.Dispatcher.UIThread.Post(() => ApplyLabels());
         InitDonate();
 
         // Refresh timer for live sensor data
@@ -91,6 +93,7 @@ public partial class MainWindow : Window
 
     private void RefreshAll()
     {
+        ApplyLabels();
         RefreshPerformanceMode();
         RefreshGpuMode();
         RefreshScreen();
@@ -98,6 +101,55 @@ public partial class MainWindow : Window
         RefreshKeyboard();
         RefreshSensorData();
         RefreshFooter();
+    }
+
+    private void ApplyLabels()
+    {
+        // Button text (find the TextBlock children inside each button's StackPanel)
+        SetButtonText(buttonSilent, Labels.Get("mode_silent"));
+        SetButtonText(buttonBalanced, Labels.Get("mode_balanced"));
+        SetButtonText(buttonTurbo, Labels.Get("mode_turbo"));
+        SetButtonText(buttonFans, Labels.Get("fans_power"));
+        SetButtonText(buttonEco, Labels.Get("gpu_eco"));
+        SetButtonText(buttonStandard, Labels.Get("gpu_standard"));
+        SetButtonText(buttonUltimate, Labels.Get("gpu_ultimate"));
+        SetButtonText(buttonOptimized, Labels.Get("gpu_optimized"));
+        SetButtonText(buttonKeyboard, Labels.Get("backlight"));
+        SetButtonText(buttonExtra, Labels.Get("extra"));
+        SetButtonText(buttonUpdates, Labels.Get("updates"));
+        SetButtonText(buttonQuit, Labels.Get("quit"));
+        labelDonateText.Text = Labels.Get("donate");
+
+        buttonColor1.SetValue(Avalonia.Controls.ToolTip.TipProperty, Labels.Get("color_primary"));
+        buttonColor2.SetValue(Avalonia.Controls.ToolTip.TipProperty, Labels.Get("color_secondary"));
+
+        labelKeyboard.Text = Labels.Get("keyboard_header");
+        checkStartup.Content = Labels.Get("run_on_startup");
+
+        // Refresh dynamic labels
+        RefreshPerformanceMode();
+        RefreshGpuMode();
+        RefreshScreen();
+        RefreshBattery();
+        RefreshKeyboard();
+        RefreshFooter();
+        RefreshAuraCombos();
+    }
+
+    /// <summary>Helper: set text of the last TextBlock inside a Button's StackPanel content.</summary>
+    private static void SetButtonText(Button button, string text)
+    {
+        // Buttons use StackPanel > TextBlock (icon) + TextBlock (text)
+        // We want the LAST TextBlock child
+        if (button.Content is StackPanel sp)
+        {
+            var textBlock = sp.Children.OfType<Avalonia.Controls.TextBlock>().LastOrDefault();
+            if (textBlock != null) textBlock.Text = text;
+        }
+        else if (button.Content is Avalonia.Controls.TextBlock tb)
+        {
+            tb.Text = text;
+        }
     }
 
     private void RefreshSensorData()
@@ -129,7 +181,7 @@ public partial class MainWindow : Window
                 gpuFanStr = "0RPM";
 
             // Match Windows layout: "CPU: 32°C Fan: 0RPM" on the right
-            labelCPUFan.Text = $"CPU: {cpuTempStr} Fan: {cpuFanStr}";
+            labelCPUFan.Text = Labels.Format("cpu_fan_info", cpuTempStr, cpuFanStr);
 
             // GPU fan info — compact for right-aligned display
             string gpuTempStr = gpuTemp > 0 ? $"{gpuTemp}°C" : "";
@@ -152,13 +204,13 @@ public partial class MainWindow : Window
             }
 
             labelGPUFan.Text = gpuTempStr.Length > 0
-                ? $"GPU: {gpuTempStr}{gpuLoadStr}  Fan: {gpuFanStr}"
-                : $"GPU Fan: {gpuFanStr}";
+                ? Labels.Format("gpu_fan_full_info", gpuTempStr, gpuLoadStr, gpuFanStr)
+                : Labels.Format("gpu_fan_only", gpuFanStr);
 
             // Mid fan if available
             int midFan = wmi.GetFanRpm(2);
             if (midFan > 0)
-                labelMidFan.Text = $"Mid Fan: {midFan}RPM";
+                labelMidFan.Text = Labels.Format("mid_fan_info", $"{midFan}RPM");
         }
         catch (Exception ex)
         {
@@ -177,14 +229,14 @@ public partial class MainWindow : Window
 
         string modeName = _currentPerfMode switch
         {
-            0 => "Balanced",
-            1 => "Turbo",
-            2 => "Silent",
-            _ => "Unknown"
+            0 => Labels.Get("mode_balanced"),
+            1 => Labels.Get("mode_turbo"),
+            2 => Labels.Get("mode_silent"),
+            _ => Labels.Get("mode_unknown")
         };
 
         // Combined header: "Mode: Balanced" (matches Windows layout)
-        labelPerf.Text = $"Mode: {modeName}";
+        labelPerf.Text = Labels.Format("mode_prefix", modeName);
         labelPerfMode.Text = modeName;
         UpdatePerfButtons();
     }
@@ -270,14 +322,14 @@ public partial class MainWindow : Window
 
         string modeName = _currentGpuMode switch
         {
-            0 => "Eco",
-            1 => "Standard",
-            2 => "Optimized",
-            3 => "Ultimate",
-            _ => "Unknown"
+            0 => Labels.Get("gpu_eco"),
+            1 => Labels.Get("gpu_standard"),
+            2 => Labels.Get("gpu_optimized"),
+            3 => Labels.Get("gpu_ultimate"),
+            _ => Labels.Get("gpu_unknown")
         };
 
-        labelGPU.Text = $"GPU Mode: {modeName}";
+        labelGPU.Text = Labels.Format("gpu_mode_prefix", modeName);
         labelGPUMode.Text = modeName;
         UpdateGpuButtons();
 
@@ -285,16 +337,16 @@ public partial class MainWindow : Window
         if (gpu?.IsPendingReboot() == true)
         {
             string? pending = Helpers.AppConfig.GetString("gpu_mode");
-            labelTipGPU.Text = $"{pending?.ToUpperInvariant() ?? "Mode"} pending — reboot to apply";
+            labelTipGPU.Text = Labels.Format("gpu_pending_reboot", pending?.ToUpperInvariant() ?? Labels.Get("gpu_pending_mode"));
         }
         else
         {
             labelTipGPU.Text = _currentGpuMode switch
             {
-                0 => "dGPU is off — maximum battery life",
-                1 => "Hybrid mode — dGPU powers on when needed",
-                2 => "Auto Eco on battery, Standard on AC power",
-                3 => "dGPU direct — bypass iGPU for best performance (requires reboot)",
+                0 => Labels.Get("gpu_tip_eco"),
+                1 => Labels.Get("gpu_tip_standard"),
+                2 => Labels.Get("gpu_tip_optimized"),
+                3 => Labels.Get("gpu_tip_ultimate"),
                 _ => ""
             };
         }
@@ -380,13 +432,13 @@ public partial class MainWindow : Window
             case GpuSwitchResult.Applied:
                 string appliedText = target switch
                 {
-                    GpuMode.Eco => "Eco mode — dGPU disabled",
-                    GpuMode.Standard => "Standard mode — hybrid dGPU",
-                    GpuMode.Optimized => "Optimized — auto Eco/Standard based on power",
-                    GpuMode.Ultimate => "Ultimate mode — dGPU direct",
-                    _ => "GPU mode changed"
+                    GpuMode.Eco => Labels.Get("gpu_notify_eco"),
+                    GpuMode.Standard => Labels.Get("gpu_notify_standard"),
+                    GpuMode.Optimized => Labels.Get("gpu_notify_optimized"),
+                    GpuMode.Ultimate => Labels.Get("gpu_notify_ultimate"),
+                    _ => Labels.Get("gpu_notify_changed")
                 };
-                App.System?.ShowNotification("GPU Mode", appliedText, "video-display");
+                App.System?.ShowNotification(Labels.Get("gpu_mode"), appliedText, "video-display");
                 break;
 
             case GpuSwitchResult.AlreadySet:
@@ -396,22 +448,22 @@ public partial class MainWindow : Window
             case GpuSwitchResult.RebootRequired:
                 string rebootText = target switch
                 {
-                    GpuMode.Ultimate => "Ultimate mode set — reboot required",
-                    GpuMode.Standard => "Standard mode set — reboot required for MUX change",
-                    GpuMode.Optimized => "Optimized mode — reboot required for MUX change",
-                    GpuMode.Eco => "Eco mode requires reboot — MUX and GPU changes will apply",
-                    _ => "Reboot required for GPU mode change"
+                    GpuMode.Ultimate => Labels.Get("gpu_reboot_ultimate"),
+                    GpuMode.Standard => Labels.Get("gpu_reboot_standard"),
+                    GpuMode.Optimized => Labels.Get("gpu_reboot_optimized"),
+                    GpuMode.Eco => Labels.Get("gpu_reboot_eco"),
+                    _ => Labels.Get("gpu_reboot_generic")
                 };
                 labelTipGPU.Text = target == GpuMode.Optimized
-                    ? "MUX switch changed — reboot required, then auto-switching will begin"
-                    : "You must reboot for changes to take effect";
-                App.System?.ShowNotification("GPU Mode", rebootText, "system-reboot");
+                    ? Labels.Get("gpu_mux_reboot_auto")
+                    : Labels.Get("gpu_mux_reboot");
+                App.System?.ShowNotification(Labels.Get("gpu_mode"), rebootText, "system-reboot");
                 break;
 
             case GpuSwitchResult.EcoBlocked:
-                labelTipGPU.Text = "Eco mode blocked — MUX was changed to Ultimate this session. Reboot first.";
-                App.System?.ShowNotification("GPU Mode",
-                    "Eco mode blocked: MUX was changed to Ultimate this session. Reboot first, then switch to Eco.",
+                labelTipGPU.Text = Labels.Get("gpu_eco_blocked");
+                App.System?.ShowNotification(Labels.Get("gpu_mode"),
+                    Labels.Get("gpu_eco_blocked_detail"),
                     "dialog-warning");
                 break;
 
@@ -420,14 +472,14 @@ public partial class MainWindow : Window
                 break;
 
             case GpuSwitchResult.Deferred:
-                labelTipGPU.Text = "Eco mode pending — reboot to apply";
-                App.System?.ShowNotification("GPU Mode",
-                    "Eco mode will activate after reboot", "system-reboot");
+                labelTipGPU.Text = Labels.Get("gpu_eco_pending");
+                App.System?.ShowNotification(Labels.Get("gpu_mode"),
+                    Labels.Get("gpu_eco_after_reboot"), "system-reboot");
                 break;
 
             case GpuSwitchResult.Failed:
-                App.System?.ShowNotification("GPU Mode",
-                    "GPU mode switch failed — check logs", "dialog-error");
+                App.System?.ShowNotification(Labels.Get("gpu_mode"),
+                    Labels.Get("gpu_switch_failed"), "dialog-error");
                 break;
         }
     }
@@ -443,7 +495,7 @@ public partial class MainWindow : Window
     {
         var dialog = new Window
         {
-            Title = "GPU Driver Active",
+            Title = Labels.Get("gpu_driver_title"),
             Width = 490,
             Height = 310,
             WindowStartupLocation = WindowStartupLocation.CenterOwner,
@@ -470,7 +522,7 @@ public partial class MainWindow : Window
 
         var titleText = new TextBlock
         {
-            Text = "GPU Driver Active",
+            Text = Labels.Get("gpu_driver_title"),
             FontSize = 15,
             FontWeight = Avalonia.Media.FontWeight.Bold,
             VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
@@ -486,8 +538,7 @@ public partial class MainWindow : Window
 
         var body = new TextBlock
         {
-            Text = "The GPU is currently in use by the display system.\n" +
-                   "Switching to Eco mode requires releasing the driver first.",
+            Text = Labels.Get("gpu_driver_body"),
             TextWrapping = Avalonia.Media.TextWrapping.Wrap,
             FontSize = 13,
             LineHeight = 20,
@@ -522,9 +573,9 @@ public partial class MainWindow : Window
             };
         }
 
-        var btnSwitchNow   = MakeDialogButton("Switch Now",    "#4CC2FF", "#000000", bold: true);
-        var btnAfterReboot = MakeDialogButton("After Reboot",  "#373737", "#F0F0F0");
-        var btnCancel      = MakeDialogButton("Cancel",        "#2A2A2A", "#888888");
+        var btnSwitchNow   = MakeDialogButton(Labels.Get("gpu_driver_switch_now"),    "#4CC2FF", "#000000", bold: true);
+        var btnAfterReboot = MakeDialogButton(Labels.Get("gpu_driver_after_reboot"),  "#373737", "#F0F0F0");
+        var btnCancel      = MakeDialogButton(Labels.Get("cancel"),        "#2A2A2A", "#888888");
 
         btnSwitchNow.Margin = new Avalonia.Thickness(0, 0, 8, 0);
         btnAfterReboot.Margin = new Avalonia.Thickness(0, 0, 8, 0);
@@ -533,7 +584,7 @@ public partial class MainWindow : Window
         btnSwitchNow.Click += (_, _) =>
         {
             dialog.Close();
-            LockGpuButtons("Releasing GPU driver, please wait...");
+            LockGpuButtons(Labels.Get("gpu_releasing_driver"));
 
             Task.Run(() =>
             {
@@ -547,10 +598,10 @@ public partial class MainWindow : Window
                     if (result == GpuSwitchResult.Deferred)
                     {
                         // Driver release failed (rmmod failed, pkexec cancelled, etc.)
-                        labelTipGPU.Text = "Eco mode pending — reboot to apply";
+                        labelTipGPU.Text = Labels.Get("gpu_eco_pending");
                         RefreshGpuMode();
-                        App.System?.ShowNotification("GPU Mode",
-                            "GPU held by display system — Eco mode scheduled for reboot",
+                        App.System?.ShowNotification(Labels.Get("gpu_mode"),
+                            Labels.Get("gpu_driver_eco_scheduled"),
                             "dialog-warning");
                         return;
                     }
@@ -564,10 +615,10 @@ public partial class MainWindow : Window
         {
             dialog.Close();
             App.GpuModeCtrl?.ScheduleModeForReboot(target);
-            labelTipGPU.Text = "Eco mode pending — reboot to apply";
+            labelTipGPU.Text = Labels.Get("gpu_eco_pending");
             RefreshGpuMode();
-            App.System?.ShowNotification("GPU Mode",
-                "Eco mode will activate after reboot", "system-reboot");
+            App.System?.ShowNotification(Labels.Get("gpu_mode"),
+                Labels.Get("gpu_eco_after_reboot"), "system-reboot");
         };
 
         btnCancel.Click += (_, _) =>
@@ -589,8 +640,7 @@ public partial class MainWindow : Window
         // ── Footer help text ──
         var footer = new TextBlock
         {
-            Text = "Switch Now attempts to unload the GPU driver (admin password\n" +
-                   "may be required). After Reboot saves for next startup.",
+            Text = Labels.Get("gpu_driver_footer"),
             Foreground = new SolidColorBrush(Color.Parse("#666666")),
             TextWrapping = Avalonia.Media.TextWrapping.Wrap,
             FontSize = 11,
@@ -609,16 +659,16 @@ public partial class MainWindow : Window
     }
 
     private void ButtonEco_Click(object? sender, RoutedEventArgs e)
-        => RequestGpuModeSwitch(GpuMode.Eco, "Switching to Eco mode, please wait...");
+        => RequestGpuModeSwitch(GpuMode.Eco, Labels.Get("gpu_switching_eco"));
 
     private void ButtonStandard_Click(object? sender, RoutedEventArgs e)
-        => RequestGpuModeSwitch(GpuMode.Standard, "Switching to Standard mode...");
+        => RequestGpuModeSwitch(GpuMode.Standard, Labels.Get("gpu_switching_standard"));
 
     private void ButtonOptimized_Click(object? sender, RoutedEventArgs e)
-        => RequestGpuModeSwitch(GpuMode.Optimized, "Switching GPU mode...");
+        => RequestGpuModeSwitch(GpuMode.Optimized, Labels.Get("gpu_switching_generic"));
 
     private void ButtonUltimate_Click(object? sender, RoutedEventArgs e)
-        => RequestGpuModeSwitch(GpuMode.Ultimate, "Switching to Ultimate mode...");
+        => RequestGpuModeSwitch(GpuMode.Ultimate, Labels.Get("gpu_switching_ultimate"));
 
     // ── Screen ──
 
@@ -634,8 +684,7 @@ public partial class MainWindow : Window
 
         if (hz > 0)
         {
-            string suffix = isAuto ? " (Auto)" : "";
-            labelScreen.Text = $"Laptop Screen: {hz}Hz{suffix}";
+            labelScreen.Text = Labels.Format(isAuto ? "screen_prefix_auto" : "screen_prefix", hz);
             labelScreenHz.Text = $"{hz} Hz";
         }
 
@@ -721,13 +770,13 @@ public partial class MainWindow : Window
         {
             string level = brightness switch
             {
-                0 => "Off",
-                1 => "Low",
-                2 => "Medium",
-                3 => "High",
-                _ => $"Level {brightness}"
+                0 => Labels.Get("backlight_off"),
+                1 => Labels.Get("backlight_low"),
+                2 => Labels.Get("backlight_medium"),
+                3 => Labels.Get("backlight_high"),
+                _ => Labels.Format("backlight_level", brightness)
             };
-            labelBacklight.Text = $"Backlight: {level}";
+            labelBacklight.Text = Labels.Format("backlight_prefix", level);
         }
 
         InitAura();
@@ -833,6 +882,40 @@ public partial class MainWindow : Window
         buttonColor1.IsVisible = Aura.UsesColor();
     }
 
+    /// <summary>Rebuild Aura mode/speed combo items with current language strings.</summary>
+    private void RefreshAuraCombos()
+    {
+        if (!_auraInitialized) return;
+
+        _suppressAuraEvents = true;
+
+        // Mode combo — save selection, rebuild, restore
+        int savedMode = comboAuraMode.SelectedItem is ComboBoxItem sel1 && sel1.Tag is int m ? m : (int)Aura.Mode;
+        comboAuraMode.Items.Clear();
+        int selectedIdx = 0, idx = 0;
+        foreach (var kv in Aura.GetModes())
+        {
+            comboAuraMode.Items.Add(new ComboBoxItem { Content = kv.Value, Tag = (int)kv.Key });
+            if ((int)kv.Key == savedMode) selectedIdx = idx;
+            idx++;
+        }
+        comboAuraMode.SelectedIndex = selectedIdx;
+
+        // Speed combo — save selection, rebuild, restore
+        int savedSpeed = comboAuraSpeed.SelectedItem is ComboBoxItem sel2 && sel2.Tag is int s ? s : (int)Aura.Speed;
+        comboAuraSpeed.Items.Clear();
+        selectedIdx = 0; idx = 0;
+        foreach (var kv in Aura.GetSpeeds())
+        {
+            comboAuraSpeed.Items.Add(new ComboBoxItem { Content = kv.Value, Tag = (int)kv.Key });
+            if ((int)kv.Key == savedSpeed) selectedIdx = idx;
+            idx++;
+        }
+        comboAuraSpeed.SelectedIndex = selectedIdx;
+
+        _suppressAuraEvents = false;
+    }
+
     private void ComboAuraMode_Changed(object? sender, SelectionChangedEventArgs e)
     {
         if (_suppressAuraEvents) return;
@@ -891,7 +974,7 @@ public partial class MainWindow : Window
     {
         var pickerWindow = new Window
         {
-            Title = "Pick Color",
+            Title = Labels.Get("pick_color"),
             Width = 320,
             Height = 420,
             WindowStartupLocation = WindowStartupLocation.CenterOwner,
@@ -919,7 +1002,7 @@ public partial class MainWindow : Window
         var labelB = new TextBlock { Text = $"B: {initB}", Foreground = Brushes.White, Margin = new Avalonia.Thickness(4, 2, 0, 0) };
 
         // Hex color input
-        var hexLabel = new TextBlock { Text = "Hex:", Foreground = Brushes.White, Margin = new Avalonia.Thickness(4, 6, 0, 0), FontSize = 11 };
+        var hexLabel = new TextBlock { Text = Labels.Get("hex_label"), Foreground = Brushes.White, Margin = new Avalonia.Thickness(4, 6, 0, 0), FontSize = 11 };
         var hexInput = new TextBox
         {
             Text = $"#{initR:X2}{initG:X2}{initB:X2}",
@@ -975,7 +1058,7 @@ public partial class MainWindow : Window
 
         var btnOk = new Button
         {
-            Content = "Apply",
+            Content = Labels.Get("apply"),
             HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,
             Margin = new Avalonia.Thickness(0, 12, 0, 0),
             MinWidth = 120,
@@ -1085,7 +1168,7 @@ public partial class MainWindow : Window
             _updatingBatterySlider = false;
             labelBatteryLimit.Text = $"{limit}%";
             // Combined header: "Battery Charge Limit: 80%" (matches Windows)
-            labelBattery.Text = $"Battery Charge Limit: {limit}%";
+            labelBattery.Text = Labels.Format("battery_limit_prefix", limit);
         }
 
         // Show discharge/charge rate in battery section header (right side)
@@ -1102,19 +1185,19 @@ public partial class MainWindow : Window
             {
                 double watts = Math.Abs(drainMw) / 1000.0;
                 string rateStr = drainMw > 0
-                    ? $"Discharging: {watts:F1}W"
-                    : $"Charging: {watts:F1}W";
+                    ? Labels.Format("discharging_watts", $"{watts:F1}")
+                    : Labels.Format("charging_watts", $"{watts:F1}");
                 labelCharge.Text = rateStr;
             }
             else if (acPlugged)
             {
-                labelCharge.Text = "Plugged in";
+                labelCharge.Text = Labels.Get("plugged_in");
             }
 
             // Charge level in footer
             if (level >= 0)
             {
-                labelChargeFooter.Text = $"Charge: {level}%";
+                labelChargeFooter.Text = Labels.Format("charge_prefix", level);
             }
         }
     }
@@ -1130,7 +1213,7 @@ public partial class MainWindow : Window
 
         // Update labels immediately (responsive UI)
         labelBatteryLimit.Text = $"{limit}%";
-        labelBattery.Text = $"Battery Charge Limit: {limit}%";
+        labelBattery.Text = Labels.Format("battery_limit_prefix", limit);
 
         // Debounce the sysfs write — only write 300ms after the user stops dragging
         _batteryDebounce?.Stop();
@@ -1153,7 +1236,7 @@ public partial class MainWindow : Window
                 // Re-read actual (firmware may clamp on 6080 models)
                 int actual = App.Wmi?.GetBatteryChargeLimit() ?? limit;
                 labelBatteryLimit.Text = $"{actual}%";
-                labelBattery.Text = $"Battery Charge Limit: {actual}%";
+                labelBattery.Text = Labels.Format("battery_limit_prefix", actual);
                 Helpers.AppConfig.Set("charge_limit", actual);
 
                 if (actual != limit && actual > 0)
@@ -1204,13 +1287,13 @@ public partial class MainWindow : Window
         var sys = App.System;
         if (sys == null) return;
 
-        string model = sys.GetModelName() ?? "Unknown ASUS";
+        string model = sys.GetModelName() ?? Labels.Get("unknown_asus");
 
         // Show model in window title (like Windows G-Helper)
-        Title = $"G-Helper — {model}";
+        Title = Labels.Format("title_prefix", model);
 
         // Version + model in footer
-        labelVersion.Text = $"v{Helpers.AppConfig.AppVersion} — {model}";
+        labelVersion.Text = Labels.Format("version_prefix", Helpers.AppConfig.AppVersion, model);
 
         // Check autostart status from config (suppress to avoid re-writing .desktop file)
         _suppressEvents = true;
@@ -1218,29 +1301,29 @@ public partial class MainWindow : Window
         _suppressEvents = false;
 
         // System info (same as ExtraWindow)
-        labelSysModel.Text = $"Model: {model}";
-        labelSysBios.Text = $"BIOS: {sys.GetBiosVersion()}";
-        labelSysKernel.Text = $"Kernel: {sys.GetKernelVersion()}";
+        labelSysModel.Text = Labels.Format("model_prefix", model);
+        labelSysBios.Text = Labels.Format("bios_prefix", sys.GetBiosVersion());
+        labelSysKernel.Text = Labels.Format("kernel_prefix", sys.GetKernelVersion());
 
         bool wmiLoaded = sys.IsAsusWmiLoaded();
-        labelSysWmi.Text = $"asus-wmi: {(wmiLoaded ? "\u2713 Loaded" : "\u2717 Not loaded")}";
+        labelSysWmi.Text = wmiLoaded ? Labels.Get("asus_wmi_loaded") : Labels.Get("asus_wmi_not_loaded");
 
         var features = new List<string>();
         var wmi = App.Wmi;
         if (wmi != null)
         {
-            if (wmi.IsFeatureSupported(AsusAttributes.ThrottleThermalPolicy)) features.Add("Performance Modes");
-            if (wmi.IsFeatureSupported(AsusAttributes.DgpuDisable)) features.Add("GPU Eco");
-            if (wmi.IsFeatureSupported(AsusAttributes.GpuMuxMode)) features.Add("MUX Switch");
-            if (wmi.IsFeatureSupported(AsusAttributes.PanelOd)) features.Add("Panel Overdrive");
-            if (wmi.IsFeatureSupported(AsusAttributes.MiniLedMode)) features.Add("MiniLED");
-            if (wmi.IsFeatureSupported(AsusAttributes.PptPl1Spl)) features.Add("PPT Limits");
-            if (wmi.IsFeatureSupported(AsusAttributes.NvDynamicBoost)) features.Add("NVIDIA Dynamic Boost");
+            if (wmi.IsFeatureSupported(AsusAttributes.ThrottleThermalPolicy)) features.Add(Labels.Get("feature_perf_modes"));
+            if (wmi.IsFeatureSupported(AsusAttributes.DgpuDisable)) features.Add(Labels.Get("feature_gpu_eco"));
+            if (wmi.IsFeatureSupported(AsusAttributes.GpuMuxMode)) features.Add(Labels.Get("feature_mux"));
+            if (wmi.IsFeatureSupported(AsusAttributes.PanelOd)) features.Add(Labels.Get("feature_overdrive"));
+            if (wmi.IsFeatureSupported(AsusAttributes.MiniLedMode)) features.Add(Labels.Get("feature_miniled"));
+            if (wmi.IsFeatureSupported(AsusAttributes.PptPl1Spl)) features.Add(Labels.Get("feature_ppt"));
+            if (wmi.IsFeatureSupported(AsusAttributes.NvDynamicBoost)) features.Add(Labels.Get("feature_nv_boost"));
         }
 
         labelSysFeatures.Text = features.Count > 0
-            ? $"Features: {string.Join(", ", features)}"
-            : "No ASUS-specific features detected";
+            ? Labels.Format("features_prefix", string.Join(", ", features))
+            : Labels.Get("no_features");
     }
 
     private void CheckStartup_Changed(object? sender, RoutedEventArgs e)

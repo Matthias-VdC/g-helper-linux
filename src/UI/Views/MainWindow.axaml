@@ -311,7 +311,7 @@
                                                    HorizontalAlignment="Center" VerticalAlignment="Center"
                                                    Margin="1,0,0,0" />
                                     </Border>
-                                    <TextBlock Text="Donate" FontSize="12" FontWeight="Bold"
+                                    <TextBlock x:Name="labelDonateText" Text="Donate" FontSize="12" FontWeight="Bold"
                                                Foreground="#4A3800" VerticalAlignment="Center" />
                                     <TextBlock x:Name="labelCoinCount" Text="" FontSize="12"
                                                VerticalAlignment="Center" FontWeight="Bold"
