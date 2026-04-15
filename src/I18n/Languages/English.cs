@@ -1,7 +1,7 @@
 namespace GHelper.Linux.I18n.Languages;
 
 /// <summary>
-/// English (en) — base language. All keys must be defined here.
+/// English (en) - base language. All keys must be defined here.
 /// Other languages fall back to English for any missing keys.
 /// Keys use format strings ({0}, {1}...) for dynamic values.
 /// </summary>
@@ -9,7 +9,7 @@ public static class English
 {
     public static Dictionary<string, string> Translations => new()
     {
-        // ═══════════════════ COMMON ═══════════════════
+        // COMMON
         ["enabled"] = "Enabled",
         ["disabled"] = "Disabled",
         ["muted"] = "Muted",
@@ -30,7 +30,7 @@ public static class English
         ["refresh"] = "Refresh",
         ["details"] = "Details...",
 
-        // ═══════════════════ PERFORMANCE MODES ═══════════════════
+        // PERFORMANCE MODES
         ["mode_silent"] = "Silent",
         ["mode_balanced"] = "Balanced",
         ["mode_turbo"] = "Turbo",
@@ -39,7 +39,7 @@ public static class English
         ["mode_prefix"] = "Mode: {0}",
         ["fans_power"] = "Fans + Power",
 
-        // ═══════════════════ GPU MODES ═══════════════════
+        // GPU MODES
         ["gpu_eco"] = "Eco",
         ["gpu_standard"] = "Standard",
         ["gpu_ultimate"] = "Ultimate",
@@ -47,19 +47,19 @@ public static class English
         ["gpu_unknown"] = "Unknown",
         ["gpu_mode_prefix"] = "GPU Mode: {0}",
 
-        // ═══════════════════ SENSOR INFO ═══════════════════
+        // SENSOR INFO
         ["cpu_fan_info"] = "CPU: {0} Fan: {1}",
         ["gpu_fan_full_info"] = "GPU: {0}{1}  Fan: {2}",
         ["gpu_fan_only"] = "GPU Fan: {0}",
         ["mid_fan_info"] = "Mid Fan: {0}",
 
-        // ═══════════════════ SCREEN ═══════════════════
+        // SCREEN
         ["screen_prefix"] = "Laptop Screen: {0}Hz",
         ["screen_prefix_auto"] = "Laptop Screen: {0}Hz (Auto)",
         ["screen_auto"] = "Auto",
         ["screen_miniled"] = "MiniLED",
 
-        // ═══════════════════ KEYBOARD ═══════════════════
+        // KEYBOARD
         ["keyboard_header"] = "Laptop Keyboard",
         ["backlight"] = "Backlight",
         ["extra"] = "Extra",
@@ -74,14 +74,14 @@ public static class English
         ["pick_color"] = "Pick Color",
         ["hex_label"] = "Hex:",
 
-        // ═══════════════════ BATTERY ═══════════════════
+        // BATTERY
         ["battery_limit_prefix"] = "Battery Charge Limit: {0}%",
         ["discharging_watts"] = "Discharging: {0}W",
         ["charging_watts"] = "Charging: {0}W",
         ["plugged_in"] = "Plugged in",
         ["charge_prefix"] = "Charge: {0}%",
 
-        // ═══════════════════ FOOTER ═══════════════════
+        // FOOTER
         ["run_on_startup"] = "Run on Startup",
         ["unknown_asus"] = "Unknown ASUS",
         ["title_prefix"] = "G-Helper - {0}",
@@ -94,7 +94,7 @@ public static class English
         ["features_prefix"] = "Features: {0}",
         ["no_features"] = "No ASUS-specific features detected",
 
-        // ═══════════════════ FEATURE NAMES ═══════════════════
+        // FEATURE NAMES
         ["feature_perf_modes"] = "Performance Modes",
         ["feature_gpu_eco"] = "GPU Eco",
         ["feature_mux"] = "MUX Switch",
@@ -103,7 +103,7 @@ public static class English
         ["feature_ppt"] = "PPT Limits",
         ["feature_nv_boost"] = "NVIDIA Dynamic Boost",
 
-        // ═══════════════════ GPU TIPS & NOTIFICATIONS ═══════════════════
+        // GPU TIPS & NOTIFICATIONS
         ["gpu_pending_reboot"] = "{0} pending - reboot to apply",
         ["gpu_pending_mode"] = "Mode",
         ["gpu_tip_eco"] = "dGPU is off - maximum battery life",
@@ -156,7 +156,7 @@ public static class English
         ["gpu_driver_after_reboot"] = "After Reboot",
         ["gpu_driver_footer"] = "Switch Now attempts to unload the GPU driver (admin password\nmay be required). After Reboot saves for next startup.",
 
-        // ═══════════════════ KEYBOARD NOTIFICATIONS ═══════════════════
+        // KEYBOARD NOTIFICATIONS
         ["kbd_off"] = "Off  \u25cb\u25cb\u25cb",
         ["kbd_low"] = "Low  \u25cf\u25cb\u25cb",
         ["kbd_medium"] = "Medium  \u25cf\u25cf\u25cb",
@@ -164,7 +164,7 @@ public static class English
         ["kbd_level"] = "Level {0}",
         ["keyboard"] = "Keyboard",
 
-        // ═══════════════════ OTHER NOTIFICATIONS ═══════════════════
+        // OTHER NOTIFICATIONS
         ["performance"] = "Performance",
         ["aura"] = "Aura",
         ["microphone"] = "Microphone",
@@ -181,14 +181,14 @@ public static class English
         ["setup_required"] = "Setup Required",
         ["udev_not_installed"] = "udev rules not installed. Run install.sh for full functionality (battery limit, fan control, etc.)",
 
-        // ═══════════════════ SYSTEM TRAY ═══════════════════
+        // SYSTEM TRAY
         ["tray_tooltip"] = "G-Helper - {0}",
         ["tray_gpu_eco"] = "GPU: Eco (iGPU only)",
         ["tray_gpu_standard"] = "GPU: Standard (dGPU)",
         ["tray_gpu_optimized"] = "GPU: Optimized (auto)",
         ["tray_gpu_ultimate"] = "GPU: Ultimate (MUX)",
 
-        // ═══════════════════ KEY ACTIONS ═══════════════════
+        // KEY ACTIONS
         ["action_none"] = "None",
         ["action_ghelper"] = "Toggle G-Helper",
         ["action_performance"] = "Cycle Performance Mode",
@@ -204,12 +204,12 @@ public static class English
         ["action_camera"] = "Toggle Camera",
         ["action_touchpad"] = "Toggle Touchpad",
 
-        // ═══════════════════ KEY NAMES ═══════════════════
+        // KEY NAMES
         ["key_m4"] = "ROG / M5 Key",
         ["key_fnf4"] = "Fn+F4 (Aura)",
         ["key_fnf5"] = "Fn+F5 / M4 (Performance)",
 
-        // ═══════════════════ EXTRA WINDOW ═══════════════════
+        // EXTRA WINDOW
         ["extra_title"] = "Extra Settings",
         ["kbd_backlight_header"] = "Keyboard Backlight",
         ["brightness"] = "Brightness",
@@ -271,7 +271,7 @@ public static class English
         ["battery_health_unknown"] = "Battery health: --%",
         ["power_draw_discharge"] = "Power draw: {0} mW (discharging)",
         ["power_draw_charge"] = "Power draw: {0} mW (charging)",
-        ["power_draw_unknown"] = "Power draw: -- mW",
+        ["power_draw_unknown"] = "Power draw: - mW",
 
         ["system_info_header"] = "System Info",
 
@@ -287,11 +287,11 @@ public static class English
         ["log_stdout"] = "Logs are written to stdout - run from terminal to see output",
         ["kernel_warning"] = "\u26A0 Kernel 6.2+ recommended for full feature support",
 
-        // ═══════════════════ LANGUAGE ═══════════════════
+        // LANGUAGE
         ["language_header"] = "Language",
         ["language_auto"] = "Auto (system)",
 
-        // ═══════════════════ FANS WINDOW ═══════════════════
+        // FANS WINDOW
         ["fans_title"] = "Fans & Power",
         ["fan_curves"] = "Fan Curves",
         ["reset"] = "Reset",
@@ -309,7 +309,7 @@ public static class English
         ["firmware_control"] = "Firmware control",
         ["fan_sensor_format"] = "CPU: {0} / GPU: {1} Load: {2}   Mid: {3} RPM",
 
-        // ═══════════════════ BATTERY INFO WINDOW ═══════════════════
+        // BATTERY INFO WINDOW
         ["battery_info_title"] = "Battery Information",
         ["health_header"] = "Health",
         ["health"] = "Health",
@@ -331,7 +331,7 @@ public static class English
         ["discharging"] = "discharging",
         ["charging"] = "charging",
 
-        // ═══════════════════ UPDATES WINDOW ═══════════════════
+        // UPDATES WINDOW
         ["updates_title"] = "BIOS & Driver Updates",
         ["updates_header"] = "BIOS & Driver Updates",
         ["copy_diagnostics"] = "Copy Diagnostics",
@@ -366,7 +366,7 @@ public static class English
         ["updates_title_format"] = "BIOS & Driver Updates: {0} ({1} BIOS {2})",
         ["app_version_format"] = "G-Helper Linux v{0} - {1}",
 
-        // ═══════════════════ ARCADE GAME ═══════════════════
+        // ARCADE GAME
         ["arcade_title"] = "ROG Fighter",
         ["arcade_game_title"] = "ROG FIGHTER",
         ["arcade_move"] = "\u2190 \u2192 \u2191 \u2193 / W A S D  move",
@@ -386,7 +386,7 @@ public static class English
         ["arcade_new_highscore"] = "NEW HIGH SCORE!",
         ["arcade_retry"] = "ENTER to retry",
 
-        // ═══════════════════ AURA MODES ═══════════════════
+        // AURA MODES
         ["aura_static"] = "Static",
         ["aura_breathe"] = "Breathe",
         ["aura_strobe"] = "Strobe",
@@ -401,12 +401,12 @@ public static class English
         ["aura_flash"] = "Flash",
         ["aura_no_modes"] = "No modes",
 
-        // ═══════════════════ AURA SPEEDS ═══════════════════
+        // AURA SPEEDS
         ["speed_slow"] = "Slow",
         ["speed_normal"] = "Normal",
         ["speed_fast"] = "Fast",
 
-        // ═══════════════════ MISC ═══════════════════
+        // MISC
         ["ghelper"] = "G-Helper",
         ["asus_laptop_control"] = "ASUS Laptop Control (Linux)",
     };

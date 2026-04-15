@@ -22,7 +22,8 @@ public class LinuxPowerManager : IPowerManager
 
     public void StartPowerMonitoring()
     {
-        if (_powerMonitoring) return;
+        if (_powerMonitoring)
+            return;
         _powerMonitoring = true;
         _lastAcState = IsOnAcPower();
 
@@ -48,7 +49,8 @@ public class LinuxPowerManager : IPowerManager
             try
             {
                 Thread.Sleep(3000); // Poll every 3 seconds
-                if (!_powerMonitoring) break;
+                if (!_powerMonitoring)
+                    break;
 
                 bool currentAc = IsOnAcPower();
                 if (_lastAcState.HasValue && currentAc != _lastAcState.Value)
@@ -103,7 +105,7 @@ public class LinuxPowerManager : IPowerManager
     public void SetPlatformProfile(string profile)
     {
         // /sys/firmware/acpi/platform_profile accepts a subset of: "low-power", "balanced", "performance", "quiet"
-        // Available profiles vary by firmware — read platform_profile_choices first
+        // Available profiles vary by firmware - read platform_profile_choices first
         if (SysfsHelper.Exists(SysfsHelper.PlatformProfile))
         {
             string? choices = SysfsHelper.ReadAttribute(SysfsHelper.PlatformProfileChoices);
@@ -115,8 +117,8 @@ public class LinuxPowerManager : IPowerManager
                 if (!available.Contains(profile))
                 {
                     // Try mapping to closest available:
-                    //   "low-power" → "quiet" → "balanced"
-                    //   "performance" → "balanced"
+                    // "low-power" → "quiet" → "balanced"
+                    // "performance" → "balanced"
                     string? fallback = profile switch
                     {
                         "low-power" when available.Contains("quiet") => "quiet",
@@ -159,14 +161,15 @@ public class LinuxPowerManager : IPowerManager
 
     public void SetAspmPolicy(string policy)
     {
-        if (!_aspmWritable) return; // Kernel blocks writes on some systems (built-in module)
+        if (!_aspmWritable)
+            return; // Kernel blocks writes on some systems (built-in module)
 
         if (SysfsHelper.Exists(SysfsHelper.PcieAspm))
         {
             if (!SysfsHelper.WriteAttribute(SysfsHelper.PcieAspm, policy))
             {
                 _aspmWritable = false;
-                Helpers.Logger.WriteLine("ASPM policy is read-only on this kernel — use boot param pcie_aspm.policy=... instead");
+                Helpers.Logger.WriteLine("ASPM policy is read-only on this kernel - use boot param pcie_aspm.policy=... instead");
             }
         }
     }
@@ -196,13 +199,15 @@ public class LinuxPowerManager : IPowerManager
 
     public int GetBatteryPercentage()
     {
-        if (_batteryDir == null) return -1;
+        if (_batteryDir == null)
+            return -1;
         return SysfsHelper.ReadInt(Path.Combine(_batteryDir, "capacity"), -1);
     }
 
     public int GetBatteryDrainRate()
     {
-        if (_batteryDir == null) return 0;
+        if (_batteryDir == null)
+            return 0;
 
         // power_now is in microwatts
         int powerUw = SysfsHelper.ReadInt(Path.Combine(_batteryDir, "power_now"), 0);
@@ -215,12 +220,14 @@ public class LinuxPowerManager : IPowerManager
 
     public int GetBatteryHealth()
     {
-        if (_batteryDir == null) return -1;
+        if (_batteryDir == null)
+            return -1;
 
         int fullCharge = SysfsHelper.ReadInt(Path.Combine(_batteryDir, "energy_full"), -1);
         int designCapacity = SysfsHelper.ReadInt(Path.Combine(_batteryDir, "energy_full_design"), -1);
 
-        if (fullCharge < 0 || designCapacity <= 0) return -1;
+        if (fullCharge < 0 || designCapacity <= 0)
+            return -1;
         return (int)(fullCharge * 100.0 / designCapacity);
     }
 }

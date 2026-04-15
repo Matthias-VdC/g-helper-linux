@@ -12,7 +12,7 @@ using GHelper.Linux.I18n;
 namespace GHelper.Linux.UI.Views;
 
 /// <summary>
-/// BIOS and Driver Updates window — Linux port of G-Helper's Updates form.
+/// BIOS and Driver Updates window - Linux port of G-Helper's Updates form.
 /// Queries ASUS ROG support API for BIOS and driver updates,
 /// compares versions, shows download links.
 /// 
@@ -261,7 +261,8 @@ public partial class UpdatesWindow : Window
                     string url = releaseUrl;
                     btnRelease.Click += (_, _) =>
                     {
-                        try { Process.Start(new ProcessStartInfo(url) { UseShellExecute = true }); }
+                        try
+                        { Process.Start(new ProcessStartInfo(url) { UseShellExecute = true }); }
                         catch { }
                     };
                     btnRow.Children.Add(btnRelease);
@@ -280,7 +281,7 @@ public partial class UpdatesWindow : Window
                 }
             });
 
-            Helpers.Logger.WriteLine($"Self-update: current=v{Helpers.AppConfig.AppVersion} latest=v{latestVersion} newer={isNewer} mode={( IsAppImage ? "AppImage" : "binary" )}");
+            Helpers.Logger.WriteLine($"Self-update: current=v{Helpers.AppConfig.AppVersion} latest=v{latestVersion} newer={isNewer} mode={(IsAppImage ? "AppImage" : "binary")}");
         }
         catch (Exception ex)
         {
@@ -369,7 +370,8 @@ public partial class UpdatesWindow : Window
                 // (the process keeps using the old inode), but does NOT allow
                 // overwriting it directly ("Text file busy" / ETXTBSY).
                 var backupPath = targetPath + ".bak";
-                if (File.Exists(backupPath)) File.Delete(backupPath);
+                if (File.Exists(backupPath))
+                    File.Delete(backupPath);
                 File.Move(targetPath, backupPath);  // rename running file → .bak (allowed)
                 File.Move(tmpPath, targetPath);      // place new file at original path
 
@@ -393,7 +395,7 @@ public partial class UpdatesWindow : Window
             }
             else
             {
-                // Can't determine target path — save to downloads
+                // Can't determine target path - save to downloads
                 var fileName = IsAppImage ? "GHelper-x86_64.AppImage" : "ghelper";
                 var savePath = Path.Combine(
                     Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
@@ -433,7 +435,8 @@ public partial class UpdatesWindow : Window
         {
             int numA = i < partsA.Length && int.TryParse(partsA[i], out var na) ? na : 0;
             int numB = i < partsB.Length && int.TryParse(partsB[i], out var nb) ? nb : 0;
-            if (numA != numB) return numA - numB;
+            if (numA != numB)
+                return numA - numB;
         }
         return 0;
     }
@@ -541,11 +544,12 @@ public partial class UpdatesWindow : Window
                 else if (!isBios)
                 {
                     // On Linux we can't easily check installed driver versions via WMI,
-                    // so we show them all as "can't check" (gray) — user can click to download
+                    // so we show them all as "can't check" (gray) - user can click to download
                     status = 0;
                 }
 
-                if (status == 1) localUpdates++;
+                if (status == 1)
+                    localUpdates++;
 
                 // Must capture for closure
                 var d = driver;

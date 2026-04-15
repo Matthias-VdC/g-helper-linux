@@ -4,7 +4,7 @@ namespace GHelper.Linux.Platform.Linux;
 /// Linux implementation of IAsusWmi using the asus-wmi kernel module (sysfs).
 /// Maps G-Helper's ATKACPI device IDs to Linux sysfs attributes.
 /// 
-/// Sysfs paths — resolved at runtime via SysfsHelper.ResolveAttrPath():
+/// Sysfs paths - resolved at runtime via SysfsHelper.ResolveAttrPath():
 ///
 ///   Legacy (kernel 6.2+ with CONFIG_ASUS_WMI_DEPRECATED_ATTRS=y):
 ///     /sys/devices/platform/asus-nb-wmi/throttle_thermal_policy
@@ -42,11 +42,11 @@ public class LinuxAsusWmi : IAsusWmi
 
     public LinuxAsusWmi()
     {
-        // Discover hwmon devices — names vary by kernel version:
-        //   Kernel <6.x:  "asus_nb_wmi" (single hwmon for fans + temps + curves)
-        //   Kernel 6.x+:  "asus" (base, has fan*_input for RPM)
-        //                  "asus_custom_fan_curve" (has pwm*_auto_point* for curve control, NO fan RPM)
-        //                  "coretemp"/"k10temp" (CPU temp)
+        // Discover hwmon devices - names vary by kernel version:
+        // Kernel <6.x:  "asus_nb_wmi" (single hwmon for fans + temps + curves)
+        // Kernel 6.x+:  "asus" (base, has fan*_input for RPM)
+        // "asus_custom_fan_curve" (has pwm*_auto_point* for curve control, NO fan RPM)
+        // "coretemp"/"k10temp" (CPU temp)
         //
         // Fan RPM: find hwmon that actually has fan1_input
         _asusFanRpmHwmonDir = SysfsHelper.FindHwmonByNameWithFile("fan1_input",
@@ -100,7 +100,7 @@ public class LinuxAsusWmi : IAsusWmi
             Helpers.Logger.WriteLine($"Battery found: {_batteryDir}");
     }
 
-    // ── Core ACPI-equivalent methods ──
+    // Core ACPI-equivalent methods
 
     public int DeviceGet(int deviceId)
     {
@@ -132,7 +132,7 @@ public class LinuxAsusWmi : IAsusWmi
             0x00120075 => SetAndReturn(() => SetThrottleThermalPolicy(value)),
             0x00120057 => SetAndReturn(() => SetBatteryChargeLimit(value)),
             0x00050019 => SetAndReturn(() => SetPanelOverdrive(value != 0)),
-            // GPU mode changes MUST go through GpuModeController — direct writes to
+            // GPU mode changes MUST go through GpuModeController - direct writes to
             // dgpu_disable cause kernel panics if the NVIDIA/AMD driver is active.
             // 0x00090020 (GPUEco) and 0x00090016 (GPUMux) intentionally removed.
             0x0005001E => SetAndReturn(() => SetMiniLedMode(value)),
@@ -154,7 +154,7 @@ public class LinuxAsusWmi : IAsusWmi
         };
     }
 
-    // ── Performance mode ──
+    // Performance mode
 
     public int GetThrottleThermalPolicy()
     {
@@ -188,7 +188,7 @@ public class LinuxAsusWmi : IAsusWmi
         // If throttle_thermal_policy doesn't exist, ModeControl still sets platform_profile directly
     }
 
-    // ── Fan control ──
+    // Fan control
 
     public int GetFanRpm(int fanIndex)
     {
@@ -198,7 +198,8 @@ public class LinuxAsusWmi : IAsusWmi
         {
             int rpm = SysfsHelper.ReadInt(
                 Path.Combine(hwmon, $"fan{fanIndex + 1}_input"), -1);
-            if (rpm > 0) return rpm;
+            if (rpm > 0)
+                return rpm;
         }
 
         // For GPU fan (index 1), try nvidia-smi as fallback (only if NVIDIA driver is loaded)
@@ -223,7 +224,8 @@ public class LinuxAsusWmi : IAsusWmi
     /// </summary>
     public int? GetGpuFanPercent()
     {
-        if (!Directory.Exists("/sys/module/nvidia")) return null;
+        if (!Directory.Exists("/sys/module/nvidia"))
+            return null;
         try
         {
             var output = SysfsHelper.RunCommand("nvidia-smi", "--query-gpu=fan.speed --format=csv,noheader,nounits");
@@ -236,7 +238,8 @@ public class LinuxAsusWmi : IAsusWmi
 
     public byte[]? GetFanCurve(int fanIndex)
     {
-        if (_asusFanCurveHwmonDir == null) return null;
+        if (_asusFanCurveHwmonDir == null)
+            return null;
 
         var curve = new byte[16];
         int pwmIndex = fanIndex + 1;
@@ -247,13 +250,15 @@ public class LinuxAsusWmi : IAsusWmi
             // The kernel stores temps directly from the ACPI buffer: data->temps[i] = buf[i]
             int temp = SysfsHelper.ReadInt(
                 Path.Combine(_asusFanCurveHwmonDir, $"pwm{pwmIndex}_auto_point{i + 1}_temp"), -1);
-            if (temp < 0) return null;
+            if (temp < 0)
+                return null;
             curve[i] = (byte)temp;
 
             // PWM 0-255 → percentage 0-100
             int pwm = SysfsHelper.ReadInt(
                 Path.Combine(_asusFanCurveHwmonDir, $"pwm{pwmIndex}_auto_point{i + 1}_pwm"), -1);
-            if (pwm < 0) return null;
+            if (pwm < 0)
+                return null;
             curve[8 + i] = (byte)(pwm * 100 / 255);
         }
 
@@ -266,8 +271,10 @@ public class LinuxAsusWmi : IAsusWmi
         bool anyPwmNonZero = false;
         for (int i = 0; i < 8; i++)
         {
-            if (curve[i] > 0) allTempsZero = false;
-            if (curve[8 + i] > 0) anyPwmNonZero = true;
+            if (curve[i] > 0)
+                allTempsZero = false;
+            if (curve[8 + i] > 0)
+                anyPwmNonZero = true;
         }
 
         if (allTempsZero && anyPwmNonZero)
@@ -284,7 +291,8 @@ public class LinuxAsusWmi : IAsusWmi
 
     public void SetFanCurve(int fanIndex, byte[] curve)
     {
-        if (_asusFanCurveHwmonDir == null || curve.Length != 16) return;
+        if (_asusFanCurveHwmonDir == null || curve.Length != 16)
+            return;
 
         int pwmIndex = fanIndex + 1;
 
@@ -311,7 +319,8 @@ public class LinuxAsusWmi : IAsusWmi
 
     public void DisableFanCurve(int fanIndex)
     {
-        if (_asusFanCurveHwmonDir == null) return;
+        if (_asusFanCurveHwmonDir == null)
+            return;
         int pwmIndex = fanIndex + 1;
 
         // pwm_enable=2 disables the custom curve for this fan, returning to
@@ -322,7 +331,8 @@ public class LinuxAsusWmi : IAsusWmi
 
     public byte[]? ResetFanCurveToDefaults(int fanIndex)
     {
-        if (_asusFanCurveHwmonDir == null) return null;
+        if (_asusFanCurveHwmonDir == null)
+            return null;
         int pwmIndex = fanIndex + 1;
 
         // pwm_enable=3 resets the fan curve to BIOS factory defaults for the
@@ -336,45 +346,51 @@ public class LinuxAsusWmi : IAsusWmi
 
     public bool IsFanCurveEnabled(int fanIndex)
     {
-        if (_asusFanCurveHwmonDir == null) return false;
+        if (_asusFanCurveHwmonDir == null)
+            return false;
         int pwmIndex = fanIndex + 1;
         return SysfsHelper.ReadInt(
             Path.Combine(_asusFanCurveHwmonDir, $"pwm{pwmIndex}_enable"), 0) == 1;
     }
 
-    // ── Battery ──
+    // Battery
 
     public int GetBatteryChargeLimit()
     {
-        if (_batteryDir == null) return -1;
+        if (_batteryDir == null)
+            return -1;
         return SysfsHelper.ReadInt(
             Path.Combine(_batteryDir, "charge_control_end_threshold"), -1);
     }
 
     public bool SetBatteryChargeLimit(int percent)
     {
-        if (_batteryDir == null) return false;
+        if (_batteryDir == null)
+            return false;
         percent = Math.Clamp(percent, 40, 100);
 
         // Some models only accept 60/80/100 as charge limits
         if (Helpers.AppConfig.IsChargeLimit6080())
         {
-            if (percent > 85) percent = 100;
-            else if (percent >= 80) percent = 80;
-            else if (percent < 60) percent = 60;
+            if (percent > 85)
+                percent = 100;
+            else if (percent >= 80)
+                percent = 80;
+            else if (percent < 60)
+                percent = 60;
         }
 
         return SysfsHelper.WriteInt(
             Path.Combine(_batteryDir, "charge_control_end_threshold"), percent);
     }
 
-    // ── GPU ──
+    // GPU
 
-    // ── Raw WMI GPU Eco detection (cached) ──
+    // Raw WMI GPU Eco detection (cached)
     private bool? _rawWmiGpuEcoAvailable;
 
     /// <summary>
-    /// True if GPU Eco switching is available — either via sysfs (dgpu_disable)
+    /// True if GPU Eco switching is available - either via sysfs (dgpu_disable)
     /// or via raw WMI debugfs (when raw_wmi is enabled and firmware supports it).
     /// </summary>
     public bool IsGpuEcoAvailable()
@@ -397,24 +413,27 @@ public class LinuxAsusWmi : IAsusWmi
 
     public bool GetGpuEco()
     {
-        // Path 1: sysfs (standard — works on models with dgpu_disable)
+        // Path 1: sysfs (standard - works on models with dgpu_disable)
         var path = SysfsHelper.ResolveAttrPath(AsusAttributes.DgpuDisable, SysfsHelper.AsusBusPlatform);
-        if (path != null) return SysfsHelper.ReadInt(path, 0) == 1;
+        if (path != null)
+            return SysfsHelper.ReadInt(path, 0) == 1;
 
-        // Path 2: raw WMI debugfs (opt-in — for models without dgpu_disable sysfs)
+        // Path 2: raw WMI debugfs (opt-in - for models without dgpu_disable sysfs)
         // Use cached probe to pick the right device ID (0 pkexec), then 1 DSTS call
-        if (!Helpers.AppConfig.Is("raw_wmi")) return false;
+        if (!Helpers.AppConfig.Is("raw_wmi"))
+            return false;
         uint devId = AsusWmiDebugfs.IsDevicePresent(AsusWmiDebugfs.DEVID_DGPU)
             ? AsusWmiDebugfs.DEVID_DGPU : AsusWmiDebugfs.DEVID_DGPU_VIVO;
         uint? r = AsusWmiDebugfs.Dsts(devId);
-        if (r == null) return false;
+        if (r == null)
+            return false;
         return (r.Value & 0x01) == 1;
     }
 
     /// <summary>
     /// Check if the NVIDIA DRM driver is currently active (holding GPU resources).
     /// Returns true if nvidia_drm is loaded AND refcnt > 0.
-    /// Used by SetGpuEco guard — prevents kernel panics from ACPI hot-removal.
+    /// Used by SetGpuEco guard - prevents kernel panics from ACPI hot-removal.
     /// </summary>
     private static bool IsNvidiaDrmActive()
     {
@@ -427,7 +446,7 @@ public class LinuxAsusWmi : IAsusWmi
         // Can't read refcnt → assume active for safety
         if (refcnt < 0)
         {
-            Helpers.Logger.WriteLine("SetGpuEco guard: nvidia_drm loaded but refcnt unreadable — assuming active");
+            Helpers.Logger.WriteLine("SetGpuEco guard: nvidia_drm loaded but refcnt unreadable - assuming active");
             return true;
         }
 
@@ -436,7 +455,7 @@ public class LinuxAsusWmi : IAsusWmi
 
     /// <summary>
     /// Check if ANY dGPU driver is currently active (NVIDIA or AMD).
-    /// Combined guard for SetGpuEco — prevents ACPI hot-removal crash for both vendors.
+    /// Combined guard for SetGpuEco - prevents ACPI hot-removal crash for both vendors.
     /// </summary>
     private bool IsDgpuDriverActive()
     {
@@ -451,7 +470,7 @@ public class LinuxAsusWmi : IAsusWmi
 
     /// <summary>
     /// Check if the AMD dGPU driver (amdgpu) is currently active.
-    /// AMD has no module refcnt like NVIDIA — instead check PCI runtime_status.
+    /// AMD has no module refcnt like NVIDIA - instead check PCI runtime_status.
     /// Returns true if amdgpu module is loaded AND bound to the dGPU AND runtime_status != "suspended".
     /// </summary>
     private static bool IsAmdDgpuDriverActive()
@@ -460,7 +479,7 @@ public class LinuxAsusWmi : IAsusWmi
         if (!Directory.Exists("/sys/module/amdgpu"))
             return false;
 
-        // Module is loaded — find the AMD dGPU PCI device
+        // Module is loaded - find the AMD dGPU PCI device
         string? pciAddr = FindAmdDgpuPciAddress();
         if (pciAddr == null)
             return false; // No AMD dGPU found
@@ -483,7 +502,7 @@ public class LinuxAsusWmi : IAsusWmi
         }
         catch
         {
-            // Can't read driver symlink — fall through to runtime_status check
+            // Can't read driver symlink - fall through to runtime_status check
         }
 
         // Check runtime power state
@@ -492,12 +511,12 @@ public class LinuxAsusWmi : IAsusWmi
 
         if (status == "suspended")
         {
-            Helpers.Logger.WriteLine($"SetGpuEco guard: AMD dGPU {pciAddr} runtime_status=suspended — safe");
+            Helpers.Logger.WriteLine($"SetGpuEco guard: AMD dGPU {pciAddr} runtime_status=suspended - safe");
             return false;
         }
 
         // "active" or any other value (including null/unreadable) → assume active for safety
-        Helpers.Logger.WriteLine($"SetGpuEco guard: AMD dGPU {pciAddr} runtime_status={status ?? "unreadable"} — active");
+        Helpers.Logger.WriteLine($"SetGpuEco guard: AMD dGPU {pciAddr} runtime_status={status ?? "unreadable"} - active");
         return true;
     }
 
@@ -510,19 +529,24 @@ public class LinuxAsusWmi : IAsusWmi
         try
         {
             string pciDir = "/sys/bus/pci/devices";
-            if (!Directory.Exists(pciDir)) return null;
+            if (!Directory.Exists(pciDir))
+                return null;
 
             foreach (var deviceDir in Directory.GetDirectories(pciDir))
             {
                 string? vendor = SysfsHelper.ReadAttribute(Path.Combine(deviceDir, "vendor"));
-                if (vendor != "0x1002") continue;
+                if (vendor != "0x1002")
+                    continue;
 
                 string? cls = SysfsHelper.ReadAttribute(Path.Combine(deviceDir, "class"));
-                if (cls == null) continue;
-                if (!cls.StartsWith("0x0300") && !cls.StartsWith("0x0302")) continue;
+                if (cls == null)
+                    continue;
+                if (!cls.StartsWith("0x0300") && !cls.StartsWith("0x0302"))
+                    continue;
 
                 string? bootVga = SysfsHelper.ReadAttribute(Path.Combine(deviceDir, "boot_vga"));
-                if (bootVga == "1") continue; // iGPU, not dGPU
+                if (bootVga == "1")
+                    continue; // iGPU, not dGPU
 
                 return Path.GetFileName(deviceDir);
             }
@@ -539,15 +563,16 @@ public class LinuxAsusWmi : IAsusWmi
         // No sysfs → try raw WMI debugfs (opt-in)
         if (path == null)
         {
-            if (!Helpers.AppConfig.Is("raw_wmi")) return;
+            if (!Helpers.AppConfig.Is("raw_wmi"))
+                return;
 
             // Same safety guards as sysfs path
             if (enabled && IsDgpuDriverActive())
                 throw new InvalidOperationException(
-                    "SAFETY: Cannot disable dGPU — driver is active (raw WMI path).");
+                    "SAFETY: Cannot disable dGPU - driver is active (raw WMI path).");
             if (enabled && GetGpuMuxMode() == 0)
                 throw new InvalidOperationException(
-                    "SAFETY: Cannot disable dGPU — MUX is in dGPU mode (raw WMI path).");
+                    "SAFETY: Cannot disable dGPU - MUX is in dGPU mode (raw WMI path).");
 
             uint devId = AsusWmiDebugfs.IsDevicePresent(AsusWmiDebugfs.DEVID_DGPU)
                 ? AsusWmiDebugfs.DEVID_DGPU : AsusWmiDebugfs.DEVID_DGPU_VIVO;
@@ -557,7 +582,7 @@ public class LinuxAsusWmi : IAsusWmi
             return;
         }
 
-        // Skip write if already in desired state — writing dgpu_disable can block
+        // Skip write if already in desired state - writing dgpu_disable can block
         // in the kernel for 30-60 seconds while the GPU powers down via ACPI/WMI
         int current = SysfsHelper.ReadInt(path, -1);
         int desired = enabled ? 1 : 0;
@@ -569,21 +594,21 @@ public class LinuxAsusWmi : IAsusWmi
 
         if (enabled)
         {
-            // ── SAFETY GUARD 1: Never disable dGPU when dGPU driver is active ──
+            // SAFETY GUARD 1: Never disable dGPU when dGPU driver is active
             // Writing dgpu_disable=1 triggers ACPI hot-removal (acpiphp_disable_and_eject_slot).
             // If nvidia_drm or amdgpu is bound, hot-removal causes kernel panic / GPU fault.
             if (IsDgpuDriverActive())
                 throw new InvalidOperationException(
-                    "SAFETY: Cannot write dgpu_disable=1 — dGPU driver is active. " +
+                    "SAFETY: Cannot write dgpu_disable=1 - dGPU driver is active. " +
                     "This would cause a kernel panic via ACPI hot-removal.");
 
-            // ── SAFETY GUARD 2: Never disable dGPU when MUX=0 (Ultimate/dGPU-direct) ──
+            // SAFETY GUARD 2: Never disable dGPU when MUX=0 (Ultimate/dGPU-direct)
             // MUX=0 means the dGPU is the sole display output. Disabling it = no display = black screen.
             // This creates an impossible boot state that requires CMOS reset to recover.
             int mux = GetGpuMuxMode();
             if (mux == 0)
                 throw new InvalidOperationException(
-                    "SAFETY: Cannot write dgpu_disable=1 — gpu_mux_mode=0 (Ultimate). " +
+                    "SAFETY: Cannot write dgpu_disable=1 - gpu_mux_mode=0 (Ultimate). " +
                     "This creates an impossible state: dGPU is sole display output but powered off.");
         }
 
@@ -591,7 +616,7 @@ public class LinuxAsusWmi : IAsusWmi
 
         if (!enabled)
         {
-            // ── PCI bus rescan after enabling dGPU ──
+            // PCI bus rescan after enabling dGPU
             // After dgpu_disable=0, the dGPU needs to reappear in the PCI device tree.
             // The kernel ACPI _ON method usually triggers re-enumeration, but an explicit
             // rescan ensures reliability (supergfxctl pattern: special_asus.rs:145-149).
@@ -599,21 +624,23 @@ public class LinuxAsusWmi : IAsusWmi
             Helpers.Logger.WriteLine("SetGpuEco: dGPU enabled, triggering PCI bus rescan");
             Thread.Sleep(50); // Brief settle time for hardware (supergfxctl uses 50ms)
             if (!SysfsHelper.WriteAttribute("/sys/bus/pci/rescan", "1"))
-                Helpers.Logger.WriteLine("SetGpuEco: PCI rescan failed (may need root) — dGPU should re-enumerate via ACPI");
+                Helpers.Logger.WriteLine("SetGpuEco: PCI rescan failed (may need root) - dGPU should re-enumerate via ACPI");
         }
     }
 
     public int GetGpuMuxMode()
     {
         var path = SysfsHelper.ResolveAttrPath(AsusAttributes.GpuMuxMode, SysfsHelper.AsusBusPlatform);
-        if (path == null) return -1;
+        if (path == null)
+            return -1;
         return SysfsHelper.ReadInt(path, -1);
     }
 
     public void SetGpuMuxMode(int mode)
     {
         var path = SysfsHelper.ResolveAttrPath(AsusAttributes.GpuMuxMode, SysfsHelper.AsusBusPlatform);
-        if (path == null) return;
+        if (path == null)
+            return;
 
         int current = SysfsHelper.ReadInt(path, -1);
         if (current == mode)
@@ -622,13 +649,13 @@ public class LinuxAsusWmi : IAsusWmi
             return;
         }
 
-        // ── SAFETY GUARD 3: Never write gpu_mux_mode when dGPU is disabled ──
+        // SAFETY GUARD 3: Never write gpu_mux_mode when dGPU is disabled
         // Firmware rejects MUX changes when dgpu_disable=1 (returns ENODEV).
         // The kernel write can hang for several seconds before returning the error.
         // Refusing immediately is safer and faster.
         if (GetGpuEco())
             throw new InvalidOperationException(
-                "SAFETY: Cannot write gpu_mux_mode — dgpu_disable=1. " +
+                "SAFETY: Cannot write gpu_mux_mode - dgpu_disable=1. " +
                 "Firmware rejects MUX changes when dGPU is powered off.");
 
         if (!SysfsHelper.WriteInt(path, mode))
@@ -636,13 +663,14 @@ public class LinuxAsusWmi : IAsusWmi
                 $"gpu_mux_mode write rejected by firmware (wrote {mode} to {path})");
     }
 
-    // ── Display ──
+    // Display
 
     public bool GetPanelOverdrive()
     {
         // AsusAttributes.PanelOd handles the alias: panel_od (legacy) → panel_overdrive (fw-attr)
         var path = SysfsHelper.ResolveAttrPath(AsusAttributes.PanelOd, SysfsHelper.AsusWmiPlatform);
-        if (path == null) return false;
+        if (path == null)
+            return false;
         return SysfsHelper.ReadInt(path, 0) == 1;
     }
 
@@ -656,7 +684,8 @@ public class LinuxAsusWmi : IAsusWmi
     public int GetMiniLedMode()
     {
         var path = SysfsHelper.ResolveAttrPath(AsusAttributes.MiniLedMode, SysfsHelper.AsusBusPlatform);
-        if (path == null) return -1;
+        if (path == null)
+            return -1;
         return SysfsHelper.ReadInt(path, -1);
     }
 
@@ -667,15 +696,15 @@ public class LinuxAsusWmi : IAsusWmi
             SysfsHelper.WriteInt(path, mode);
     }
 
-    // ── PPT / Power limits ──
+    // PPT / Power limits
 
     public void SetPptLimit(string attribute, int watts)
     {
         // PPT attributes: ppt_pl1_spl, ppt_pl2_sppt, ppt_fppt, ppt_apu_sppt, etc.
         //
         // On dual-backend kernels (asus-nb-wmi + asus-armoury), we cannot predict which
-        // backend is functional for any given attribute. Write to ALL available paths —
-        // legacy sysfs and firmware-attributes — so at least one succeeds.
+        // backend is functional for any given attribute. Write to ALL available paths
+        // legacy sysfs and firmware-attributes - so at least one succeeds.
         // See: https://github.com/utajum/g-helper-linux/issues/23
         var attrDef = AsusAttributes.FindByLegacyName(attribute);
         if (attrDef != null)
@@ -699,11 +728,12 @@ public class LinuxAsusWmi : IAsusWmi
             return SysfsHelper.ReadFromAnyBackend(attrDef, -1, SysfsHelper.AsusWmiPlatform);
 
         var path = SysfsHelper.ResolveAttrPath(attribute, SysfsHelper.AsusWmiPlatform);
-        if (path == null) return -1;
+        if (path == null)
+            return -1;
         return SysfsHelper.ReadInt(path, -1);
     }
 
-    // ── Keyboard ──
+    // Keyboard
 
     /// <summary>
     /// True when the kernel driver handles keyboard brightness changes in hardware
@@ -745,7 +775,7 @@ public class LinuxAsusWmi : IAsusWmi
             Helpers.Logger.WriteLine($"kbd_rgb_mode not available at {modePath}");
             return;
         }
-        // Protocol: [1, mode, R, G, B, speed] — matches asusctl's TUF write
+        // Protocol: [1, mode, R, G, B, speed] - matches asusctl's TUF write
         string value = $"1 {mode} {r} {g} {b} {speed}";
         SysfsHelper.WriteAttribute(modePath, value);
     }
@@ -764,7 +794,7 @@ public class LinuxAsusWmi : IAsusWmi
             Helpers.Logger.WriteLine($"kbd_rgb_state not available at {statePath}");
             return;
         }
-        // Protocol: [1, boot, awake, sleep, 1] — matches asusctl's TUF power state
+        // Protocol: [1, boot, awake, sleep, 1] - matches asusctl's TUF power state
         string value = $"1 {(boot ? 1 : 0)} {(awake ? 1 : 0)} {(sleep ? 1 : 0)} 1";
         SysfsHelper.WriteAttribute(statePath, value);
     }
@@ -778,22 +808,24 @@ public class LinuxAsusWmi : IAsusWmi
             Path.Combine(SysfsHelper.Leds, "asus::kbd_backlight", "kbd_rgb_mode"));
     }
 
-    // ── Temperature ──
+    // Temperature
 
     private int GetCpuTemp()
     {
-        // Try dedicated CPU temp hwmon (coretemp/k10temp) — package temp
+        // Try dedicated CPU temp hwmon (coretemp/k10temp) - package temp
         if (_cpuTempHwmonDir != null)
         {
             int temp = SysfsHelper.ReadInt(Path.Combine(_cpuTempHwmonDir, "temp1_input"), -1);
-            if (temp > 0) return temp / 1000;
+            if (temp > 0)
+                return temp / 1000;
         }
 
         // Try ASUS base hwmon
         if (_asusBaseHwmonDir != null)
         {
             int temp = SysfsHelper.ReadInt(Path.Combine(_asusBaseHwmonDir, "temp1_input"), -1);
-            if (temp > 0) return temp / 1000;
+            if (temp > 0)
+                return temp / 1000;
         }
 
         // Fallback to thermal zones
@@ -805,14 +837,16 @@ public class LinuxAsusWmi : IAsusWmi
                 if (type != null && type.Contains("x86_pkg_temp", StringComparison.OrdinalIgnoreCase))
                 {
                     int temp = SysfsHelper.ReadInt(Path.Combine(zone, "temp"), -1);
-                    if (temp > 0) return temp / 1000;
+                    if (temp > 0)
+                        return temp / 1000;
                 }
             }
 
             // Last resort: first thermal zone
             var fallback = Path.Combine(SysfsHelper.Thermal, "thermal_zone0", "temp");
             int fallbackTemp = SysfsHelper.ReadInt(fallback, -1);
-            if (fallbackTemp > 0) return fallbackTemp / 1000;
+            if (fallbackTemp > 0)
+                return fallbackTemp / 1000;
         }
 
         return -1;
@@ -825,7 +859,8 @@ public class LinuxAsusWmi : IAsusWmi
         if (nvidiaHwmon != null)
         {
             int temp = SysfsHelper.ReadInt(Path.Combine(nvidiaHwmon, "temp1_input"), -1);
-            if (temp > 0) return temp / 1000;
+            if (temp > 0)
+                return temp / 1000;
         }
 
         // Try amdgpu hwmon
@@ -833,7 +868,8 @@ public class LinuxAsusWmi : IAsusWmi
         if (amdHwmon != null)
         {
             int temp = SysfsHelper.ReadInt(Path.Combine(amdHwmon, "temp1_input"), -1);
-            if (temp > 0) return temp / 1000;
+            if (temp > 0)
+                return temp / 1000;
         }
 
         // Fallback: try nvidia-smi (only if NVIDIA driver is loaded)
@@ -851,7 +887,7 @@ public class LinuxAsusWmi : IAsusWmi
         return -1;
     }
 
-    // ── Events ──
+    // Events
 
     public void SubscribeEvents()
     {
@@ -941,7 +977,9 @@ public class LinuxAsusWmi : IAsusWmi
         {
             foreach (var fs in streams)
             {
-                try { fs.Dispose(); } catch { }
+                try
+                { fs.Dispose(); }
+                catch { }
             }
         }
     }
@@ -962,7 +1000,7 @@ public class LinuxAsusWmi : IAsusWmi
                     ushort code = BitConverter.ToUInt16(buffer, 18);
                     int value = BitConverter.ToInt32(buffer, 20);
 
-                    // EV_MSC (4) / MSC_SCAN (4) — capture scan code for next EV_KEY.
+                    // EV_MSC (4) / MSC_SCAN (4) - capture scan code for next EV_KEY.
                     // MSC_SCAN values match Windows WMI event codes and are consistent
                     // across models even when KEY_* codes differ (e.g. TUF vs ROG).
                     if (type == 4 && code == 4)
@@ -1020,7 +1058,8 @@ public class LinuxAsusWmi : IAsusWmi
         var result = new List<string>();
         try
         {
-            if (!File.Exists("/proc/bus/input/devices")) return result;
+            if (!File.Exists("/proc/bus/input/devices"))
+                return result;
 
             var content = File.ReadAllText("/proc/bus/input/devices");
             var sections = content.Split("\n\n", StringSplitOptions.RemoveEmptyEntries);
@@ -1032,7 +1071,8 @@ public class LinuxAsusWmi : IAsusWmi
                 // The vendor match catches ITE-named ASUS HID devices like "ITE Tech. Inc. ITE Device(8910)".
                 bool isAsus = section.Contains("asus", StringComparison.OrdinalIgnoreCase)
                     || section.Contains("Vendor=0b05", StringComparison.OrdinalIgnoreCase);
-                if (!isAsus) continue;
+                if (!isAsus)
+                    continue;
 
                 bool isKeyboard = section.Contains("keyboard", StringComparison.OrdinalIgnoreCase)
                     || section.Contains("Vendor=0b05", StringComparison.OrdinalIgnoreCase);
@@ -1170,7 +1210,7 @@ public class LinuxAsusWmi : IAsusWmi
         };
     }
 
-    // ── Feature detection ──
+    // Feature detection
 
     public bool IsFeatureSupported(string feature)
     {
@@ -1178,7 +1218,7 @@ public class LinuxAsusWmi : IAsusWmi
         return SysfsHelper.ResolveAttrPath(feature, SysfsHelper.AsusWmiPlatform, SysfsHelper.AsusBusPlatform) != null;
     }
 
-    // ── Helpers ──
+    // Helpers
 
     private static int SetAndReturn(Action action)
     {
@@ -1202,7 +1242,9 @@ public class LinuxAsusWmi : IAsusWmi
         {
             foreach (var fs in _eventStreams)
             {
-                try { fs.Close(); } catch { }
+                try
+                { fs.Close(); }
+                catch { }
             }
             _eventStreams.Clear();
         }

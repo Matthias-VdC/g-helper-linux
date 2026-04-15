@@ -9,21 +9,21 @@ using GHelper.Linux.I18n;
 namespace GHelper.Linux.UI.Views;
 
 /// <summary>
-/// ROG Fighter — retro top-down arcade shooter (1942-style).
+/// ROG Fighter - retro top-down arcade shooter (1942-style).
 /// Pure wave-based formation spawning, 4 enemy types, boss every 5 waves,
 /// 6 power-ups, high score persistence. All Canvas rectangles, no image assets.
 /// </summary>
 public partial class ArcadeWindow : Window
 {
-    // ── Constants ──
+    // Constants
     const double CW = 480, CH = 640;
     const double PlayerSpeed = 5, BulletSpeed = 7, EnemyBulletSpeed = 3.5;
     const int StarCount = 50;
 
-    // ── Enemy types ──
+    // Enemy types
     enum EnemyType { Scout, Fighter, Bomber, Ace, Boss }
 
-    // ── Colors ──
+    // Colors
     static readonly IBrush PlayerBody = new SolidColorBrush(Color.Parse("#FFD700"));
     static readonly IBrush PlayerWing = new SolidColorBrush(Color.Parse("#DAA520"));
     static readonly IBrush PlayerCockpit = new SolidColorBrush(Color.Parse("#B8860B"));
@@ -69,7 +69,7 @@ public partial class ArcadeWindow : Window
     static readonly IBrush TextBrush = new SolidColorBrush(Color.Parse("#F0F0F0"));
     static readonly IBrush DimBrush = new SolidColorBrush(Color.Parse("#888888"));
 
-    // ── Data types ──
+    // Data types
     enum GameState { Menu, Playing, GameOver }
     enum PowerUpType { Spread, Shield, Rapid, Bomb, Magnet, Life }
 
@@ -79,7 +79,7 @@ public partial class ArcadeWindow : Window
     record struct PowerUp(double X, double Y, PowerUpType Type);
     record struct Star(double X, double Y, double Speed, double Brightness);
 
-    // ── Game state ──
+    // Game state
     GameState _state = GameState.Menu;
     double _playerX, _playerY;
     int _score, _highScore, _lives, _frame;
@@ -116,20 +116,34 @@ public partial class ArcadeWindow : Window
         KeyUp += OnKeyUp;
     }
 
-    // ── Input ──
+    // Input
 
     private void OnKeyDown(object? s, KeyEventArgs e)
     {
         switch (e.Key)
         {
-            case Key.Left or Key.A: _keyLeft = true; break;
-            case Key.Right or Key.D: _keyRight = true; break;
-            case Key.Up or Key.W: _keyUp = true; break;
-            case Key.Down or Key.S: _keyDown = true; break;
-            case Key.Space: _keyShoot = true; break;
+            case Key.Left or Key.A:
+                _keyLeft = true;
+                break;
+            case Key.Right or Key.D:
+                _keyRight = true;
+                break;
+            case Key.Up or Key.W:
+                _keyUp = true;
+                break;
+            case Key.Down or Key.S:
+                _keyDown = true;
+                break;
+            case Key.Space:
+                _keyShoot = true;
+                break;
             case Key.Return or Key.Enter:
-                if (_state != GameState.Playing) StartGame(); break;
-            case Key.Escape: Close(); break;
+                if (_state != GameState.Playing)
+                    StartGame();
+                break;
+            case Key.Escape:
+                Close();
+                break;
         }
     }
 
@@ -137,25 +151,45 @@ public partial class ArcadeWindow : Window
     {
         switch (e.Key)
         {
-            case Key.Left or Key.A: _keyLeft = false; break;
-            case Key.Right or Key.D: _keyRight = false; break;
-            case Key.Up or Key.W: _keyUp = false; break;
-            case Key.Down or Key.S: _keyDown = false; break;
-            case Key.Space: _keyShoot = false; break;
+            case Key.Left or Key.A:
+                _keyLeft = false;
+                break;
+            case Key.Right or Key.D:
+                _keyRight = false;
+                break;
+            case Key.Up or Key.W:
+                _keyUp = false;
+                break;
+            case Key.Down or Key.S:
+                _keyDown = false;
+                break;
+            case Key.Space:
+                _keyShoot = false;
+                break;
         }
     }
 
-    // ── Lifecycle ──
+    // Lifecycle
 
     private void StartGame()
     {
         _state = GameState.Playing;
-        _playerX = CW / 2; _playerY = CH - 60;
-        _score = 0; _lives = 3; _frame = 0;
-        _fireCooldown = 0; _spreadTimer = 0; _rapidTimer = 0; _magnetTimer = 0;
+        _playerX = CW / 2;
+        _playerY = CH - 60;
+        _score = 0;
+        _lives = 3;
+        _frame = 0;
+        _fireCooldown = 0;
+        _spreadTimer = 0;
+        _rapidTimer = 0;
+        _magnetTimer = 0;
         _hasShield = false;
-        _waveNumber = 0; _waveActive = false; _wavePauseCd = 60;
-        _bullets.Clear(); _enemies.Clear(); _powerUps.Clear();
+        _waveNumber = 0;
+        _waveActive = false;
+        _wavePauseCd = 60;
+        _bullets.Clear();
+        _enemies.Clear();
+        _powerUps.Clear();
     }
 
     private void InitStars()
@@ -165,7 +199,7 @@ public partial class ArcadeWindow : Window
                 0.3 + _rng.NextDouble() * 1.5, 0.3 + _rng.NextDouble() * 0.7);
     }
 
-    // ── Game loop ──
+    // Game loop
 
     private void GameTick()
     {
@@ -189,19 +223,25 @@ public partial class ArcadeWindow : Window
         {
             var st = _stars[i];
             st.Y += st.Speed;
-            if (st.Y > CH) { st.Y = 0; st.X = _rng.NextDouble() * CW; }
+            if (st.Y > CH)
+            { st.Y = 0; st.X = _rng.NextDouble() * CW; }
             _stars[i] = st;
         }
     }
 
     private void UpdatePlayer()
     {
-        if (_keyLeft) _playerX = Math.Max(20, _playerX - PlayerSpeed);
-        if (_keyRight) _playerX = Math.Min(CW - 20, _playerX + PlayerSpeed);
-        if (_keyUp) _playerY = Math.Max(CH * 0.35, _playerY - PlayerSpeed);
-        if (_keyDown) _playerY = Math.Min(CH - 30, _playerY + PlayerSpeed);
+        if (_keyLeft)
+            _playerX = Math.Max(20, _playerX - PlayerSpeed);
+        if (_keyRight)
+            _playerX = Math.Min(CW - 20, _playerX + PlayerSpeed);
+        if (_keyUp)
+            _playerY = Math.Max(CH * 0.35, _playerY - PlayerSpeed);
+        if (_keyDown)
+            _playerY = Math.Min(CH - 30, _playerY + PlayerSpeed);
 
-        if (_fireCooldown > 0) _fireCooldown--;
+        if (_fireCooldown > 0)
+            _fireCooldown--;
         int rate = _rapidTimer > 0 ? 5 : 10;
         if (_keyShoot && _fireCooldown <= 0)
         {
@@ -217,9 +257,12 @@ public partial class ArcadeWindow : Window
                 _bullets.Add(new Bullet(_playerX, _playerY - 16, 0, -BulletSpeed, true));
             }
         }
-        if (_spreadTimer > 0) _spreadTimer--;
-        if (_rapidTimer > 0) _rapidTimer--;
-        if (_magnetTimer > 0) _magnetTimer--;
+        if (_spreadTimer > 0)
+            _spreadTimer--;
+        if (_rapidTimer > 0)
+            _rapidTimer--;
+        if (_magnetTimer > 0)
+            _magnetTimer--;
     }
 
     private void UpdateBullets()
@@ -229,7 +272,8 @@ public partial class ArcadeWindow : Window
             var b = _bullets[i] with { X = _bullets[i].X + _bullets[i].Dx, Y = _bullets[i].Y + _bullets[i].Dy };
             if (b.Y < -10 || b.Y > CH + 10 || b.X < -10 || b.X > CW + 10)
                 _bullets.RemoveAt(i);
-            else _bullets[i] = b;
+            else
+                _bullets[i] = b;
         }
     }
 
@@ -304,18 +348,18 @@ public partial class ArcadeWindow : Window
                                 shootCd = 25;
                                 break;
                             case 2: // Phantom: aimed shot toward player
-                            {
-                                double adx = _playerX - e.X, ady = _playerY - e.Y;
-                                double dist = Math.Sqrt(adx * adx + ady * ady);
-                                if (dist > 1)
                                 {
-                                    _bullets.Add(new Bullet(e.X, e.Y + 20,
-                                        adx / dist * EnemyBulletSpeed * 0.8,
-                                        ady / dist * EnemyBulletSpeed * 0.8, false));
+                                    double adx = _playerX - e.X, ady = _playerY - e.Y;
+                                    double dist = Math.Sqrt(adx * adx + ady * ady);
+                                    if (dist > 1)
+                                    {
+                                        _bullets.Add(new Bullet(e.X, e.Y + 20,
+                                            adx / dist * EnemyBulletSpeed * 0.8,
+                                            ady / dist * EnemyBulletSpeed * 0.8, false));
+                                    }
+                                    shootCd = 40;
+                                    break;
                                 }
-                                shootCd = 40;
-                                break;
-                            }
                             case 3: // Bombardier: 5-bomb carpet
                                 for (int b = 0; b < 5; b++)
                                     _bullets.Add(new Bullet(e.X - 30 + b * 15, e.Y + 25, 0, 2.0, false));
@@ -356,7 +400,8 @@ public partial class ArcadeWindow : Window
 
             if (e.Y > CH + 60 || e.X < -100 || e.X > CW + 100)
                 _enemies.RemoveAt(i);
-            else _enemies[i] = e;
+            else
+                _enemies[i] = e;
         }
     }
 
@@ -373,16 +418,19 @@ public partial class ArcadeWindow : Window
             {
                 double ddx = _playerX - p.X, ddy = _playerY - p.Y;
                 double dist = Math.Sqrt(ddx * ddx + ddy * ddy);
-                if (dist > 5) { dx = ddx / dist * 4; dy = ddy / dist * 4; }
+                if (dist > 5)
+                { dx = ddx / dist * 4; dy = ddy / dist * 4; }
             }
 
             p = p with { X = p.X + dx, Y = p.Y + dy };
-            if (p.Y > CH + 20) _powerUps.RemoveAt(i);
-            else _powerUps[i] = p;
+            if (p.Y > CH + 20)
+                _powerUps.RemoveAt(i);
+            else
+                _powerUps[i] = p;
         }
     }
 
-    // ── Wave spawner ──
+    // Wave spawner
 
     private void RunWaveSpawner()
     {
@@ -391,9 +439,11 @@ public partial class ArcadeWindow : Window
             // Progressive threshold: starts at 50%, reaches 20% by wave 15
             double threshold = CH * Math.Max(0.2, 0.5 - _waveNumber * 0.02);
             foreach (var e in _enemies)
-                if (e.Y < threshold) return;
+                if (e.Y < threshold)
+                    return;
 
-            if (_wavePauseCd > 0) { _wavePauseCd--; return; }
+            if (_wavePauseCd > 0)
+            { _wavePauseCd--; return; }
 
             // Start next wave
             _waveNumber++;
@@ -415,10 +465,20 @@ public partial class ArcadeWindow : Window
                 {
                     <= 2 => EnemyType.Scout,
                     <= 4 => cycle == 0 ? EnemyType.Scout : EnemyType.Fighter,
-                    <= 8 => cycle switch { 0 => EnemyType.Scout, 1 => EnemyType.Fighter,
-                                           2 => EnemyType.Bomber, _ => EnemyType.Fighter },
-                    _ => cycle switch { 0 => EnemyType.Fighter, 1 => EnemyType.Bomber,
-                                        2 => EnemyType.Ace, _ => EnemyType.Scout }
+                    <= 8 => cycle switch
+                    {
+                        0 => EnemyType.Scout,
+                        1 => EnemyType.Fighter,
+                        2 => EnemyType.Bomber,
+                        _ => EnemyType.Fighter
+                    },
+                    _ => cycle switch
+                    {
+                        0 => EnemyType.Fighter,
+                        1 => EnemyType.Bomber,
+                        2 => EnemyType.Ace,
+                        _ => EnemyType.Scout
+                    }
                 };
                 _waveSpawnTotal = _waveType switch
                 {
@@ -432,8 +492,10 @@ public partial class ArcadeWindow : Window
         }
 
         // Spawn enemies within the wave
-        if (_waveSpawnCd > 0) { _waveSpawnCd--; return; }
-        if (_waveSpawnIndex >= _waveSpawnTotal) { _waveActive = false; _wavePauseCd = 30; return; }
+        if (_waveSpawnCd > 0)
+        { _waveSpawnCd--; return; }
+        if (_waveSpawnIndex >= _waveSpawnTotal)
+        { _waveActive = false; _wavePauseCd = 30; return; }
 
         SpawnWaveEnemy(_waveType, _waveSpawnIndex, _waveSpawnTotal);
         _waveSpawnIndex++;
@@ -448,63 +510,64 @@ public partial class ArcadeWindow : Window
         switch (type)
         {
             case EnemyType.Scout:
-            {
-                // V-formation
-                double cx = CW / 2;
-                double offsetX = (idx - total / 2.0) * 40;
-                double offsetY = Math.Abs(idx - total / 2.0) * 20;
-                _enemies.Add(new Enemy(cx + offsetX, -20 - offsetY, 0, 1.8 * speedMul,
-                    1, 1, EnemyType.Scout, 0, idx * 50, 0));
-                break;
-            }
-            case EnemyType.Fighter:
-            {
-                double x = 60 + idx * ((CW - 120) / Math.Max(total - 1, 1));
-                _enemies.Add(new Enemy(x, -20 - idx * 10, 0, 1.4 * speedMul,
-                    1, 1, EnemyType.Fighter, 0, idx * 80, 0));
-                break;
-            }
-            case EnemyType.Bomber:
-            {
-                double x = CW * 0.3 + idx * (CW * 0.2);
-                _enemies.Add(new Enemy(x, -30 - idx * 40, 0, 0.8 * speedMul,
-                    2 + cycle, 2 + cycle, EnemyType.Bomber, 0, idx * 60, 0));
-                break;
-            }
-            case EnemyType.Ace:
-            {
-                double cx = CW / 2;
-                double offsetX = (idx - total / 2.0) * 50;
-                _enemies.Add(new Enemy(cx + offsetX, -20, 0, 2.0 * speedMul,
-                    2 + cycle, 2 + cycle, EnemyType.Ace, 0, idx * 100, 0));
-                break;
-            }
-            case EnemyType.Boss:
-            {
-                int bossId = ((_waveNumber / 5) - 1) % 5;
-                int hp = bossId switch
                 {
-                    0 => 20, // Mothership
-                    1 => 25, // Fortress
-                    2 => 20, // Phantom
-                    3 => 30, // Bombardier
-                    4 => 35, // Overlord
-                    _ => 20
-                } + cycle * 8;
-                _enemies.Add(new Enemy(CW / 2, -60, 0, 0.8, hp, hp, EnemyType.Boss, 0, 0, bossId));
-                break;
-            }
+                    // V-formation
+                    double cx = CW / 2;
+                    double offsetX = (idx - total / 2.0) * 40;
+                    double offsetY = Math.Abs(idx - total / 2.0) * 20;
+                    _enemies.Add(new Enemy(cx + offsetX, -20 - offsetY, 0, 1.8 * speedMul,
+                        1, 1, EnemyType.Scout, 0, idx * 50, 0));
+                    break;
+                }
+            case EnemyType.Fighter:
+                {
+                    double x = 60 + idx * ((CW - 120) / Math.Max(total - 1, 1));
+                    _enemies.Add(new Enemy(x, -20 - idx * 10, 0, 1.4 * speedMul,
+                        1, 1, EnemyType.Fighter, 0, idx * 80, 0));
+                    break;
+                }
+            case EnemyType.Bomber:
+                {
+                    double x = CW * 0.3 + idx * (CW * 0.2);
+                    _enemies.Add(new Enemy(x, -30 - idx * 40, 0, 0.8 * speedMul,
+                        2 + cycle, 2 + cycle, EnemyType.Bomber, 0, idx * 60, 0));
+                    break;
+                }
+            case EnemyType.Ace:
+                {
+                    double cx = CW / 2;
+                    double offsetX = (idx - total / 2.0) * 50;
+                    _enemies.Add(new Enemy(cx + offsetX, -20, 0, 2.0 * speedMul,
+                        2 + cycle, 2 + cycle, EnemyType.Ace, 0, idx * 100, 0));
+                    break;
+                }
+            case EnemyType.Boss:
+                {
+                    int bossId = ((_waveNumber / 5) - 1) % 5;
+                    int hp = bossId switch
+                    {
+                        0 => 20, // Mothership
+                        1 => 25, // Fortress
+                        2 => 20, // Phantom
+                        3 => 30, // Bombardier
+                        4 => 35, // Overlord
+                        _ => 20
+                    } + cycle * 8;
+                    _enemies.Add(new Enemy(CW / 2, -60, 0, 0.8, hp, hp, EnemyType.Boss, 0, 0, bossId));
+                    break;
+                }
         }
     }
 
-    // ── Collisions ──
+    // Collisions
 
     private void CheckCollisions()
     {
         // Player bullets → enemies
         for (int bi = _bullets.Count - 1; bi >= 0; bi--)
         {
-            if (!_bullets[bi].IsPlayer) continue;
+            if (!_bullets[bi].IsPlayer)
+                continue;
             var b = _bullets[bi];
 
             for (int ei = _enemies.Count - 1; ei >= 0; ei--)
@@ -527,7 +590,9 @@ public partial class ArcadeWindow : Window
                             EnemyType.Bomber => 20,
                             _ => 10
                         };
-                        try { Helpers.CoinSound.Play(); } catch { }
+                        try
+                        { Helpers.CoinSound.Play(); }
+                        catch { }
 
                         // Power-up drop: 15% normal, 100% boss
                         if (e.Type == EnemyType.Boss || _rng.Next(100) < 15)
@@ -536,7 +601,8 @@ public partial class ArcadeWindow : Window
                             _powerUps.Add(new PowerUp(e.X, e.Y, pt));
                         }
                     }
-                    else _enemies[ei] = e;
+                    else
+                        _enemies[ei] = e;
                     break;
                 }
             }
@@ -545,7 +611,8 @@ public partial class ArcadeWindow : Window
         // Enemy bullets → player
         for (int bi = _bullets.Count - 1; bi >= 0; bi--)
         {
-            if (_bullets[bi].IsPlayer) continue;
+            if (_bullets[bi].IsPlayer)
+                continue;
             if (HitsRect(_bullets[bi].X, _bullets[bi].Y, _playerX, _playerY, 28, 28))
             {
                 _bullets.RemoveAt(bi);
@@ -560,7 +627,8 @@ public partial class ArcadeWindow : Window
             var (ew, eh) = EnemySize(e.Type);
             if (RectsOverlap(_playerX, _playerY, 28, 28, e.X, e.Y, ew, eh))
             {
-                if (e.Type != EnemyType.Boss) _enemies.RemoveAt(ei);
+                if (e.Type != EnemyType.Boss)
+                    _enemies.RemoveAt(ei);
                 HitPlayer();
             }
         }
@@ -581,9 +649,15 @@ public partial class ArcadeWindow : Window
     {
         switch (type)
         {
-            case PowerUpType.Spread: _spreadTimer = 600; break;
-            case PowerUpType.Rapid: _rapidTimer = 600; break;
-            case PowerUpType.Shield: _hasShield = true; break;
+            case PowerUpType.Spread:
+                _spreadTimer = 600;
+                break;
+            case PowerUpType.Rapid:
+                _rapidTimer = 600;
+                break;
+            case PowerUpType.Shield:
+                _hasShield = true;
+                break;
             case PowerUpType.Bomb:
                 // Clear all non-boss enemies, damage boss 5HP
                 for (int i = _enemies.Count - 1; i >= 0; i--)
@@ -591,8 +665,10 @@ public partial class ArcadeWindow : Window
                     if (_enemies[i].Type == EnemyType.Boss)
                     {
                         var boss = _enemies[i] with { Hp = _enemies[i].Hp - 5 };
-                        if (boss.Hp <= 0) { _enemies.RemoveAt(i); _score += 50; }
-                        else _enemies[i] = boss;
+                        if (boss.Hp <= 0)
+                        { _enemies.RemoveAt(i); _score += 50; }
+                        else
+                            _enemies[i] = boss;
                     }
                     else
                     {
@@ -600,20 +676,27 @@ public partial class ArcadeWindow : Window
                         _enemies.RemoveAt(i);
                     }
                 }
-                try { Helpers.CoinSound.Play(); } catch { }
+                try
+                { Helpers.CoinSound.Play(); }
+                catch { }
                 break;
-            case PowerUpType.Magnet: _magnetTimer = 480; break; // 8 sec
+            case PowerUpType.Magnet:
+                _magnetTimer = 480;
+                break; // 8 sec
             case PowerUpType.Life:
-                if (_lives < 5) _lives++;
+                if (_lives < 5)
+                    _lives++;
                 break;
         }
     }
 
     private void HitPlayer()
     {
-        if (_hasShield) { _hasShield = false; return; }
+        if (_hasShield)
+        { _hasShield = false; return; }
         _lives--;
-        _spreadTimer = 0; _rapidTimer = 0;
+        _spreadTimer = 0;
+        _rapidTimer = 0;
         if (_lives <= 0)
         {
             _state = GameState.GameOver;
@@ -642,7 +725,7 @@ public partial class ArcadeWindow : Window
                               double x2, double y2, double w2, double h2)
         => Math.Abs(x1 - x2) < (w1 + w2) / 2 && Math.Abs(y1 - y2) < (h1 + h2) / 2;
 
-    // ══════════════════ RENDERING ══════════════════
+    // RENDERING
 
     private void Render()
     {
@@ -651,9 +734,14 @@ public partial class ArcadeWindow : Window
         // Starfield
         foreach (var s in _stars)
         {
-            var star = new Rectangle { Width = 2, Height = 2,
-                Fill = new SolidColorBrush(Color.FromArgb((byte)(s.Brightness * 255), 255, 255, 255)) };
-            Canvas.SetLeft(star, s.X); Canvas.SetTop(star, s.Y);
+            var star = new Rectangle
+            {
+                Width = 2,
+                Height = 2,
+                Fill = new SolidColorBrush(Color.FromArgb((byte)(s.Brightness * 255), 255, 255, 255))
+            };
+            Canvas.SetLeft(star, s.X);
+            Canvas.SetTop(star, s.Y);
             gameCanvas.Children.Add(star);
         }
 
@@ -684,7 +772,8 @@ public partial class ArcadeWindow : Window
             DrawRect(b.X, b.Y, 3, 8, b.IsPlayer ? BulletBrush : EnemyBulletBrush);
 
         // Enemies
-        foreach (var e in _enemies) DrawEnemy(e);
+        foreach (var e in _enemies)
+            DrawEnemy(e);
 
         // Player
         if (_state == GameState.Playing)
@@ -692,9 +781,16 @@ public partial class ArcadeWindow : Window
             DrawPlayerPlane(_playerX, _playerY);
             if (_hasShield)
             {
-                var sh = new Ellipse { Width = 44, Height = 44,
-                    Stroke = ShieldColor, StrokeThickness = 2, Fill = null };
-                Canvas.SetLeft(sh, _playerX - 22); Canvas.SetTop(sh, _playerY - 22);
+                var sh = new Ellipse
+                {
+                    Width = 44,
+                    Height = 44,
+                    Stroke = ShieldColor,
+                    StrokeThickness = 2,
+                    Fill = null
+                };
+                Canvas.SetLeft(sh, _playerX - 22);
+                Canvas.SetTop(sh, _playerY - 22);
                 gameCanvas.Children.Add(sh);
             }
         }
@@ -707,10 +803,14 @@ public partial class ArcadeWindow : Window
             DrawRect(CW / 2 - 24 + i * 14, 30, 8, 8, PlayerBody);
 
         double iy = 48;
-        if (_spreadTimer > 0) { DrawText(Labels.Format("arcade_spread", _spreadTimer / 60), 10, iy, 10, SpreadColor, false); iy += 13; }
-        if (_rapidTimer > 0) { DrawText(Labels.Format("arcade_rapid", _rapidTimer / 60), 10, iy, 10, RapidColor, false); iy += 13; }
-        if (_magnetTimer > 0) { DrawText(Labels.Format("arcade_magnet", _magnetTimer / 60), 10, iy, 10, MagnetColor, false); iy += 13; }
-        if (_hasShield) { DrawText(Labels.Get("arcade_shield"), 10, iy, 10, ShieldColor, false); }
+        if (_spreadTimer > 0)
+        { DrawText(Labels.Format("arcade_spread", _spreadTimer / 60), 10, iy, 10, SpreadColor, false); iy += 13; }
+        if (_rapidTimer > 0)
+        { DrawText(Labels.Format("arcade_rapid", _rapidTimer / 60), 10, iy, 10, RapidColor, false); iy += 13; }
+        if (_magnetTimer > 0)
+        { DrawText(Labels.Format("arcade_magnet", _magnetTimer / 60), 10, iy, 10, MagnetColor, false); iy += 13; }
+        if (_hasShield)
+        { DrawText(Labels.Get("arcade_shield"), 10, iy, 10, ShieldColor, false); }
 
         // Game over
         if (_state == GameState.GameOver)
@@ -724,7 +824,7 @@ public partial class ArcadeWindow : Window
         }
     }
 
-    // ── Plane drawing ──
+    // Plane drawing
 
     private void DrawPlayerPlane(double x, double y)
     {
@@ -809,7 +909,7 @@ public partial class ArcadeWindow : Window
 
         switch (e.BossId)
         {
-            case 0: // Mothership — wide, flat carrier with hangars
+            case 0: // Mothership - wide, flat carrier with hangars
                 DrawRect(x, y, 60, 28, Boss0Body);
                 DrawRect(x, y - 12, 36, 8, Boss0Accent);
                 DrawRect(x - 34, y + 2, 12, 20, Boss0Accent);  // left hangar
@@ -819,7 +919,7 @@ public partial class ArcadeWindow : Window
                 DrawRect(x, y + 16, 20, 6, Boss0Detail);       // center bay
                 break;
 
-            case 1: // Fortress — tall armored tower with turrets
+            case 1: // Fortress - tall armored tower with turrets
                 DrawRect(x, y, 40, 44, Boss1Body);
                 DrawRect(x, y - 18, 28, 10, Boss1Accent);      // top armor
                 DrawRect(x - 28, y - 4, 12, 16, Boss1Detail);  // left turret
@@ -831,7 +931,7 @@ public partial class ArcadeWindow : Window
                 DrawRect(x + 10, y, 6, 6, Boss1Detail);        // viewport R
                 break;
 
-            case 2: // Phantom — sleek, narrow, extremely long wings
+            case 2: // Phantom - sleek, narrow, extremely long wings
                 DrawRect(x, y, 12, 24, Boss2Body);
                 DrawRect(x, y - 10, 6, 8, Boss2Accent);        // nose
                 DrawRect(x - 36, y + 2, 30, 6, Boss2Accent);   // left wing (long!)
@@ -841,7 +941,7 @@ public partial class ArcadeWindow : Window
                 DrawRect(x, y + 12, 8, 4, Boss2Detail);        // tail
                 break;
 
-            case 3: // Bombardier — fat round body, bomb bays
+            case 3: // Bombardier - fat round body, bomb bays
                 DrawRect(x, y, 52, 34, Boss3Body);
                 DrawRect(x, y - 14, 32, 8, Boss3Accent);       // top
                 DrawRect(x - 18, y + 6, 12, 14, Boss3Accent);  // left engine
@@ -852,7 +952,7 @@ public partial class ArcadeWindow : Window
                 DrawRect(x, y + 4, 20, 8, Boss3Detail);        // belly
                 break;
 
-            case 4: // Overlord — massive, crown on top
+            case 4: // Overlord - massive, crown on top
                 DrawRect(x, y, 56, 38, Boss4Body);
                 DrawRect(x, y - 16, 36, 10, Boss4Accent);
                 // Crown (gold spikes)
@@ -887,20 +987,27 @@ public partial class ArcadeWindow : Window
         _ => (DimBrush, "?")
     };
 
-    // ── Drawing helpers ──
+    // Drawing helpers
 
     private void DrawRect(double cx, double cy, double w, double h, IBrush fill)
     {
         var r = new Rectangle { Width = w, Height = h, Fill = fill };
-        Canvas.SetLeft(r, cx - w / 2); Canvas.SetTop(r, cy - h / 2);
+        Canvas.SetLeft(r, cx - w / 2);
+        Canvas.SetTop(r, cy - h / 2);
         gameCanvas.Children.Add(r);
     }
 
     private void DrawText(string text, double x, double y, double size, IBrush brush,
                            bool centerX, bool rightAlign = false)
     {
-        var tb = new TextBlock { Text = text, FontSize = size, FontWeight = FontWeight.Bold,
-            Foreground = brush, FontFamily = new FontFamily("monospace") };
+        var tb = new TextBlock
+        {
+            Text = text,
+            FontSize = size,
+            FontWeight = FontWeight.Bold,
+            Foreground = brush,
+            FontFamily = new FontFamily("monospace")
+        };
         tb.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
         double tw = tb.DesiredSize.Width;
         Canvas.SetLeft(tb, centerX ? x - tw / 2 : rightAlign ? x - tw : x);

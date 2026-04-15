@@ -4,7 +4,7 @@ public static class Turkish
 {
     public static Dictionary<string, string> Translations => new()
     {
-        // ═══════════════════ COMMON ═══════════════════
+        // COMMON
         ["enabled"] = "Etkin",
         ["disabled"] = "Devre Dışı",
         ["muted"] = "Sessize Alındı",
@@ -25,7 +25,7 @@ public static class Turkish
         ["refresh"] = "Yenile",
         ["details"] = "Ayrıntılar...",
 
-        // ═══════════════════ PERFORMANCE MODES ═══════════════════
+        // PERFORMANCE MODES
         ["mode_silent"] = "Sessiz",
         ["mode_balanced"] = "Dengeli",
         ["mode_turbo"] = "Turbo",
@@ -34,7 +34,7 @@ public static class Turkish
         ["mode_prefix"] = "Mod: {0}",
         ["fans_power"] = "Fanlar + Güç",
 
-        // ═══════════════════ GPU MODES ═══════════════════
+        // GPU MODES
         ["gpu_eco"] = "Eco",
         ["gpu_standard"] = "Standard",
         ["gpu_ultimate"] = "Ultimate",
@@ -42,19 +42,19 @@ public static class Turkish
         ["gpu_unknown"] = "Bilinmiyor",
         ["gpu_mode_prefix"] = "GPU Modu: {0}",
 
-        // ═══════════════════ SENSOR INFO ═══════════════════
+        // SENSOR INFO
         ["cpu_fan_info"] = "CPU: {0} Fan: {1}",
         ["gpu_fan_full_info"] = "GPU: {0}{1}  Fan: {2}",
         ["gpu_fan_only"] = "GPU Fan: {0}",
         ["mid_fan_info"] = "Orta Fan: {0}",
 
-        // ═══════════════════ SCREEN ═══════════════════
+        // SCREEN
         ["screen_prefix"] = "Laptop Ekranı: {0}Hz",
         ["screen_prefix_auto"] = "Laptop Ekranı: {0}Hz (Otomatik)",
         ["screen_auto"] = "Otomatik",
         ["screen_miniled"] = "MiniLED",
 
-        // ═══════════════════ KEYBOARD ═══════════════════
+        // KEYBOARD
         ["keyboard_header"] = "Laptop Klavyesi",
         ["backlight"] = "Arka Işık",
         ["extra"] = "Ekstra",
@@ -69,14 +69,14 @@ public static class Turkish
         ["pick_color"] = "Renk Seç",
         ["hex_label"] = "Hex:",
 
-        // ═══════════════════ BATTERY ═══════════════════
+        // BATTERY
         ["battery_limit_prefix"] = "Batarya Şarj Limiti: {0}%",
         ["discharging_watts"] = "Deşarj: {0}W",
         ["charging_watts"] = "Şarj: {0}W",
         ["plugged_in"] = "Prize takılı",
         ["charge_prefix"] = "Şarj: {0}%",
 
-        // ═══════════════════ FOOTER ═══════════════════
+        // FOOTER
         ["run_on_startup"] = "Başlangıçta Çalıştır",
         ["unknown_asus"] = "Bilinmeyen ASUS",
         ["title_prefix"] = "G-Helper - {0}",
@@ -89,7 +89,7 @@ public static class Turkish
         ["features_prefix"] = "Özellikler: {0}",
         ["no_features"] = "ASUS'a özel özellik algılanmadı",
 
-        // ═══════════════════ FEATURE NAMES ═══════════════════
+        // FEATURE NAMES
         ["feature_perf_modes"] = "Performans Modları",
         ["feature_gpu_eco"] = "GPU Eco",
         ["feature_mux"] = "MUX Anahtarı",
@@ -98,7 +98,7 @@ public static class Turkish
         ["feature_ppt"] = "PPT Limitleri",
         ["feature_nv_boost"] = "NVIDIA Dynamic Boost",
 
-        // ═══════════════════ GPU TIPS & NOTIFICATIONS ═══════════════════
+        // GPU TIPS & NOTIFICATIONS
         ["gpu_pending_reboot"] = "{0} bekliyor - uygulamak için yeniden başlatın",
         ["gpu_pending_mode"] = "Mod",
         ["gpu_tip_eco"] = "dGPU kapalı - maksimum pil ömrü",
@@ -151,7 +151,7 @@ public static class Turkish
         ["gpu_driver_after_reboot"] = "Yeniden Başlatmadan Sonra",
         ["gpu_driver_footer"] = "Şimdi Geç, GPU sürücüsünü kaldırmaya çalışır (yönetici şifresi\ngerekebilir). Yeniden Başlatmadan Sonra, sonraki açılış için kaydeder.",
 
-        // ═══════════════════ KEYBOARD NOTIFICATIONS ═══════════════════
+        // KEYBOARD NOTIFICATIONS
         ["kbd_off"] = "Kapalı  \u25cb\u25cb\u25cb",
         ["kbd_low"] = "Düşük  \u25cf\u25cb\u25cb",
         ["kbd_medium"] = "Orta  \u25cf\u25cf\u25cb",
@@ -159,7 +159,7 @@ public static class Turkish
         ["kbd_level"] = "Seviye {0}",
         ["keyboard"] = "Klavye",
 
-        // ═══════════════════ OTHER NOTIFICATIONS ═══════════════════
+        // OTHER NOTIFICATIONS
         ["performance"] = "Performans",
         ["aura"] = "Aura",
         ["microphone"] = "Mikrofon",
@@ -176,14 +176,14 @@ public static class Turkish
         ["setup_required"] = "Kurulum Gerekli",
         ["udev_not_installed"] = "udev kuralları yüklü değil. Tam işlevsellik için install.sh dosyasını çalıştırın (pil limiti, fan kontrolü vb.)",
 
-        // ═══════════════════ SYSTEM TRAY ═══════════════════
+        // SYSTEM TRAY
         ["tray_tooltip"] = "G-Helper - {0}",
         ["tray_gpu_eco"] = "GPU: Eco (yalnızca iGPU)",
         ["tray_gpu_standard"] = "GPU: Standard (dGPU)",
         ["tray_gpu_optimized"] = "GPU: Optimize (otomatik)",
         ["tray_gpu_ultimate"] = "GPU: Ultimate (MUX)",
 
-        // ═══════════════════ KEY ACTIONS ═══════════════════
+        // KEY ACTIONS
         ["action_none"] = "Yok",
         ["action_ghelper"] = "G-Helper'ı Aç/Kapat",
         ["action_performance"] = "Performans Modunu Değiştir",
@@ -199,12 +199,12 @@ public static class Turkish
         ["action_camera"] = "Kamerayı Aç/Kapat",
         ["action_touchpad"] = "Dokunmatik Yüzeyi Aç/Kapat",
 
-        // ═══════════════════ KEY NAMES ═══════════════════
+        // KEY NAMES
         ["key_m4"] = "ROG / M5 Tuşu",
         ["key_fnf4"] = "Fn+F4 (Aura)",
         ["key_fnf5"] = "Fn+F5 / M4 (Performans)",
 
-        // ═══════════════════ EXTRA WINDOW ═══════════════════
+        // EXTRA WINDOW
         ["extra_title"] = "Ek Ayarlar",
         ["kbd_backlight_header"] = "Klavye Arka Işığı",
         ["brightness"] = "Parlaklık",
@@ -266,7 +266,7 @@ public static class Turkish
         ["battery_health_unknown"] = "Batarya sağlığı: --%",
         ["power_draw_discharge"] = "Güç tüketimi: {0} mW (deşarj)",
         ["power_draw_charge"] = "Güç tüketimi: {0} mW (şarj)",
-        ["power_draw_unknown"] = "Güç tüketimi: -- mW",
+        ["power_draw_unknown"] = "Güç tüketimi: - mW",
 
         ["system_info_header"] = "Sistem Bilgisi",
 
@@ -282,11 +282,11 @@ public static class Turkish
         ["log_stdout"] = "Günlükler stdout'a yazılıyor - çıktıyı görmek için terminalden çalıştırın",
         ["kernel_warning"] = "\u26A0 Tam özellik desteği için çekirdek 6.2+ önerilir",
 
-        // ═══════════════════ LANGUAGE ═══════════════════
+        // LANGUAGE
         ["language_header"] = "Dil",
         ["language_auto"] = "Otomatik (sistem)",
 
-        // ═══════════════════ FANS WINDOW ═══════════════════
+        // FANS WINDOW
         ["fans_title"] = "Fanlar ve Güç",
         ["fan_curves"] = "Fan Eğrileri",
         ["reset"] = "Sıfırla",
@@ -304,7 +304,7 @@ public static class Turkish
         ["firmware_control"] = "Firmware kontrolü",
         ["fan_sensor_format"] = "CPU: {0} / GPU: {1} Yük: {2}   Orta: {3} RPM",
 
-        // ═══════════════════ BATTERY INFO WINDOW ═══════════════════
+        // BATTERY INFO WINDOW
         ["battery_info_title"] = "Batarya Bilgisi",
         ["health_header"] = "Sağlık",
         ["health"] = "Sağlık",
@@ -326,7 +326,7 @@ public static class Turkish
         ["discharging"] = "deşarj",
         ["charging"] = "şarj",
 
-        // ═══════════════════ UPDATES WINDOW ═══════════════════
+        // UPDATES WINDOW
         ["updates_title"] = "BIOS ve Sürücü Güncellemeleri",
         ["updates_header"] = "BIOS ve Sürücü Güncellemeleri",
         ["copy_diagnostics"] = "Tanılamayı Kopyala",
@@ -361,7 +361,7 @@ public static class Turkish
         ["updates_title_format"] = "BIOS ve Sürücü Güncellemeleri: {0} ({1} BIOS {2})",
         ["app_version_format"] = "G-Helper Linux v{0} - {1}",
 
-        // ═══════════════════ ARCADE GAME ═══════════════════
+        // ARCADE GAME
         ["arcade_title"] = "ROG Fighter",
         ["arcade_game_title"] = "ROG FIGHTER",
         ["arcade_move"] = "\u2190 \u2192 \u2191 \u2193 / W A S D  hareket",
@@ -381,7 +381,7 @@ public static class Turkish
         ["arcade_new_highscore"] = "YENİ EN YÜKSEK SKOR!",
         ["arcade_retry"] = "Tekrar denemek için ENTER",
 
-        // ═══════════════════ AURA MODES ═══════════════════
+        // AURA MODES
         ["aura_static"] = "Statik",
         ["aura_breathe"] = "Nefes",
         ["aura_strobe"] = "Stroboskop",
@@ -396,12 +396,12 @@ public static class Turkish
         ["aura_flash"] = "Flaş",
         ["aura_no_modes"] = "Mod yok",
 
-        // ═══════════════════ AURA SPEEDS ═══════════════════
+        // AURA SPEEDS
         ["speed_slow"] = "Yavaş",
         ["speed_normal"] = "Normal",
         ["speed_fast"] = "Hızlı",
 
-        // ═══════════════════ MISC ═══════════════════
+        // MISC
         ["ghelper"] = "G-Helper",
         ["asus_laptop_control"] = "ASUS Laptop Kontrolü (Linux)",
     };

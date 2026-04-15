@@ -4,7 +4,7 @@ public static class Dutch
 {
     public static Dictionary<string, string> Translations => new()
     {
-        // ═══════════════════ COMMON ═══════════════════
+        // COMMON
         ["enabled"] = "Ingeschakeld",
         ["disabled"] = "Uitgeschakeld",
         ["muted"] = "Gedempt",
@@ -25,7 +25,7 @@ public static class Dutch
         ["refresh"] = "Vernieuwen",
         ["details"] = "Details...",
 
-        // ═══════════════════ PERFORMANCE MODES ═══════════════════
+        // PERFORMANCE MODES
         ["mode_silent"] = "Stil",
         ["mode_balanced"] = "Gebalanceerd",
         ["mode_turbo"] = "Turbo",
@@ -34,7 +34,7 @@ public static class Dutch
         ["mode_prefix"] = "Modus: {0}",
         ["fans_power"] = "Ventilatoren + Vermogen",
 
-        // ═══════════════════ GPU MODES ═══════════════════
+        // GPU MODES
         ["gpu_eco"] = "Eco",
         ["gpu_standard"] = "Standard",
         ["gpu_ultimate"] = "Ultimate",
@@ -42,19 +42,19 @@ public static class Dutch
         ["gpu_unknown"] = "Onbekend",
         ["gpu_mode_prefix"] = "GPU-modus: {0}",
 
-        // ═══════════════════ SENSOR INFO ═══════════════════
+        // SENSOR INFO
         ["cpu_fan_info"] = "CPU: {0} Ventilator: {1}",
         ["gpu_fan_full_info"] = "GPU: {0}{1}  Ventilator: {2}",
         ["gpu_fan_only"] = "GPU-ventilator: {0}",
         ["mid_fan_info"] = "Middelste ventilator: {0}",
 
-        // ═══════════════════ SCREEN ═══════════════════
+        // SCREEN
         ["screen_prefix"] = "Laptopscherm: {0}Hz",
         ["screen_prefix_auto"] = "Laptopscherm: {0}Hz (Auto)",
         ["screen_auto"] = "Auto",
         ["screen_miniled"] = "MiniLED",
 
-        // ═══════════════════ KEYBOARD ═══════════════════
+        // KEYBOARD
         ["keyboard_header"] = "Laptoptoetsenbord",
         ["backlight"] = "Verlichting",
         ["extra"] = "Extra",
@@ -69,14 +69,14 @@ public static class Dutch
         ["pick_color"] = "Kleur kiezen",
         ["hex_label"] = "Hex:",
 
-        // ═══════════════════ BATTERY ═══════════════════
+        // BATTERY
         ["battery_limit_prefix"] = "Acculaadlimiet: {0}%",
         ["discharging_watts"] = "Ontladen: {0}W",
         ["charging_watts"] = "Opladen: {0}W",
         ["plugged_in"] = "Aangesloten",
         ["charge_prefix"] = "Lading: {0}%",
 
-        // ═══════════════════ FOOTER ═══════════════════
+        // FOOTER
         ["run_on_startup"] = "Starten bij opstarten",
         ["unknown_asus"] = "Onbekende ASUS",
         ["title_prefix"] = "G-Helper - {0}",
@@ -89,7 +89,7 @@ public static class Dutch
         ["features_prefix"] = "Functies: {0}",
         ["no_features"] = "Geen ASUS-specifieke functies gedetecteerd",
 
-        // ═══════════════════ FEATURE NAMES ═══════════════════
+        // FEATURE NAMES
         ["feature_perf_modes"] = "Prestatiemodi",
         ["feature_gpu_eco"] = "GPU Eco",
         ["feature_mux"] = "MUX-schakelaar",
@@ -98,7 +98,7 @@ public static class Dutch
         ["feature_ppt"] = "PPT-limieten",
         ["feature_nv_boost"] = "NVIDIA Dynamic Boost",
 
-        // ═══════════════════ GPU TIPS & NOTIFICATIONS ═══════════════════
+        // GPU TIPS & NOTIFICATIONS
         ["gpu_pending_reboot"] = "{0} in behandeling - herstart om toe te passen",
         ["gpu_pending_mode"] = "Modus",
         ["gpu_tip_eco"] = "dGPU is uit - maximale accuduur",
@@ -151,7 +151,7 @@ public static class Dutch
         ["gpu_driver_after_reboot"] = "Na herstart",
         ["gpu_driver_footer"] = "\"Nu wisselen\" probeert de GPU-driver te ontladen (beheerderswachtwoord\nkan nodig zijn). \"Na herstart\" slaat op voor de volgende start.",
 
-        // ═══════════════════ KEYBOARD NOTIFICATIONS ═══════════════════
+        // KEYBOARD NOTIFICATIONS
         ["kbd_off"] = "Uit  \u25cb\u25cb\u25cb",
         ["kbd_low"] = "Laag  \u25cf\u25cb\u25cb",
         ["kbd_medium"] = "Gemiddeld  \u25cf\u25cf\u25cb",
@@ -159,7 +159,7 @@ public static class Dutch
         ["kbd_level"] = "Niveau {0}",
         ["keyboard"] = "Toetsenbord",
 
-        // ═══════════════════ OTHER NOTIFICATIONS ═══════════════════
+        // OTHER NOTIFICATIONS
         ["performance"] = "Prestatie",
         ["aura"] = "Aura",
         ["microphone"] = "Microfoon",
@@ -176,14 +176,14 @@ public static class Dutch
         ["setup_required"] = "Configuratie vereist",
         ["udev_not_installed"] = "udev-regels niet geïnstalleerd. Voer install.sh uit voor volledige functionaliteit (acculimiet, ventilatorregeling, enz.)",
 
-        // ═══════════════════ SYSTEM TRAY ═══════════════════
+        // SYSTEM TRAY
         ["tray_tooltip"] = "G-Helper - {0}",
         ["tray_gpu_eco"] = "GPU: Eco (alleen iGPU)",
         ["tray_gpu_standard"] = "GPU: Standard (dGPU)",
         ["tray_gpu_optimized"] = "GPU: Geoptimaliseerd (auto)",
         ["tray_gpu_ultimate"] = "GPU: Ultimate (MUX)",
 
-        // ═══════════════════ KEY ACTIONS ═══════════════════
+        // KEY ACTIONS
         ["action_none"] = "Geen",
         ["action_ghelper"] = "G-Helper tonen/verbergen",
         ["action_performance"] = "Prestatiemodus wisselen",
@@ -199,12 +199,12 @@ public static class Dutch
         ["action_camera"] = "Camera in-/uitschakelen",
         ["action_touchpad"] = "Touchpad in-/uitschakelen",
 
-        // ═══════════════════ KEY NAMES ═══════════════════
+        // KEY NAMES
         ["key_m4"] = "ROG / M5-toets",
         ["key_fnf4"] = "Fn+F4 (Aura)",
         ["key_fnf5"] = "Fn+F5 / M4 (Prestatie)",
 
-        // ═══════════════════ EXTRA WINDOW ═══════════════════
+        // EXTRA WINDOW
         ["extra_title"] = "Extra instellingen",
         ["kbd_backlight_header"] = "Toetsenbordverlichting",
         ["brightness"] = "Helderheid",
@@ -266,7 +266,7 @@ public static class Dutch
         ["battery_health_unknown"] = "Accugezondheid: --%",
         ["power_draw_discharge"] = "Stroomverbruik: {0} mW (ontladen)",
         ["power_draw_charge"] = "Stroomverbruik: {0} mW (opladen)",
-        ["power_draw_unknown"] = "Stroomverbruik: -- mW",
+        ["power_draw_unknown"] = "Stroomverbruik: - mW",
 
         ["system_info_header"] = "Systeeminformatie",
 
@@ -282,11 +282,11 @@ public static class Dutch
         ["log_stdout"] = "Logs worden naar stdout geschreven - start vanuit terminal om uitvoer te zien",
         ["kernel_warning"] = "\u26A0 Kernel 6.2+ aanbevolen voor volledige functieondersteuning",
 
-        // ═══════════════════ LANGUAGE ═══════════════════
+        // LANGUAGE
         ["language_header"] = "Taal",
         ["language_auto"] = "Auto (systeem)",
 
-        // ═══════════════════ FANS WINDOW ═══════════════════
+        // FANS WINDOW
         ["fans_title"] = "Ventilatoren & Vermogen",
         ["fan_curves"] = "Ventilatorcurves",
         ["reset"] = "Reset",
@@ -304,7 +304,7 @@ public static class Dutch
         ["firmware_control"] = "Firmwarebesturing",
         ["fan_sensor_format"] = "CPU: {0} / GPU: {1} Belasting: {2}   Midden: {3} RPM",
 
-        // ═══════════════════ BATTERY INFO WINDOW ═══════════════════
+        // BATTERY INFO WINDOW
         ["battery_info_title"] = "Accu-informatie",
         ["health_header"] = "Gezondheid",
         ["health"] = "Gezondheid",
@@ -326,7 +326,7 @@ public static class Dutch
         ["discharging"] = "ontladen",
         ["charging"] = "opladen",
 
-        // ═══════════════════ UPDATES WINDOW ═══════════════════
+        // UPDATES WINDOW
         ["updates_title"] = "BIOS- & driver-updates",
         ["updates_header"] = "BIOS- & driver-updates",
         ["copy_diagnostics"] = "Diagnostiek kopiëren",
@@ -361,7 +361,7 @@ public static class Dutch
         ["updates_title_format"] = "BIOS- & driver-updates: {0} ({1} BIOS {2})",
         ["app_version_format"] = "G-Helper Linux v{0} - {1}",
 
-        // ═══════════════════ ARCADE GAME ═══════════════════
+        // ARCADE GAME
         ["arcade_title"] = "ROG Fighter",
         ["arcade_game_title"] = "ROG FIGHTER",
         ["arcade_move"] = "\u2190 \u2192 \u2191 \u2193 / W A S D  bewegen",
@@ -381,7 +381,7 @@ public static class Dutch
         ["arcade_new_highscore"] = "NIEUWE TOPSCORE!",
         ["arcade_retry"] = "ENTER om opnieuw te proberen",
 
-        // ═══════════════════ AURA MODES ═══════════════════
+        // AURA MODES
         ["aura_static"] = "Statisch",
         ["aura_breathe"] = "Ademhaling",
         ["aura_strobe"] = "Stroboscoop",
@@ -396,12 +396,12 @@ public static class Dutch
         ["aura_flash"] = "Flits",
         ["aura_no_modes"] = "Geen modi",
 
-        // ═══════════════════ AURA SPEEDS ═══════════════════
+        // AURA SPEEDS
         ["speed_slow"] = "Langzaam",
         ["speed_normal"] = "Normaal",
         ["speed_fast"] = "Snel",
 
-        // ═══════════════════ MISC ═══════════════════
+        // MISC
         ["ghelper"] = "G-Helper",
         ["asus_laptop_control"] = "ASUS-laptopbediening (Linux)",
     };

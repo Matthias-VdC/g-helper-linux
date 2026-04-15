@@ -15,13 +15,15 @@ public class XrandrBackend : IDisplayBackend
     public int GetRefreshRate()
     {
         var displayName = GetPrimaryOutput();
-        if (displayName == null) return -1;
+        if (displayName == null)
+            return -1;
 
         var output = SysfsHelper.RunCommand("xrandr", $"--output {displayName} --verbose");
         if (string.IsNullOrEmpty(output))
         {
             output = SysfsHelper.RunCommand("xrandr", "");
-            if (output == null) return -1;
+            if (output == null)
+                return -1;
         }
 
         foreach (var line in output.Split('\n'))
@@ -44,10 +46,12 @@ public class XrandrBackend : IDisplayBackend
     {
         var rates = new List<int>();
         var displayName = GetPrimaryOutput();
-        if (displayName == null) return rates;
+        if (displayName == null)
+            return rates;
 
         var output = SysfsHelper.RunCommand("xrandr", "");
-        if (output == null) return rates;
+        if (output == null)
+            return rates;
 
         bool foundDisplay = false;
         foreach (var line in output.Split('\n'))
@@ -143,7 +147,8 @@ public class XrandrBackend : IDisplayBackend
     public void SetGamma(float r, float g, float b)
     {
         var displayName = GetPrimaryOutput();
-        if (displayName == null) return;
+        if (displayName == null)
+            return;
 
         r = Math.Clamp(r, 0.1f, 5.0f);
         g = Math.Clamp(g, 0.1f, 5.0f);
@@ -163,7 +168,7 @@ public class XrandrBackend : IDisplayBackend
         return GetPrimaryOutput();
     }
 
-    // ── Probing ──
+    // Probing
 
     /// <summary>
     /// Test if xrandr is available and returns output.
@@ -175,7 +180,7 @@ public class XrandrBackend : IDisplayBackend
         return output != null && output.Contains(" connected");
     }
 
-    // ── Internal helpers ──
+    // Internal helpers
 
     /// <summary>
     /// Get the primary/laptop display output name from xrandr.
@@ -184,14 +189,16 @@ public class XrandrBackend : IDisplayBackend
     internal static string? GetPrimaryOutput()
     {
         var output = SysfsHelper.RunCommand("xrandr", "--query");
-        if (output == null) return null;
+        if (output == null)
+            return null;
 
         string? primary = null;
         string? firstConnected = null;
 
         foreach (var line in output.Split('\n'))
         {
-            if (!line.Contains(" connected")) continue;
+            if (!line.Contains(" connected"))
+                continue;
 
             var outputName = line.Split(' ')[0];
 

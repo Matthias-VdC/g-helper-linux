@@ -6,12 +6,12 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Platform;
 using GHelper.Linux.Gpu;
 using GHelper.Linux.Helpers;
+using GHelper.Linux.I18n;
 using GHelper.Linux.Mode;
 using GHelper.Linux.Platform;
 using GHelper.Linux.Platform.Linux;
 using GHelper.Linux.UI.Views;
 using GHelper.Linux.USB;
-using GHelper.Linux.I18n;
 
 namespace GHelper.Linux;
 
@@ -123,7 +123,7 @@ public class App : Application
         // Exit if another ghelper is already running
         if (!TryAcquireSingleInstanceLock())
         {
-            Console.Error.WriteLine("g-helper: another instance is already running — exiting");
+            Console.Error.WriteLine("g-helper: another instance is already running - exiting");
             Environment.Exit(0);
             return;
         }
@@ -140,7 +140,8 @@ public class App : Application
             desktop.ShutdownMode = ShutdownMode.OnExplicitShutdown;
 
             MainWindowInstance = new MainWindow();
-            if (AppConfig.Is("topmost")) MainWindowInstance.Topmost = true;
+            if (AppConfig.Is("topmost"))
+                MainWindowInstance.Topmost = true;
 
             // Show main window on startup unless "Start minimized to tray" is enabled
             if (!AppConfig.Is("silent_start"))
@@ -168,7 +169,7 @@ public class App : Application
             // Warn if udev rules are not installed (sysfs writes will fail)
             if (!File.Exists("/etc/udev/rules.d/90-ghelper.rules"))
             {
-                Logger.WriteLine("WARNING: udev rules not installed — sysfs writes will fail. Run install.sh for full functionality.");
+                Logger.WriteLine("WARNING: udev rules not installed - sysfs writes will fail. Run install.sh for full functionality.");
                 System?.ShowNotification(Labels.Get("setup_required"),
                     Labels.Get("udev_not_installed"),
                     "dialog-warning");
@@ -199,7 +200,7 @@ public class App : Application
 
             // Apply pending GPU mode from config (e.g., Eco scheduled for reboot)
             // Then apply auto GPU mode if Optimized is enabled
-            // Run on background thread — SetGpuEco can block for 30-60 seconds
+            // Run on background thread - SetGpuEco can block for 30-60 seconds
             Task.Run(() =>
             {
                 // Check for boot recovery marker (impossible state was fixed during boot)
@@ -213,11 +214,12 @@ public class App : Application
                         System?.ShowNotification(Labels.Get("gpu_mode"),
                             Labels.Get("gpu_reset_standard"),
                             "dialog-warning");
-                        try { File.Delete(RecoveryMarkerPath); }
+                        try
+                        { File.Delete(RecoveryMarkerPath); }
                         catch (Exception delEx)
                         {
                             Logger.WriteLine($"Could not delete recovery marker: {delEx.Message}");
-                            // Non-fatal — marker will be shown again next launch but that's acceptable
+                            // Non-fatal - marker will be shown again next launch but that's acceptable
                         }
                     }
                 }
@@ -328,7 +330,7 @@ public class App : Application
             Logger.WriteLine("  Raw WMI mode: ENABLED (user opt-in)");
             if (AsusWmiDebugfs.IsAvailable())
             {
-                AsusWmiDebugfs.ProbeAll();      // 1 pkexec call — probes + caches all device IDs
+                AsusWmiDebugfs.ProbeAll();      // 1 pkexec call - probes + caches all device IDs
                 AsusWmiDebugfs.LogProbeResults(); // reads from cache, no pkexec
             }
             else
@@ -370,7 +372,8 @@ public class App : Application
 
     private void StartHotkeyListener()
     {
-        if (Input == null) return;
+        if (Input == null)
+            return;
 
         Input.HotkeyPressed += OnHotkeyPressed;
         Input.KeyBindingPressed += OnKeyBindingPressed;
@@ -528,13 +531,15 @@ public class App : Application
     private void CycleScreenRefreshRate()
     {
         var display = Display;
-        if (display == null) return;
+        if (display == null)
+            return;
 
         // Hotkey cycle disables auto mode (manual override)
         AppConfig.Set("screen_auto", 0);
 
         var rates = display.GetAvailableRefreshRates();
-        if (rates.Count < 2) return;
+        if (rates.Count < 2)
+            return;
 
         int current = display.GetRefreshRate();
         rates.Sort();
@@ -564,10 +569,12 @@ public class App : Application
     /// </summary>
     public void AutoScreen()
     {
-        if (!AppConfig.Is("screen_auto")) return;
+        if (!AppConfig.Is("screen_auto"))
+            return;
 
         var display = Display;
-        if (display == null) return;
+        if (display == null)
+            return;
 
         var rates = display.GetAvailableRefreshRates();
         bool onAc = Power?.IsOnAcPower() ?? true;
@@ -597,9 +604,10 @@ public class App : Application
         int next;
         if (Wmi is Platform.Linux.LinuxAsusWmi lwmi && lwmi.HasKbdBrightnessHwChanged)
         {
-            // Kernel already changed brightness in sysfs — just read the new value
+            // Kernel already changed brightness in sysfs - just read the new value
             next = lwmi.GetKeyboardBrightness();
-            if (next < 0) next = 0;
+            if (next < 0)
+                next = 0;
         }
         else
         {
@@ -628,13 +636,13 @@ public class App : Application
     private void SetupTrayIcon(IClassicDesktopStyleApplicationLifetime desktop)
     {
         // Tray icons on Linux use D-Bus StatusNotifierItem (SNI) protocol.
-        // This requires a valid DBUS_SESSION_BUS_ADDRESS — running with plain
+        // This requires a valid DBUS_SESSION_BUS_ADDRESS - running with plain
         // 'sudo' breaks this. Use udev rules for non-root access instead,
         // or run with: sudo -E ./ghelper
         var dbusAddr = Environment.GetEnvironmentVariable("DBUS_SESSION_BUS_ADDRESS");
         if (string.IsNullOrEmpty(dbusAddr))
         {
-            Logger.WriteLine("WARNING: DBUS_SESSION_BUS_ADDRESS not set — tray icon will not appear.");
+            Logger.WriteLine("WARNING: DBUS_SESSION_BUS_ADDRESS not set - tray icon will not appear.");
             Logger.WriteLine("  Tip: Install udev rules to run without sudo, or use: sudo -E ./ghelper");
         }
 
@@ -685,7 +693,8 @@ public class App : Application
     /// <summary>Update tray icon and tooltip to reflect current performance mode.</summary>
     public static void UpdateTrayIcon()
     {
-        if (TrayIconInstance == null) return;
+        if (TrayIconInstance == null)
+            return;
 
         Avalonia.Threading.Dispatcher.UIThread.Post(() =>
         {
@@ -702,7 +711,7 @@ public class App : Application
             {
                 0 => bw ? "dark-standard.ico" : "standard.ico",   // Balanced
                 1 => bw ? "dark-standard.ico" : "ultimate.ico",   // Turbo (no dark-ultimate, use dark-standard)
-                2 => bw ? "dark-eco.ico"      : "eco.ico",        // Silent
+                2 => bw ? "dark-eco.ico" : "eco.ico",        // Silent
                 _ => bw ? "dark-standard.ico" : "standard.ico"
             };
 
@@ -713,7 +722,7 @@ public class App : Application
             }
             catch
             {
-                // Ignore — icon may not exist
+                // Ignore - icon may not exist
             }
         });
     }
@@ -752,7 +761,7 @@ public class App : Application
 
         menu.Add(new NativeMenuItemSeparator());
 
-        // GPU modes — show if GPU Eco is available (sysfs or raw WMI debugfs).
+        // GPU modes - show if GPU Eco is available (sysfs or raw WMI debugfs).
         // All writes run in Task.Run via GpuModeController
         // (dgpu_disable writes can block in the kernel for 30-60 seconds)
         if (Wmi?.IsGpuEcoAvailable() == true)
@@ -769,7 +778,7 @@ public class App : Application
             optimized.Click += (_, _) => TrayGpuModeSwitch(GpuMode.Optimized);
             menu.Add(optimized);
 
-            // Ultimate (MUX switch) — only on models with gpu_mux_mode support
+            // Ultimate (MUX switch) - only on models with gpu_mux_mode support
             if (Wmi?.IsFeatureSupported(AsusAttributes.GpuMuxMode) == true)
             {
                 var ultimate = new NativeMenuItem(Labels.Get("tray_gpu_ultimate"));
@@ -801,11 +810,12 @@ public class App : Application
     private void ToggleMainWindow()
     {
         // Window may have been disposed by closing (KDE logout, user clicking X).
-        // Recreate it if needed — app stays alive via ShutdownMode.OnExplicitShutdown.
+        // Recreate it if needed - app stays alive via ShutdownMode.OnExplicitShutdown.
         if (MainWindowInstance == null || MainWindowInstance.PlatformImpl == null)
         {
             MainWindowInstance = new MainWindow();
-            if (AppConfig.Is("topmost")) MainWindowInstance.Topmost = true;
+            if (AppConfig.Is("topmost"))
+                MainWindowInstance.Topmost = true;
             MainWindowInstance.Show();
             MainWindowInstance.Activate();
             return;
@@ -823,14 +833,15 @@ public class App : Application
     }
 
     /// <summary>
-    /// Tray menu GPU mode switch — runs GpuModeController on background thread.
+    /// Tray menu GPU mode switch - runs GpuModeController on background thread.
     /// Tray menu cannot show dialogs, so DriverBlocking → auto-schedule for reboot.
     /// </summary>
     private static void TrayGpuModeSwitch(GpuMode target)
     {
         Task.Run(() =>
         {
-            if (GpuModeCtrl == null) return;
+            if (GpuModeCtrl == null)
+                return;
 
             var result = GpuModeCtrl.RequestModeSwitch(target);
 
@@ -867,7 +878,7 @@ public class App : Application
                     break;
 
                 case GpuSwitchResult.DriverBlocking:
-                    // Tray menu can't show a dialog — auto-schedule for reboot
+                    // Tray menu can't show a dialog - auto-schedule for reboot
                     GpuModeCtrl.ScheduleModeForReboot(target);
                     System?.ShowNotification(Labels.Get("gpu_mode"),
                         Labels.Get("gpu_driver_scheduled"), "system-reboot");
@@ -899,13 +910,14 @@ public class App : Application
     private void OnPowerStateChanged(bool onAc)
     {
         long now = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-        if (Math.Abs(now - _lastPowerChangeMs) < 3000) return;
+        if (Math.Abs(now - _lastPowerChangeMs) < 3000)
+            return;
         _lastPowerChangeMs = now;
 
         Logger.WriteLine($"Power state changed: AC={onAc}");
 
         // Auto GPU mode (Optimized = auto Eco/Standard based on AC power)
-        // Run on background thread — SetGpuEco can block for 30-60 seconds
+        // Run on background thread - SetGpuEco can block for 30-60 seconds
         Task.Run(() =>
         {
             if (GpuModeCtrl != null)
@@ -978,17 +990,27 @@ public class App : Application
     private void ShutdownFromSignal(IClassicDesktopStyleApplicationLifetime desktop)
     {
         // Signal handler runs on a threadpool thread.
-        // Don't rely on UI thread — it may already be blocked during session shutdown.
+        // Don't rely on UI thread - it may already be blocked during session shutdown.
         Logger.WriteLine("Signal shutdown: cleaning up...");
 
         // Best-effort: apply pending Eco mode before shutdown
-        // (system is going down — display stack is closing, driver may be releasing)
-        try { GpuModeCtrl?.ApplyPendingOnShutdown(); } catch { }
+        // (system is going down - display stack is closing, driver may be releasing)
+        try
+        { GpuModeCtrl?.ApplyPendingOnShutdown(); }
+        catch { }
 
-        try { Power?.StopPowerMonitoring(); } catch { }
-        try { UI.Views.ExtraWindow.StopClamshellInhibit(); } catch { }
-        try { Input?.Dispose(); } catch { }
-        try { Wmi?.Dispose(); } catch { }
+        try
+        { Power?.StopPowerMonitoring(); }
+        catch { }
+        try
+        { UI.Views.ExtraWindow.StopClamshellInhibit(); }
+        catch { }
+        try
+        { Input?.Dispose(); }
+        catch { }
+        try
+        { Wmi?.Dispose(); }
+        catch { }
 
         Logger.WriteLine("Signal shutdown: exiting process");
         Environment.Exit(0);
@@ -1028,7 +1050,7 @@ public class App : Application
             catch (IOException)
             {
                 if (attempt == 0)
-                    Thread.Sleep(500); // retry once — covers app restart race
+                    Thread.Sleep(500); // retry once - covers app restart race
             }
         }
         return false;

@@ -11,7 +11,7 @@ namespace GHelper.Linux.Platform.Linux;
 /// </summary>
 public static class SysfsHelper
 {
-    // ── Well-known sysfs paths ──
+    // Well-known sysfs paths
 
     public const string AsusWmiPlatform = "/sys/devices/platform/asus-nb-wmi";
     public const string AsusBusPlatform = "/sys/bus/platform/devices/asus-nb-wmi";
@@ -28,10 +28,10 @@ public static class SysfsHelper
     public const string PlatformProfileChoices = "/sys/firmware/acpi/platform_profile_choices";
     public const string PcieAspm = "/sys/module/pcie_aspm/parameters/policy";
 
-    // ── Firmware-attributes path resolution cache ──
+    // Firmware-attributes path resolution cache
     // On newer kernels (6.8+ with asus_armoury module), legacy sysfs paths under
     // asus-nb-wmi may not exist. Instead, attributes live under:
-    //   /sys/class/firmware-attributes/asus-armoury/attributes/{name}/current_value
+    // /sys/class/firmware-attributes/asus-armoury/attributes/{name}/current_value
     // This cache maps attribute names to resolved full paths (including /current_value
     // suffix for firmware-attributes, or legacy path if that exists).
     // null value = attribute doesn't exist in either location.
@@ -93,7 +93,7 @@ public static class SysfsHelper
             result = legacyResult ?? fwResult;
 
         if (attr.HasAlias && fwResult != null && legacyResult != null)
-            Helpers.Logger.WriteLine($"ResolveAttrPath({attr.LegacyName}): preferring firmware-attributes ({attr.FwAttrName}) over legacy ({legacyResult}) — legacy may be phantom ENODEV");
+            Helpers.Logger.WriteLine($"ResolveAttrPath({attr.LegacyName}): preferring firmware-attributes ({attr.FwAttrName}) over legacy ({legacyResult}) - legacy may be phantom ENODEV");
 
         _resolvedPaths[attr.LegacyName] = result;
         return result;
@@ -111,7 +111,7 @@ public static class SysfsHelper
     /// <returns>Full resolved path to read/write, or null if not found anywhere.</returns>
     public static string? ResolveAttrPath(string attrName, params string[] legacyBases)
     {
-        // Check if this is a known attribute with an alias — use AttrDef resolution
+        // Check if this is a known attribute with an alias - use AttrDef resolution
         var attrDef = AsusAttributes.FindByLegacyName(attrName);
         if (attrDef != null)
             return ResolveAttrPath(attrDef, legacyBases);
@@ -162,7 +162,7 @@ public static class SysfsHelper
     /// Use this for PPT power limit writes where we cannot predict which backend is functional
     /// on dual-backend kernels (asus-nb-wmi + asus-armoury loaded simultaneously).
     /// On the reporter's GZ302EA, the firmware-attributes ppt_pl3_fppt path exists but
-    /// returns ENODEV/EACCES, while the legacy ppt_fppt works fine — and vice versa on
+    /// returns ENODEV/EACCES, while the legacy ppt_fppt works fine - and vice versa on
     /// other machines.  Writing to both is the safest approach.
     /// </summary>
     public static bool WriteToAllBackends(AttrDef attr, string value, params string[] legacyBases)
@@ -214,13 +214,15 @@ public static class SysfsHelper
         {
             var legacyPath = Path.Combine(basePath, attr.LegacyName);
             var val = ReadInt(legacyPath, int.MinValue);
-            if (val != int.MinValue) return val;
+            if (val != int.MinValue)
+                return val;
         }
 
         // Try firmware-attributes
         var fwPath = Path.Combine(FirmwareAttributes, attr.FwAttrName, "current_value");
         var fwVal = ReadInt(fwPath, int.MinValue);
-        if (fwVal != int.MinValue) return fwVal;
+        if (fwVal != int.MinValue)
+            return fwVal;
 
         // Aliased fallback
         if (attr.HasAlias)
@@ -229,7 +231,8 @@ public static class SysfsHelper
             if (fwPathLegacy != fwPath)
             {
                 var aliasVal = ReadInt(fwPathLegacy, int.MinValue);
-                if (aliasVal != int.MinValue) return aliasVal;
+                if (aliasVal != int.MinValue)
+                    return aliasVal;
             }
         }
 
@@ -259,7 +262,8 @@ public static class SysfsHelper
                 foreach (var basePath in new[] { AsusWmiPlatform, AsusBusPlatform })
                 {
                     var lp = Path.Combine(basePath, attr.LegacyName);
-                    if (File.Exists(lp)) { legacyCheck = lp; break; }
+                    if (File.Exists(lp))
+                    { legacyCheck = lp; break; }
                 }
                 var phantomNote = legacyCheck != null ? $" [preferred over legacy {legacyCheck}]" : "";
                 Helpers.Logger.WriteLine($"  {attr.LegacyName}: firmware-attributes{suffix}{phantomNote}");
@@ -276,7 +280,8 @@ public static class SysfsHelper
     {
         try
         {
-            if (!File.Exists(path)) return null;
+            if (!File.Exists(path))
+                return null;
             return File.ReadAllText(path).Trim();
         }
         catch (Exception ex)
@@ -300,7 +305,8 @@ public static class SysfsHelper
     {
         try
         {
-            if (!File.Exists(path)) return false;
+            if (!File.Exists(path))
+                return false;
             Helpers.Logger.WriteLine($"SysfsHelper.WriteAttribute({path}) = {value}");
             var sw = System.Diagnostics.Stopwatch.StartNew();
             File.WriteAllText(path, value);
@@ -351,7 +357,8 @@ public static class SysfsHelper
     {
         try
         {
-            if (!Directory.Exists(Hwmon)) return null;
+            if (!Directory.Exists(Hwmon))
+                return null;
 
             // Normalize: asus_nb_wmi ↔ asus-nb-wmi
             string normalized = driverName.Replace('_', '-');
@@ -361,7 +368,8 @@ public static class SysfsHelper
             {
                 var namePath = Path.Combine(hwmonDir, "name");
                 var name = ReadAttribute(namePath);
-                if (name == null) continue;
+                if (name == null)
+                    continue;
 
                 // Exact match
                 if (name.Equals(driverName, StringComparison.OrdinalIgnoreCase))
@@ -386,7 +394,8 @@ public static class SysfsHelper
     {
         try
         {
-            if (!Directory.Exists(Hwmon)) return null;
+            if (!Directory.Exists(Hwmon))
+                return null;
 
             foreach (var name in names)
             {
@@ -394,7 +403,8 @@ public static class SysfsHelper
                 {
                     var namePath = Path.Combine(hwmonDir, "name");
                     var hwmonName = ReadAttribute(namePath);
-                    if (hwmonName == null) continue;
+                    if (hwmonName == null)
+                        continue;
 
                     // Match name (with underscore/dash normalization)
                     string normalized = name.Replace('_', '-');
@@ -421,7 +431,8 @@ public static class SysfsHelper
     {
         try
         {
-            if (!Directory.Exists(Hwmon)) return;
+            if (!Directory.Exists(Hwmon))
+                return;
             foreach (var hwmonDir in Directory.GetDirectories(Hwmon))
             {
                 var name = ReadAttribute(Path.Combine(hwmonDir, "name"));
@@ -439,7 +450,8 @@ public static class SysfsHelper
         var results = new List<string>();
         try
         {
-            if (!Directory.Exists(Hwmon)) return results;
+            if (!Directory.Exists(Hwmon))
+                return results;
 
             foreach (var hwmonDir in Directory.GetDirectories(Hwmon))
             {
@@ -464,7 +476,8 @@ public static class SysfsHelper
     {
         try
         {
-            if (!Directory.Exists(PowerSupply)) return null;
+            if (!Directory.Exists(PowerSupply))
+                return null;
 
             foreach (var psDir in Directory.GetDirectories(PowerSupply))
             {
@@ -488,7 +501,8 @@ public static class SysfsHelper
     {
         try
         {
-            if (!Directory.Exists(PowerSupply)) return null;
+            if (!Directory.Exists(PowerSupply))
+                return null;
 
             foreach (var psDir in Directory.GetDirectories(PowerSupply))
             {
@@ -513,7 +527,8 @@ public static class SysfsHelper
     {
         try
         {
-            if (!Directory.Exists(Backlight)) return null;
+            if (!Directory.Exists(Backlight))
+                return null;
             var dirs = Directory.GetDirectories(Backlight);
             return dirs.Length > 0 ? dirs[0] : null;
         }
@@ -578,7 +593,8 @@ public static class SysfsHelper
         try
         {
             using var proc = System.Diagnostics.Process.Start(psi);
-            if (proc == null) return null;
+            if (proc == null)
+                return null;
 
             var outputTask = proc.StandardOutput.ReadToEndAsync();
             var errorTask = proc.StandardError.ReadToEndAsync();

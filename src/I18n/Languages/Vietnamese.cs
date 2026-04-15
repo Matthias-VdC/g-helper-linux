@@ -4,7 +4,7 @@ public static class Vietnamese
 {
     public static Dictionary<string, string> Translations => new()
     {
-        // ═══════════════════ COMMON ═══════════════════
+        // COMMON
         ["enabled"] = "Đã bật",
         ["disabled"] = "Đã tắt",
         ["muted"] = "Đã tắt tiếng",
@@ -25,7 +25,7 @@ public static class Vietnamese
         ["refresh"] = "Làm mới",
         ["details"] = "Chi tiết...",
 
-        // ═══════════════════ PERFORMANCE MODES ═══════════════════
+        // PERFORMANCE MODES
         ["mode_silent"] = "Yên lặng",
         ["mode_balanced"] = "Cân bằng",
         ["mode_turbo"] = "Turbo",
@@ -34,7 +34,7 @@ public static class Vietnamese
         ["mode_prefix"] = "Chế độ: {0}",
         ["fans_power"] = "Quạt + Nguồn",
 
-        // ═══════════════════ GPU MODES ═══════════════════
+        // GPU MODES
         ["gpu_eco"] = "Eco",
         ["gpu_standard"] = "Standard",
         ["gpu_ultimate"] = "Ultimate",
@@ -42,19 +42,19 @@ public static class Vietnamese
         ["gpu_unknown"] = "Không xác định",
         ["gpu_mode_prefix"] = "Chế độ GPU: {0}",
 
-        // ═══════════════════ SENSOR INFO ═══════════════════
+        // SENSOR INFO
         ["cpu_fan_info"] = "CPU: {0} Quạt: {1}",
         ["gpu_fan_full_info"] = "GPU: {0}{1}  Quạt: {2}",
         ["gpu_fan_only"] = "Quạt GPU: {0}",
         ["mid_fan_info"] = "Quạt giữa: {0}",
 
-        // ═══════════════════ SCREEN ═══════════════════
+        // SCREEN
         ["screen_prefix"] = "Màn hình laptop: {0}Hz",
         ["screen_prefix_auto"] = "Màn hình laptop: {0}Hz (Tự động)",
         ["screen_auto"] = "Tự động",
         ["screen_miniled"] = "MiniLED",
 
-        // ═══════════════════ KEYBOARD ═══════════════════
+        // KEYBOARD
         ["keyboard_header"] = "Bàn phím laptop",
         ["backlight"] = "Đèn nền",
         ["extra"] = "Thêm",
@@ -69,14 +69,14 @@ public static class Vietnamese
         ["pick_color"] = "Chọn màu",
         ["hex_label"] = "Hex:",
 
-        // ═══════════════════ BATTERY ═══════════════════
+        // BATTERY
         ["battery_limit_prefix"] = "Giới hạn sạc pin: {0}%",
         ["discharging_watts"] = "Xả: {0}W",
         ["charging_watts"] = "Sạc: {0}W",
         ["plugged_in"] = "Đã cắm sạc",
         ["charge_prefix"] = "Pin: {0}%",
 
-        // ═══════════════════ FOOTER ═══════════════════
+        // FOOTER
         ["run_on_startup"] = "Chạy khi khởi động",
         ["unknown_asus"] = "ASUS không xác định",
         ["title_prefix"] = "G-Helper - {0}",
@@ -89,7 +89,7 @@ public static class Vietnamese
         ["features_prefix"] = "Tính năng: {0}",
         ["no_features"] = "Không phát hiện tính năng đặc thù ASUS",
 
-        // ═══════════════════ FEATURE NAMES ═══════════════════
+        // FEATURE NAMES
         ["feature_perf_modes"] = "Chế độ hiệu năng",
         ["feature_gpu_eco"] = "GPU Eco",
         ["feature_mux"] = "Công tắc MUX",
@@ -98,7 +98,7 @@ public static class Vietnamese
         ["feature_ppt"] = "Giới hạn PPT",
         ["feature_nv_boost"] = "NVIDIA Dynamic Boost",
 
-        // ═══════════════════ GPU TIPS & NOTIFICATIONS ═══════════════════
+        // GPU TIPS & NOTIFICATIONS
         ["gpu_pending_reboot"] = "{0} đang chờ - khởi động lại để áp dụng",
         ["gpu_pending_mode"] = "Chế độ",
         ["gpu_tip_eco"] = "dGPU đã tắt - thời lượng pin tối đa",
@@ -151,7 +151,7 @@ public static class Vietnamese
         ["gpu_driver_after_reboot"] = "Sau khi khởi động lại",
         ["gpu_driver_footer"] = "Chuyển ngay sẽ cố gỡ trình điều khiển GPU (có thể cần\nmật khẩu quản trị). Sau khi khởi động lại sẽ lưu cho lần khởi động tiếp theo.",
 
-        // ═══════════════════ KEYBOARD NOTIFICATIONS ═══════════════════
+        // KEYBOARD NOTIFICATIONS
         ["kbd_off"] = "Tắt  \u25cb\u25cb\u25cb",
         ["kbd_low"] = "Thấp  \u25cf\u25cb\u25cb",
         ["kbd_medium"] = "Trung bình  \u25cf\u25cf\u25cb",
@@ -159,7 +159,7 @@ public static class Vietnamese
         ["kbd_level"] = "Mức {0}",
         ["keyboard"] = "Bàn phím",
 
-        // ═══════════════════ OTHER NOTIFICATIONS ═══════════════════
+        // OTHER NOTIFICATIONS
         ["performance"] = "Hiệu năng",
         ["aura"] = "Aura",
         ["microphone"] = "Micro",
@@ -176,14 +176,14 @@ public static class Vietnamese
         ["setup_required"] = "Cần thiết lập",
         ["udev_not_installed"] = "Chưa cài đặt quy tắc udev. Chạy install.sh để có đầy đủ chức năng (giới hạn pin, điều khiển quạt, v.v.)",
 
-        // ═══════════════════ SYSTEM TRAY ═══════════════════
+        // SYSTEM TRAY
         ["tray_tooltip"] = "G-Helper - {0}",
         ["tray_gpu_eco"] = "GPU: Eco (chỉ iGPU)",
         ["tray_gpu_standard"] = "GPU: Standard (dGPU)",
         ["tray_gpu_optimized"] = "GPU: Tối ưu (tự động)",
         ["tray_gpu_ultimate"] = "GPU: Ultimate (MUX)",
 
-        // ═══════════════════ KEY ACTIONS ═══════════════════
+        // KEY ACTIONS
         ["action_none"] = "Không",
         ["action_ghelper"] = "Bật/tắt G-Helper",
         ["action_performance"] = "Chuyển chế độ hiệu năng",
@@ -199,12 +199,12 @@ public static class Vietnamese
         ["action_camera"] = "Bật/tắt Camera",
         ["action_touchpad"] = "Bật/tắt Bàn cảm ứng",
 
-        // ═══════════════════ KEY NAMES ═══════════════════
+        // KEY NAMES
         ["key_m4"] = "Phím ROG / M5",
         ["key_fnf4"] = "Fn+F4 (Aura)",
         ["key_fnf5"] = "Fn+F5 / M4 (Hiệu năng)",
 
-        // ═══════════════════ EXTRA WINDOW ═══════════════════
+        // EXTRA WINDOW
         ["extra_title"] = "Cài đặt bổ sung",
         ["kbd_backlight_header"] = "Đèn nền bàn phím",
         ["brightness"] = "Độ sáng",
@@ -266,7 +266,7 @@ public static class Vietnamese
         ["battery_health_unknown"] = "Tình trạng pin: --%",
         ["power_draw_discharge"] = "Tiêu thụ: {0} mW (xả)",
         ["power_draw_charge"] = "Tiêu thụ: {0} mW (sạc)",
-        ["power_draw_unknown"] = "Tiêu thụ: -- mW",
+        ["power_draw_unknown"] = "Tiêu thụ: - mW",
 
         ["system_info_header"] = "Thông tin hệ thống",
 
@@ -282,11 +282,11 @@ public static class Vietnamese
         ["log_stdout"] = "Nhật ký được ghi ra stdout - chạy từ terminal để xem kết quả",
         ["kernel_warning"] = "\u26A0 Khuyến nghị kernel 6.2+ để hỗ trợ đầy đủ tính năng",
 
-        // ═══════════════════ LANGUAGE ═══════════════════
+        // LANGUAGE
         ["language_header"] = "Ngôn ngữ",
         ["language_auto"] = "Tự động (hệ thống)",
 
-        // ═══════════════════ FANS WINDOW ═══════════════════
+        // FANS WINDOW
         ["fans_title"] = "Quạt & Nguồn",
         ["fan_curves"] = "Đường cong quạt",
         ["reset"] = "Đặt lại",
@@ -304,7 +304,7 @@ public static class Vietnamese
         ["firmware_control"] = "Điều khiển firmware",
         ["fan_sensor_format"] = "CPU: {0} / GPU: {1} Tải: {2}   Giữa: {3} RPM",
 
-        // ═══════════════════ BATTERY INFO WINDOW ═══════════════════
+        // BATTERY INFO WINDOW
         ["battery_info_title"] = "Thông tin pin",
         ["health_header"] = "Tình trạng",
         ["health"] = "Tình trạng",
@@ -326,7 +326,7 @@ public static class Vietnamese
         ["discharging"] = "đang xả",
         ["charging"] = "đang sạc",
 
-        // ═══════════════════ UPDATES WINDOW ═══════════════════
+        // UPDATES WINDOW
         ["updates_title"] = "Cập nhật BIOS & Trình điều khiển",
         ["updates_header"] = "Cập nhật BIOS & Trình điều khiển",
         ["copy_diagnostics"] = "Sao chép chẩn đoán",
@@ -361,7 +361,7 @@ public static class Vietnamese
         ["updates_title_format"] = "Cập nhật BIOS & Trình điều khiển: {0} ({1} BIOS {2})",
         ["app_version_format"] = "G-Helper Linux v{0} - {1}",
 
-        // ═══════════════════ ARCADE GAME ═══════════════════
+        // ARCADE GAME
         ["arcade_title"] = "ROG Fighter",
         ["arcade_game_title"] = "ROG FIGHTER",
         ["arcade_move"] = "\u2190 \u2192 \u2191 \u2193 / W A S D  di chuyển",
@@ -381,7 +381,7 @@ public static class Vietnamese
         ["arcade_new_highscore"] = "ĐIỂM CAO MỚI!",
         ["arcade_retry"] = "ENTER để thử lại",
 
-        // ═══════════════════ AURA MODES ═══════════════════
+        // AURA MODES
         ["aura_static"] = "Tĩnh",
         ["aura_breathe"] = "Thở",
         ["aura_strobe"] = "Nhấp nháy",
@@ -396,12 +396,12 @@ public static class Vietnamese
         ["aura_flash"] = "Lóe sáng",
         ["aura_no_modes"] = "Không có chế độ",
 
-        // ═══════════════════ AURA SPEEDS ═══════════════════
+        // AURA SPEEDS
         ["speed_slow"] = "Chậm",
         ["speed_normal"] = "Bình thường",
         ["speed_fast"] = "Nhanh",
 
-        // ═══════════════════ MISC ═══════════════════
+        // MISC
         ["ghelper"] = "G-Helper",
         ["asus_laptop_control"] = "Điều khiển laptop ASUS (Linux)",
     };

@@ -4,7 +4,7 @@ public static class Romanian
 {
     public static Dictionary<string, string> Translations => new()
     {
-        // ═══════════════════ COMMON ═══════════════════
+        // COMMON
         ["enabled"] = "Activat",
         ["disabled"] = "Dezactivat",
         ["muted"] = "Dezactivat sunet",
@@ -25,7 +25,7 @@ public static class Romanian
         ["refresh"] = "Reîmprospătează",
         ["details"] = "Detalii...",
 
-        // ═══════════════════ PERFORMANCE MODES ═══════════════════
+        // PERFORMANCE MODES
         ["mode_silent"] = "Silențios",
         ["mode_balanced"] = "Echilibrat",
         ["mode_turbo"] = "Turbo",
@@ -34,7 +34,7 @@ public static class Romanian
         ["mode_prefix"] = "Mod: {0}",
         ["fans_power"] = "Ventilatoare + Alimentare",
 
-        // ═══════════════════ GPU MODES ═══════════════════
+        // GPU MODES
         ["gpu_eco"] = "Eco",
         ["gpu_standard"] = "Standard",
         ["gpu_ultimate"] = "Ultimate",
@@ -42,19 +42,19 @@ public static class Romanian
         ["gpu_unknown"] = "Necunoscut",
         ["gpu_mode_prefix"] = "Mod GPU: {0}",
 
-        // ═══════════════════ SENSOR INFO ═══════════════════
+        // SENSOR INFO
         ["cpu_fan_info"] = "CPU: {0} Vent.: {1}",
         ["gpu_fan_full_info"] = "GPU: {0}{1}  Vent.: {2}",
         ["gpu_fan_only"] = "Vent. GPU: {0}",
         ["mid_fan_info"] = "Vent. mijloc: {0}",
 
-        // ═══════════════════ SCREEN ═══════════════════
+        // SCREEN
         ["screen_prefix"] = "Ecran laptop: {0}Hz",
         ["screen_prefix_auto"] = "Ecran laptop: {0}Hz (Auto)",
         ["screen_auto"] = "Auto",
         ["screen_miniled"] = "MiniLED",
 
-        // ═══════════════════ KEYBOARD ═══════════════════
+        // KEYBOARD
         ["keyboard_header"] = "Tastatura laptopului",
         ["backlight"] = "Iluminare",
         ["extra"] = "Extra",
@@ -69,14 +69,14 @@ public static class Romanian
         ["pick_color"] = "Alege culoare",
         ["hex_label"] = "Hex:",
 
-        // ═══════════════════ BATTERY ═══════════════════
+        // BATTERY
         ["battery_limit_prefix"] = "Limită încărcare baterie: {0}%",
         ["discharging_watts"] = "Descărcare: {0}W",
         ["charging_watts"] = "Încărcare: {0}W",
         ["plugged_in"] = "Conectat la priză",
         ["charge_prefix"] = "Încărcare: {0}%",
 
-        // ═══════════════════ FOOTER ═══════════════════
+        // FOOTER
         ["run_on_startup"] = "Rulează la pornire",
         ["unknown_asus"] = "ASUS necunoscut",
         ["title_prefix"] = "G-Helper - {0}",
@@ -89,7 +89,7 @@ public static class Romanian
         ["features_prefix"] = "Funcții: {0}",
         ["no_features"] = "Nu au fost detectate funcții specifice ASUS",
 
-        // ═══════════════════ FEATURE NAMES ═══════════════════
+        // FEATURE NAMES
         ["feature_perf_modes"] = "Moduri de performanță",
         ["feature_gpu_eco"] = "GPU Eco",
         ["feature_mux"] = "Comutator MUX",
@@ -98,7 +98,7 @@ public static class Romanian
         ["feature_ppt"] = "Limite PPT",
         ["feature_nv_boost"] = "NVIDIA Dynamic Boost",
 
-        // ═══════════════════ GPU TIPS & NOTIFICATIONS ═══════════════════
+        // GPU TIPS & NOTIFICATIONS
         ["gpu_pending_reboot"] = "{0} în așteptare - reporniți pentru a aplica",
         ["gpu_pending_mode"] = "Mod",
         ["gpu_tip_eco"] = "dGPU oprit - autonomie maximă a bateriei",
@@ -151,7 +151,7 @@ public static class Romanian
         ["gpu_driver_after_reboot"] = "După repornire",
         ["gpu_driver_footer"] = "Comută acum încearcă să descarce driverul GPU (poate fi\nnecesară parola de administrator). După repornire salvează pentru următoarea pornire.",
 
-        // ═══════════════════ KEYBOARD NOTIFICATIONS ═══════════════════
+        // KEYBOARD NOTIFICATIONS
         ["kbd_off"] = "Oprit  \u25cb\u25cb\u25cb",
         ["kbd_low"] = "Scăzut  \u25cf\u25cb\u25cb",
         ["kbd_medium"] = "Mediu  \u25cf\u25cf\u25cb",
@@ -159,7 +159,7 @@ public static class Romanian
         ["kbd_level"] = "Nivel {0}",
         ["keyboard"] = "Tastatură",
 
-        // ═══════════════════ OTHER NOTIFICATIONS ═══════════════════
+        // OTHER NOTIFICATIONS
         ["performance"] = "Performanță",
         ["aura"] = "Aura",
         ["microphone"] = "Microfon",
@@ -176,14 +176,14 @@ public static class Romanian
         ["setup_required"] = "Configurare necesară",
         ["udev_not_installed"] = "Regulile udev nu sunt instalate. Rulați install.sh pentru funcționalitate completă (limită baterie, control ventilatoare etc.)",
 
-        // ═══════════════════ SYSTEM TRAY ═══════════════════
+        // SYSTEM TRAY
         ["tray_tooltip"] = "G-Helper - {0}",
         ["tray_gpu_eco"] = "GPU: Eco (doar iGPU)",
         ["tray_gpu_standard"] = "GPU: Standard (dGPU)",
         ["tray_gpu_optimized"] = "GPU: Optimizat (auto)",
         ["tray_gpu_ultimate"] = "GPU: Ultimate (MUX)",
 
-        // ═══════════════════ KEY ACTIONS ═══════════════════
+        // KEY ACTIONS
         ["action_none"] = "Nimic",
         ["action_ghelper"] = "Comută G-Helper",
         ["action_performance"] = "Schimbă modul de performanță",
@@ -199,12 +199,12 @@ public static class Romanian
         ["action_camera"] = "Comută camera",
         ["action_touchpad"] = "Comută touchpad",
 
-        // ═══════════════════ KEY NAMES ═══════════════════
+        // KEY NAMES
         ["key_m4"] = "Tasta ROG / M5",
         ["key_fnf4"] = "Fn+F4 (Aura)",
         ["key_fnf5"] = "Fn+F5 / M4 (Performanță)",
 
-        // ═══════════════════ EXTRA WINDOW ═══════════════════
+        // EXTRA WINDOW
         ["extra_title"] = "Setări suplimentare",
         ["kbd_backlight_header"] = "Iluminare tastatură",
         ["brightness"] = "Luminozitate",
@@ -266,7 +266,7 @@ public static class Romanian
         ["battery_health_unknown"] = "Sănătate baterie: --%",
         ["power_draw_discharge"] = "Consum: {0} mW (descărcare)",
         ["power_draw_charge"] = "Consum: {0} mW (încărcare)",
-        ["power_draw_unknown"] = "Consum: -- mW",
+        ["power_draw_unknown"] = "Consum: - mW",
 
         ["system_info_header"] = "Informații sistem",
 
@@ -282,11 +282,11 @@ public static class Romanian
         ["log_stdout"] = "Jurnalele sunt scrise pe stdout - rulați din terminal pentru a vedea rezultatul",
         ["kernel_warning"] = "\u26A0 Kernel 6.2+ recomandat pentru suport complet al funcțiilor",
 
-        // ═══════════════════ LANGUAGE ═══════════════════
+        // LANGUAGE
         ["language_header"] = "Limbă",
         ["language_auto"] = "Auto (sistem)",
 
-        // ═══════════════════ FANS WINDOW ═══════════════════
+        // FANS WINDOW
         ["fans_title"] = "Ventilatoare și alimentare",
         ["fan_curves"] = "Curbe ventilatoare",
         ["reset"] = "Resetează",
@@ -304,7 +304,7 @@ public static class Romanian
         ["firmware_control"] = "Control firmware",
         ["fan_sensor_format"] = "CPU: {0} / GPU: {1} Încărcare: {2}   Mijloc: {3} RPM",
 
-        // ═══════════════════ BATTERY INFO WINDOW ═══════════════════
+        // BATTERY INFO WINDOW
         ["battery_info_title"] = "Informații baterie",
         ["health_header"] = "Sănătate",
         ["health"] = "Sănătate",
@@ -326,7 +326,7 @@ public static class Romanian
         ["discharging"] = "descărcare",
         ["charging"] = "încărcare",
 
-        // ═══════════════════ UPDATES WINDOW ═══════════════════
+        // UPDATES WINDOW
         ["updates_title"] = "Actualizări BIOS și drivere",
         ["updates_header"] = "Actualizări BIOS și drivere",
         ["copy_diagnostics"] = "Copiază diagnosticul",
@@ -361,7 +361,7 @@ public static class Romanian
         ["updates_title_format"] = "Actualizări BIOS și drivere: {0} ({1} BIOS {2})",
         ["app_version_format"] = "G-Helper Linux v{0} - {1}",
 
-        // ═══════════════════ ARCADE GAME ═══════════════════
+        // ARCADE GAME
         ["arcade_title"] = "ROG Fighter",
         ["arcade_game_title"] = "ROG FIGHTER",
         ["arcade_move"] = "\u2190 \u2192 \u2191 \u2193 / W A S D  mișcare",
@@ -381,7 +381,7 @@ public static class Romanian
         ["arcade_new_highscore"] = "NOU SCOR MAXIM!",
         ["arcade_retry"] = "ENTER pentru a reîncerca",
 
-        // ═══════════════════ AURA MODES ═══════════════════
+        // AURA MODES
         ["aura_static"] = "Static",
         ["aura_breathe"] = "Respirație",
         ["aura_strobe"] = "Stroboscop",
@@ -396,12 +396,12 @@ public static class Romanian
         ["aura_flash"] = "Bliț",
         ["aura_no_modes"] = "Niciun mod",
 
-        // ═══════════════════ AURA SPEEDS ═══════════════════
+        // AURA SPEEDS
         ["speed_slow"] = "Lent",
         ["speed_normal"] = "Normal",
         ["speed_fast"] = "Rapid",
 
-        // ═══════════════════ MISC ═══════════════════
+        // MISC
         ["ghelper"] = "G-Helper",
         ["asus_laptop_control"] = "Control laptop ASUS (Linux)",
     };

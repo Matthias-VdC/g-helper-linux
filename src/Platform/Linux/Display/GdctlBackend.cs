@@ -8,13 +8,13 @@ namespace GHelper.Linux.Platform.Linux.Display;
 ///
 /// gdctl show -v output uses a tree format:
 ///   Monitors:
-///   ├──Monitor eDP-1 (Display Name)
-///   │  ├──Modes (2)
-///   │  │  ├──1920x1200@165.003
-///   │  │  │  └──Properties: (2)
-///   │  │  │     ├──is-current ⇒  yes
-///   │  │  │     └──is-preferred ⇒  yes
-///   │  │  └──1920x1200@60.001
+///   ├--Monitor eDP-1 (Display Name)
+///   │  ├--Modes (2)
+///   │  │  ├--1920x1200@165.003
+///   │  │  │  └--Properties: (2)
+///   │  │  │     ├--is-current ⇒  yes
+///   │  │  │     └--is-preferred ⇒  yes
+///   │  │  └--1920x1200@60.001
 ///
 /// gdctl set -L --primary -M eDP-1 -m 1920x1200@60.001
 /// </summary>
@@ -32,7 +32,8 @@ public class GdctlBackend : IDisplayBackend
         try
         {
             var info = FetchInfo();
-            if (info == null) return -1;
+            if (info == null)
+                return -1;
 
             var output = FindLaptopOutput(info);
             if (output == null)
@@ -63,10 +64,12 @@ public class GdctlBackend : IDisplayBackend
         try
         {
             var info = FetchInfo();
-            if (info == null) return rates;
+            if (info == null)
+                return rates;
 
             var output = FindLaptopOutput(info);
-            if (output == null) return rates;
+            if (output == null)
+                return rates;
 
             foreach (var mode in FindAllModes(info, output))
             {
@@ -130,7 +133,7 @@ public class GdctlBackend : IDisplayBackend
         return info != null ? FindLaptopOutput(info) : null;
     }
 
-    // ── Probing ──
+    // Probing
 
     /// <summary>Test if gdctl is available and returns monitor info.</summary>
     public static bool Probe()
@@ -139,7 +142,7 @@ public class GdctlBackend : IDisplayBackend
         return output != null && output.Contains("Monitor");
     }
 
-    // ── Internal helpers ──
+    // Internal helpers
 
     /// <summary>Run gdctl show -v and return output. Returns null on failure.</summary>
     private static string? FetchInfo()
@@ -149,7 +152,7 @@ public class GdctlBackend : IDisplayBackend
 
     /// <summary>Strip tree-drawing characters from a line.</summary>
     private static string CleanLine(string line)
-        => line.Replace("│", "").Replace("├", "").Replace("└", "").Replace("─", "").Trim();
+        => line.Replace("│", "").Replace("├", "").Replace("└", "").Replace("-", "").Trim();
 
     /// <summary>
     /// Find the laptop panel connector name. Priority: eDP > LVDS > first.
@@ -161,7 +164,8 @@ public class GdctlBackend : IDisplayBackend
         {
             var clean = CleanLine(line);
             var match = MonitorRegex.Match(clean);
-            if (!match.Success) continue;
+            if (!match.Success)
+                continue;
 
             string name = match.Groups[1].Value;
 
@@ -196,7 +200,8 @@ public class GdctlBackend : IDisplayBackend
                 continue;
             }
 
-            if (!inMonitor) continue;
+            if (!inMonitor)
+                continue;
 
             // Mode names are standalone lines like "1920x1200@165.003"
             if (ModeNameRegex.IsMatch(clean))
@@ -226,7 +231,8 @@ public class GdctlBackend : IDisplayBackend
                 continue;
             }
 
-            if (!inMonitor) continue;
+            if (!inMonitor)
+                continue;
 
             if (ModeNameRegex.IsMatch(clean))
                 lastMode = clean;
@@ -248,7 +254,8 @@ public class GdctlBackend : IDisplayBackend
         foreach (var mode in modes)
         {
             var match = RefreshRegex.Match(mode);
-            if (!match.Success) continue;
+            if (!match.Success)
+                continue;
 
             if (!double.TryParse(match.Groups[1].Value,
                     System.Globalization.NumberStyles.Float,
@@ -271,7 +278,8 @@ public class GdctlBackend : IDisplayBackend
     private static int ExtractHz(string modeName)
     {
         var match = RefreshRegex.Match(modeName);
-        if (!match.Success) return -1;
+        if (!match.Success)
+            return -1;
 
         if (double.TryParse(match.Groups[1].Value,
                 System.Globalization.NumberStyles.Float,

@@ -25,14 +25,17 @@ public class WlrRandrBackend : IDisplayBackend
         try
         {
             var json = RunJson();
-            if (json == null) return -1;
+            if (json == null)
+                return -1;
 
             using var doc = JsonDocument.Parse(json);
             var output = FindLaptopOutput(doc);
-            if (output == null) return -1;
+            if (output == null)
+                return -1;
 
             var mode = FindCurrentMode(output.Value);
-            if (mode == null) return -1;
+            if (mode == null)
+                return -1;
 
             return (int)Math.Round(mode.Value.GetProperty("refresh").GetDouble());
         }
@@ -49,11 +52,13 @@ public class WlrRandrBackend : IDisplayBackend
         try
         {
             var json = RunJson();
-            if (json == null) return rates;
+            if (json == null)
+                return rates;
 
             using var doc = JsonDocument.Parse(json);
             var output = FindLaptopOutput(doc);
-            if (output == null) return rates;
+            if (output == null)
+                return rates;
 
             var curMode = FindCurrentMode(output.Value);
             int curW = 0, curH = 0;
@@ -124,7 +129,7 @@ public class WlrRandrBackend : IDisplayBackend
             int curW = curMode.Value.GetProperty("width").GetInt32();
             int curH = curMode.Value.GetProperty("height").GetInt32();
 
-            // Find the exact rate — wlr-randr matches in mHz internally
+            // Find the exact rate - wlr-randr matches in mHz internally
             double bestRate = 0;
             double bestDist = double.MaxValue;
 
@@ -132,7 +137,8 @@ public class WlrRandrBackend : IDisplayBackend
             {
                 int w = mode.GetProperty("width").GetInt32();
                 int h = mode.GetProperty("height").GetInt32();
-                if (w != curW || h != curH) continue;
+                if (w != curW || h != curH)
+                    continue;
 
                 double rate = mode.GetProperty("refresh").GetDouble();
                 double dist = Math.Abs(rate - hz);
@@ -158,7 +164,7 @@ public class WlrRandrBackend : IDisplayBackend
                 new[] { "--output", outputName, "--mode", modeStr }, 5000);
 
             if (result != null)
-                Helpers.Logger.WriteLine($"WlrRandr.SetRefreshRate: success — {outputName} -> {modeStr}");
+                Helpers.Logger.WriteLine($"WlrRandr.SetRefreshRate: success - {outputName} -> {modeStr}");
             else
                 Helpers.Logger.WriteLine($"WlrRandr.SetRefreshRate: wlr-randr command failed (non-zero exit or timeout)");
         }
@@ -179,16 +185,19 @@ public class WlrRandrBackend : IDisplayBackend
         try
         {
             var json = RunJson();
-            if (json == null) return null;
+            if (json == null)
+                return null;
 
             using var doc = JsonDocument.Parse(json);
             var output = FindLaptopOutput(doc);
-            if (output == null) return null;
+            if (output == null)
+                return null;
 
             if (output.Value.TryGetProperty("description", out var desc))
             {
                 var d = desc.GetString();
-                if (!string.IsNullOrEmpty(d)) return d;
+                if (!string.IsNullOrEmpty(d))
+                    return d;
             }
 
             return output.Value.GetProperty("name").GetString();
@@ -200,7 +209,7 @@ public class WlrRandrBackend : IDisplayBackend
         }
     }
 
-    // ── Probing ──
+    // Probing
 
     /// <summary>
     /// Test if wlr-randr works with the current compositor.
@@ -212,7 +221,7 @@ public class WlrRandrBackend : IDisplayBackend
         return result != null;
     }
 
-    // ── Internal helpers ──
+    // Internal helpers
 
     private string? RunJson()
     {

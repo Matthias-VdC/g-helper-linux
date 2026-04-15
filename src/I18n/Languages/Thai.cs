@@ -1,13 +1,13 @@
 namespace GHelper.Linux.I18n.Languages;
 
 /// <summary>
-/// Thai (th) — ไทย
+/// Thai (th) - ไทย
 /// </summary>
 public static class Thai
 {
     public static Dictionary<string, string> Translations => new()
     {
-        // ═══════════════════ COMMON ═══════════════════
+        // COMMON
         ["enabled"] = "เปิดใช้งาน",
         ["disabled"] = "ปิดใช้งาน",
         ["muted"] = "ปิดเสียง",
@@ -28,7 +28,7 @@ public static class Thai
         ["refresh"] = "รีเฟรช",
         ["details"] = "รายละเอียด...",
 
-        // ═══════════════════ PERFORMANCE MODES ═══════════════════
+        // PERFORMANCE MODES
         ["mode_silent"] = "เงียบ",
         ["mode_balanced"] = "สมดุล",
         ["mode_turbo"] = "เทอร์โบ",
@@ -37,7 +37,7 @@ public static class Thai
         ["mode_prefix"] = "โหมด: {0}",
         ["fans_power"] = "พัดลม + พลังงาน",
 
-        // ═══════════════════ GPU MODES ═══════════════════
+        // GPU MODES
         ["gpu_eco"] = "Eco",
         ["gpu_standard"] = "Standard",
         ["gpu_ultimate"] = "Ultimate",
@@ -45,19 +45,19 @@ public static class Thai
         ["gpu_unknown"] = "ไม่ทราบ",
         ["gpu_mode_prefix"] = "โหมด GPU: {0}",
 
-        // ═══════════════════ SENSOR INFO ═══════════════════
+        // SENSOR INFO
         ["cpu_fan_info"] = "CPU: {0} พัดลม: {1}",
         ["gpu_fan_full_info"] = "GPU: {0}{1}  พัดลม: {2}",
         ["gpu_fan_only"] = "พัดลม GPU: {0}",
         ["mid_fan_info"] = "พัดลมกลาง: {0}",
 
-        // ═══════════════════ SCREEN ═══════════════════
+        // SCREEN
         ["screen_prefix"] = "หน้าจอแล็ปท็อป: {0}Hz",
         ["screen_prefix_auto"] = "หน้าจอแล็ปท็อป: {0}Hz (อัตโนมัติ)",
         ["screen_auto"] = "อัตโนมัติ",
         ["screen_miniled"] = "MiniLED",
 
-        // ═══════════════════ KEYBOARD ═══════════════════
+        // KEYBOARD
         ["keyboard_header"] = "แป้นพิมพ์แล็ปท็อป",
         ["backlight"] = "ไฟส่องสว่าง",
         ["extra"] = "เพิ่มเติม",
@@ -72,14 +72,14 @@ public static class Thai
         ["pick_color"] = "เลือกสี",
         ["hex_label"] = "Hex:",
 
-        // ═══════════════════ BATTERY ═══════════════════
+        // BATTERY
         ["battery_limit_prefix"] = "ขีดจำกัดการชาร์จแบตเตอรี่: {0}%",
         ["discharging_watts"] = "กำลังคายประจุ: {0}W",
         ["charging_watts"] = "กำลังชาร์จ: {0}W",
         ["plugged_in"] = "เสียบปลั๊กอยู่",
         ["charge_prefix"] = "ประจุ: {0}%",
 
-        // ═══════════════════ FOOTER ═══════════════════
+        // FOOTER
         ["run_on_startup"] = "เปิดเมื่อเริ่มระบบ",
         ["unknown_asus"] = "ASUS ไม่ทราบรุ่น",
         ["title_prefix"] = "G-Helper - {0}",
@@ -92,7 +92,7 @@ public static class Thai
         ["features_prefix"] = "คุณสมบัติ: {0}",
         ["no_features"] = "ไม่พบคุณสมบัติเฉพาะของ ASUS",
 
-        // ═══════════════════ FEATURE NAMES ═══════════════════
+        // FEATURE NAMES
         ["feature_perf_modes"] = "โหมดประสิทธิภาพ",
         ["feature_gpu_eco"] = "GPU Eco",
         ["feature_mux"] = "สวิตช์ MUX",
@@ -101,7 +101,7 @@ public static class Thai
         ["feature_ppt"] = "ขีดจำกัด PPT",
         ["feature_nv_boost"] = "NVIDIA ไดนามิกบูสต์",
 
-        // ═══════════════════ GPU TIPS & NOTIFICATIONS ═══════════════════
+        // GPU TIPS & NOTIFICATIONS
         ["gpu_pending_reboot"] = "{0} รอดำเนินการ - รีบูตเพื่อนำไปใช้",
         ["gpu_pending_mode"] = "โหมด",
         ["gpu_tip_eco"] = "dGPU ปิดอยู่ - ประหยัดแบตเตอรี่สูงสุด",
@@ -154,7 +154,7 @@ public static class Thai
         ["gpu_driver_after_reboot"] = "หลังรีบูต",
         ["gpu_driver_footer"] = "\"สลับตอนนี้\" จะพยายามยกเลิกการโหลดไดรเวอร์ GPU (อาจต้องใช้\nรหัสผ่านผู้ดูแลระบบ) \"หลังรีบูต\" จะบันทึกสำหรับการเริ่มต้นครั้งถัดไป",
 
-        // ═══════════════════ KEYBOARD NOTIFICATIONS ═══════════════════
+        // KEYBOARD NOTIFICATIONS
         ["kbd_off"] = "ปิด  \u25cb\u25cb\u25cb",
         ["kbd_low"] = "ต่ำ  \u25cf\u25cb\u25cb",
         ["kbd_medium"] = "ปานกลาง  \u25cf\u25cf\u25cb",
@@ -162,7 +162,7 @@ public static class Thai
         ["kbd_level"] = "ระดับ {0}",
         ["keyboard"] = "แป้นพิมพ์",
 
-        // ═══════════════════ OTHER NOTIFICATIONS ═══════════════════
+        // OTHER NOTIFICATIONS
         ["performance"] = "ประสิทธิภาพ",
         ["aura"] = "Aura",
         ["microphone"] = "ไมโครโฟน",
@@ -179,14 +179,14 @@ public static class Thai
         ["setup_required"] = "ต้องตั้งค่า",
         ["udev_not_installed"] = "ยังไม่ได้ติดตั้งกฎ udev เรียกใช้ install.sh เพื่อใช้งานฟีเจอร์ทั้งหมด (จำกัดแบตเตอรี่, ควบคุมพัดลม, ฯลฯ)",
 
-        // ═══════════════════ SYSTEM TRAY ═══════════════════
+        // SYSTEM TRAY
         ["tray_tooltip"] = "G-Helper - {0}",
         ["tray_gpu_eco"] = "GPU: Eco (iGPU เท่านั้น)",
         ["tray_gpu_standard"] = "GPU: Standard (dGPU)",
         ["tray_gpu_optimized"] = "GPU: ปรับแต่งอัตโนมัติ (อัตโนมัติ)",
         ["tray_gpu_ultimate"] = "GPU: Ultimate (MUX)",
 
-        // ═══════════════════ KEY ACTIONS ═══════════════════
+        // KEY ACTIONS
         ["action_none"] = "ไม่มี",
         ["action_ghelper"] = "สลับ G-Helper",
         ["action_performance"] = "สลับโหมดประสิทธิภาพ",
@@ -202,12 +202,12 @@ public static class Thai
         ["action_camera"] = "สลับกล้อง",
         ["action_touchpad"] = "สลับทัชแพด",
 
-        // ═══════════════════ KEY NAMES ═══════════════════
+        // KEY NAMES
         ["key_m4"] = "ปุ่ม ROG / M5",
         ["key_fnf4"] = "Fn+F4 (Aura)",
         ["key_fnf5"] = "Fn+F5 / M4 (ประสิทธิภาพ)",
 
-        // ═══════════════════ EXTRA WINDOW ═══════════════════
+        // EXTRA WINDOW
         ["extra_title"] = "ตั้งค่าเพิ่มเติม",
         ["kbd_backlight_header"] = "ไฟส่องสว่างแป้นพิมพ์",
         ["brightness"] = "ความสว่าง",
@@ -269,7 +269,7 @@ public static class Thai
         ["battery_health_unknown"] = "สุขภาพแบตเตอรี่: --%",
         ["power_draw_discharge"] = "การใช้พลังงาน: {0} mW (คายประจุ)",
         ["power_draw_charge"] = "การใช้พลังงาน: {0} mW (ชาร์จ)",
-        ["power_draw_unknown"] = "การใช้พลังงาน: -- mW",
+        ["power_draw_unknown"] = "การใช้พลังงาน: - mW",
 
         ["system_info_header"] = "ข้อมูลระบบ",
 
@@ -285,11 +285,11 @@ public static class Thai
         ["log_stdout"] = "บันทึกถูกเขียนไปยัง stdout - เรียกใช้จากเทอร์มินัลเพื่อดูผลลัพธ์",
         ["kernel_warning"] = "\u26A0 แนะนำเคอร์เนล 6.2 ขึ้นไปเพื่อรองรับฟีเจอร์ทั้งหมด",
 
-        // ═══════════════════ LANGUAGE ═══════════════════
+        // LANGUAGE
         ["language_header"] = "ภาษา",
         ["language_auto"] = "อัตโนมัติ (ระบบ)",
 
-        // ═══════════════════ FANS WINDOW ═══════════════════
+        // FANS WINDOW
         ["fans_title"] = "พัดลมและพลังงาน",
         ["fan_curves"] = "กราฟพัดลม",
         ["reset"] = "รีเซ็ต",
@@ -307,7 +307,7 @@ public static class Thai
         ["firmware_control"] = "ควบคุมเฟิร์มแวร์",
         ["fan_sensor_format"] = "CPU: {0} / GPU: {1} โหลด: {2}   กลาง: {3} RPM",
 
-        // ═══════════════════ BATTERY INFO WINDOW ═══════════════════
+        // BATTERY INFO WINDOW
         ["battery_info_title"] = "ข้อมูลแบตเตอรี่",
         ["health_header"] = "สุขภาพ",
         ["health"] = "สุขภาพ",
@@ -329,7 +329,7 @@ public static class Thai
         ["discharging"] = "คายประจุ",
         ["charging"] = "กำลังชาร์จ",
 
-        // ═══════════════════ UPDATES WINDOW ═══════════════════
+        // UPDATES WINDOW
         ["updates_title"] = "อัปเดต BIOS และไดรเวอร์",
         ["updates_header"] = "อัปเดต BIOS และไดรเวอร์",
         ["copy_diagnostics"] = "คัดลอกข้อมูลวินิจฉัย",
@@ -364,7 +364,7 @@ public static class Thai
         ["updates_title_format"] = "อัปเดต BIOS และไดรเวอร์: {0} ({1} BIOS {2})",
         ["app_version_format"] = "G-Helper Linux v{0} - {1}",
 
-        // ═══════════════════ ARCADE GAME ═══════════════════
+        // ARCADE GAME
         ["arcade_title"] = "ROG Fighter",
         ["arcade_game_title"] = "ROG FIGHTER",
         ["arcade_move"] = "\u2190 \u2192 \u2191 \u2193 / W A S D  เคลื่อนที่",
@@ -384,7 +384,7 @@ public static class Thai
         ["arcade_new_highscore"] = "คะแนนสูงสุดใหม่!",
         ["arcade_retry"] = "ENTER เพื่อลองอีกครั้ง",
 
-        // ═══════════════════ AURA MODES ═══════════════════
+        // AURA MODES
         ["aura_static"] = "คงที่",
         ["aura_breathe"] = "หายใจ",
         ["aura_strobe"] = "กะพริบ",
@@ -399,12 +399,12 @@ public static class Thai
         ["aura_flash"] = "แฟลช",
         ["aura_no_modes"] = "ไม่มีโหมด",
 
-        // ═══════════════════ AURA SPEEDS ═══════════════════
+        // AURA SPEEDS
         ["speed_slow"] = "ช้า",
         ["speed_normal"] = "ปกติ",
         ["speed_fast"] = "เร็ว",
 
-        // ═══════════════════ MISC ═══════════════════
+        // MISC
         ["ghelper"] = "G-Helper",
         ["asus_laptop_control"] = "ควบคุมแล็ปท็อป ASUS (Linux)",
     };

@@ -77,7 +77,7 @@ public static class DisplayBackendFactory
             return new XrandrBackend();
         }
 
-        Helpers.Logger.WriteLine("Display: WARNING — no display backend available on this Wayland session");
+        Helpers.Logger.WriteLine("Display: WARNING - no display backend available on this Wayland session");
         return null;
     }
 
@@ -90,11 +90,11 @@ public static class DisplayBackendFactory
             return new XrandrBackend();
         }
 
-        Helpers.Logger.WriteLine("Display: WARNING — xrandr not available on this X11 session");
+        Helpers.Logger.WriteLine("Display: WARNING - xrandr not available on this X11 session");
         return null;
     }
 
-    // ── Session detection helpers ──
+    // Session detection helpers
 
     /// <summary>Detect if we're running on a Wayland session.</summary>
     public static bool IsWaylandSession()

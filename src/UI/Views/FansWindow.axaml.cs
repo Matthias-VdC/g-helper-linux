@@ -70,12 +70,13 @@ public partial class FansWindow : Window
         chartMid.FanLabel = Labels.Get("mid_fan");
     }
 
-    // ── Fan Curves ──
+    // Fan Curves
 
     private void LoadFanCurves()
     {
         var wmi = App.Wmi;
-        if (wmi == null) return;
+        if (wmi == null)
+            return;
 
         // Try reading current curves from hardware
         byte[]? cpuCurve = wmi.GetFanCurve(0);
@@ -99,7 +100,7 @@ public partial class FansWindow : Window
         chartCPU.CurveData = cpuCurve;
         chartGPU.CurveData = gpuCurve;
 
-        // Mid fan detection — show chart if curve is valid or RPM is readable
+        // Mid fan detection - show chart if curve is valid or RPM is readable
         // (matches Windows G-Helper's InitFans logic)
         byte[]? midCurve = wmi.GetFanCurve(2);
         bool hasMidFan = IsValidCurve(midCurve) || wmi.GetFanRpm(2) > 0;
@@ -157,7 +158,8 @@ public partial class FansWindow : Window
     private void ButtonApplyFans_Click(object? sender, RoutedEventArgs e)
     {
         var wmi = App.Wmi;
-        if (wmi == null) return;
+        if (wmi == null)
+            return;
 
         if (chartCPU.CurveData is { Length: 16 })
         {
@@ -214,9 +216,12 @@ public partial class FansWindow : Window
 
         // Phase 3: Re-apply ALL curves as active custom curves (pwm_enable=1).
         // Done after all resets so no subsequent pwm_enable=3 undoes them.
-        if (cpuCurve is { Length: 16 }) wmi?.SetFanCurve(0, cpuCurve);
-        if (gpuCurve is { Length: 16 }) wmi?.SetFanCurve(1, gpuCurve);
-        if (chartMid.IsVisible && midCurve is { Length: 16 }) wmi?.SetFanCurve(2, midCurve);
+        if (cpuCurve is { Length: 16 })
+            wmi?.SetFanCurve(0, cpuCurve);
+        if (gpuCurve is { Length: 16 })
+            wmi?.SetFanCurve(1, gpuCurve);
+        if (chartMid.IsVisible && midCurve is { Length: 16 })
+            wmi?.SetFanCurve(2, midCurve);
 
         UpdateDisabledState();
         Helpers.Logger.WriteLine("Fan curves reset to firmware defaults and re-applied");
@@ -225,11 +230,13 @@ public partial class FansWindow : Window
     private void ButtonDisable_Click(object? sender, RoutedEventArgs e)
     {
         var wmi = App.Wmi;
-        if (wmi == null) return;
+        if (wmi == null)
+            return;
 
         wmi.DisableFanCurve(0);
         wmi.DisableFanCurve(1);
-        if (chartMid.IsVisible) wmi.DisableFanCurve(2);
+        if (chartMid.IsVisible)
+            wmi.DisableFanCurve(2);
         UpdateDisabledState();
 
         Helpers.Logger.WriteLine("Custom fan curves disabled, using firmware defaults");
@@ -245,9 +252,10 @@ public partial class FansWindow : Window
 
         chartCPU.Disabled = !cpuEnabled;
         chartGPU.Disabled = !gpuEnabled;
-        if (chartMid.IsVisible) chartMid.Disabled = !midEnabled;
+        if (chartMid.IsVisible)
+            chartMid.Disabled = !midEnabled;
 
-        // Toggle button visual — accent border when disabled (active state)
+        // Toggle button visual - accent border when disabled (active state)
         buttonDisable.BorderBrush = anyDisabled ? AccentBrush : TransparentBrush;
         buttonDisable.BorderThickness = new Avalonia.Thickness(2);
     }
@@ -264,21 +272,24 @@ public partial class FansWindow : Window
         Helpers.AppConfig.SetMode("auto_apply_power", enabled ? 1 : 0);
     }
 
-    // ── Power Limits ──
+    // Power Limits
 
     private void LoadPowerLimits()
     {
         var wmi = App.Wmi;
-        if (wmi == null) return;
+        if (wmi == null)
+            return;
 
         _updatingPLSliders = true;
 
         // Read from hardware, fall back to saved config
         int pl1 = wmi.GetPptLimit(Platform.Linux.AsusAttributes.PptPl1Spl);
-        if (pl1 <= 0) pl1 = Helpers.AppConfig.GetMode("limit_slow");
+        if (pl1 <= 0)
+            pl1 = Helpers.AppConfig.GetMode("limit_slow");
 
         int pl2 = wmi.GetPptLimit(Platform.Linux.AsusAttributes.PptPl2Sppt);
-        if (pl2 <= 0) pl2 = Helpers.AppConfig.GetMode("limit_fast");
+        if (pl2 <= 0)
+            pl2 = Helpers.AppConfig.GetMode("limit_fast");
 
         if (pl1 > 0)
         {
@@ -292,13 +303,14 @@ public partial class FansWindow : Window
             labelPL2.Text = $"{pl2}W";
         }
 
-        // fPPT (fast boost) — only show if supported
+        // fPPT (fast boost) - only show if supported
         bool hasFppt = wmi.IsFeatureSupported(Platform.Linux.AsusAttributes.PptFppt);
         gridFppt.IsVisible = hasFppt;
         if (hasFppt)
         {
             int fppt = wmi.GetPptLimit(Platform.Linux.AsusAttributes.PptFppt);
-            if (fppt <= 0) fppt = Helpers.AppConfig.GetMode("limit_fppt");
+            if (fppt <= 0)
+                fppt = Helpers.AppConfig.GetMode("limit_fppt");
             if (fppt > 0)
             {
                 sliderFppt.Value = fppt;
@@ -313,35 +325,44 @@ public partial class FansWindow : Window
     private void SliderPL1_ValueChanged(object? sender,
         Avalonia.Controls.Primitives.RangeBaseValueChangedEventArgs e)
     {
-        if (_updatingPLSliders) return;
+        if (_updatingPLSliders)
+            return;
         labelPL1.Text = $"{(int)e.NewValue}W";
         // Enforce PL1 ≤ PL2 ≤ fPPT (matches Windows G-Helper coupling)
-        if (sliderPL1.Value > sliderPL2.Value) sliderPL2.Value = sliderPL1.Value;
-        if (sliderPL1.Value > sliderFppt.Value) sliderFppt.Value = sliderPL1.Value;
+        if (sliderPL1.Value > sliderPL2.Value)
+            sliderPL2.Value = sliderPL1.Value;
+        if (sliderPL1.Value > sliderFppt.Value)
+            sliderFppt.Value = sliderPL1.Value;
         SchedulePLWrite();
     }
 
     private void SliderPL2_ValueChanged(object? sender,
         Avalonia.Controls.Primitives.RangeBaseValueChangedEventArgs e)
     {
-        if (_updatingPLSliders) return;
+        if (_updatingPLSliders)
+            return;
         labelPL2.Text = $"{(int)e.NewValue}W";
-        if (sliderPL2.Value < sliderPL1.Value) sliderPL1.Value = sliderPL2.Value;
-        if (sliderPL2.Value > sliderFppt.Value) sliderFppt.Value = sliderPL2.Value;
+        if (sliderPL2.Value < sliderPL1.Value)
+            sliderPL1.Value = sliderPL2.Value;
+        if (sliderPL2.Value > sliderFppt.Value)
+            sliderFppt.Value = sliderPL2.Value;
         SchedulePLWrite();
     }
 
     private void SliderFppt_ValueChanged(object? sender,
         Avalonia.Controls.Primitives.RangeBaseValueChangedEventArgs e)
     {
-        if (_updatingPLSliders) return;
+        if (_updatingPLSliders)
+            return;
         labelFppt.Text = $"{(int)e.NewValue}W";
-        if (sliderFppt.Value < sliderPL2.Value) sliderPL2.Value = sliderFppt.Value;
-        if (sliderFppt.Value < sliderPL1.Value) sliderPL1.Value = sliderFppt.Value;
+        if (sliderFppt.Value < sliderPL2.Value)
+            sliderPL2.Value = sliderFppt.Value;
+        if (sliderFppt.Value < sliderPL1.Value)
+            sliderPL1.Value = sliderFppt.Value;
         SchedulePLWrite();
     }
 
-    /// <summary>Debounce PL slider writes — only write 300ms after the user stops dragging.</summary>
+    /// <summary>Debounce PL slider writes - only write 300ms after the user stops dragging.</summary>
     private void SchedulePLWrite()
     {
         _plDebounce?.Stop();
@@ -356,7 +377,8 @@ public partial class FansWindow : Window
         Dispatcher.UIThread.Post(() =>
         {
             var wmi = App.Wmi;
-            if (wmi == null) return;
+            if (wmi == null)
+                return;
 
             int pl1 = (int)sliderPL1.Value;
             int pl2 = (int)sliderPL2.Value;
@@ -374,7 +396,7 @@ public partial class FansWindow : Window
                 Helpers.AppConfig.SetMode("limit_fppt", fppt);
             }
 
-            // Mirror to secondary PPT — prevents stale APU/Platform SPPT
+            // Mirror to secondary PPT - prevents stale APU/Platform SPPT
             // from bottlenecking. Value = max(PL1, PL2).
             int ceiling = Math.Max(pl1, pl2);
             if (ceiling > 0)
@@ -387,12 +409,13 @@ public partial class FansWindow : Window
         });
     }
 
-    // ── CPU Boost ──
+    // CPU Boost
 
     private void RefreshBoostButton()
     {
         var power = App.Power;
-        if (power == null) return;
+        if (power == null)
+            return;
 
         bool boostEnabled = power.GetCpuBoost();
         SetBoostButtonState(boostEnabled);
@@ -420,14 +443,15 @@ public partial class FansWindow : Window
         SetBoostButtonState(false);
     }
 
-    // ── Sensor refresh ──
+    // Sensor refresh
 
     private void RefreshSensors()
     {
         try
         {
             var wmi = App.Wmi;
-            if (wmi == null) return;
+            if (wmi == null)
+                return;
 
             int cpuTemp = wmi.DeviceGet(0x00120094);
             int gpuTemp = wmi.DeviceGet(0x00120097);
@@ -472,16 +496,18 @@ public partial class FansWindow : Window
     /// Rejects null, wrong length, and completely-zero curves.
     /// Matches Windows G-Helper's IsEmptyCurve: a curve is invalid only if ALL 16 bytes are 0.
     /// Note: CPU/GPU fan curves from the Linux kernel often have all-zero temperatures but
-    /// valid PWM duty cycles — these are valid curves (GetFanCurve synthesizes a temp ramp).
+    /// valid PWM duty cycles - these are valid curves (GetFanCurve synthesizes a temp ramp).
     /// </summary>
     private static bool IsValidCurve(byte[]? curve)
     {
-        if (curve == null || curve.Length != 16) return false;
+        if (curve == null || curve.Length != 16)
+            return false;
 
         // Reject only if every byte is zero (no useful data at all)
         for (int i = 0; i < 16; i++)
         {
-            if (curve[i] > 0) return true;
+            if (curve[i] > 0)
+                return true;
         }
         return false;
     }

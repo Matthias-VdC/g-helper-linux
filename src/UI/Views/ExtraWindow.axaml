@@ -13,7 +13,7 @@
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <StackPanel Margin="10" Spacing="5">
 
-            <!-- ═══════════════════ LANGUAGE ═══════════════════ -->
+            <!-- LANGUAGE -->
             <Border Classes="panel">
                 <StackPanel>
                     <Border Classes="panel-header" Margin="0,0,0,8">
@@ -29,7 +29,7 @@
                 </StackPanel>
             </Border>
 
-            <!-- ═══════════════════ KEYBOARD BACKLIGHT ═══════════════════ -->
+            <!-- KEYBOARD BACKLIGHT -->
             <Border Classes="panel">
                 <StackPanel>
                     <Border Classes="panel-header" Margin="0,0,0,8">
@@ -113,7 +113,7 @@
                 </StackPanel>
             </Border>
 
-            <!-- ═══════════════════ DISPLAY SETTINGS ═══════════════════ -->
+            <!-- DISPLAY SETTINGS -->
             <Border Classes="panel">
                 <StackPanel>
                     <Border Classes="panel-header" Margin="0,0,0,8">
@@ -157,7 +157,7 @@
                               Margin="0,4"
                               IsCheckedChanged="CheckOverdrive_Changed" />
 
-                    <!-- Gamma (hidden on Wayland — no backend support) -->
+                    <!-- Gamma (hidden on Wayland, no backend support) -->
                     <Grid x:Name="rowGamma" ColumnDefinitions="120,*,50" Margin="0,4">
                         <TextBlock Grid.Column="0" x:Name="labelGammaLabel" Text="Gamma"
                                    Classes="label-dim" VerticalAlignment="Center" />
@@ -218,7 +218,7 @@
                 </StackPanel>
             </Border>
 
-            <!-- ═══════════════════ OTHER SETTINGS ═══════════════════ -->
+            <!-- OTHER SETTINGS -->
             <Border Classes="panel">
                 <StackPanel>
                     <Border Classes="panel-header" Margin="0,0,0,8">
@@ -266,7 +266,7 @@
                 </StackPanel>
             </Border>
 
-            <!-- ═══════════════════ KEY BINDINGS ═══════════════════ -->
+            <!-- KEY BINDINGS -->
             <Border Classes="panel">
                 <StackPanel>
                     <Border Classes="panel-header" Margin="0,0,0,8">
@@ -302,7 +302,7 @@
                 </StackPanel>
             </Border>
 
-            <!-- ═══════════════════ POWER MANAGEMENT ═══════════════════ -->
+            <!-- POWER MANAGEMENT -->
             <Border Classes="panel">
                 <StackPanel>
                     <Border Classes="panel-header" Margin="0,0,0,8">
@@ -340,7 +340,7 @@
                             <TextBlock x:Name="labelBatteryHealth" Classes="label-dim"
                                        Text="Battery health: --%" />
                             <TextBlock x:Name="labelPowerDraw" Classes="label-dim"
-                                       Text="Power draw: -- mW" Margin="0,4,0,0" />
+                                       Text="Power draw: - mW" Margin="0,4,0,0" />
                         </StackPanel>
                         <Button Grid.Column="1" x:Name="buttonBatteryInfo" Classes="ghelper"
                                 Height="28" VerticalAlignment="Center"
@@ -351,7 +351,7 @@
                 </StackPanel>
             </Border>
 
-            <!-- ═══════════════════ SYSTEM INFO ═══════════════════ -->
+            <!-- SYSTEM INFO -->
             <Border Classes="panel">
                 <StackPanel>
                     <Border Classes="panel-header" Margin="0,0,0,8">
@@ -371,7 +371,7 @@
                 </StackPanel>
             </Border>
 
-            <!-- ═══════════════════ ADVANCED ═══════════════════ -->
+            <!-- ADVANCED -->
             <Border Classes="panel">
                 <StackPanel>
                     <Border Classes="panel-header" Margin="0,0,0,8">
@@ -383,7 +383,7 @@
                               IsCheckedChanged="CheckAutoApplyPower_Changed" />
 
                     <CheckBox x:Name="checkRawWmi"
-                              Content="Raw WMI mode (experimental — GPU Eco via ACPI debugfs)"
+                              Content="Raw WMI mode (experimental - GPU Eco via ACPI debugfs)"
                               Margin="0,4"
                               IsCheckedChanged="CheckRawWmi_Changed" />
                     <TextBlock x:Name="labelRawWmiHint" Classes="label-dim"

@@ -1,13 +1,13 @@
 namespace GHelper.Linux.I18n.Languages;
 
 /// <summary>
-/// Norwegian Bokmål (nb) — Norsk
+/// Norwegian Bokmål (nb) - Norsk
 /// </summary>
 public static class Norwegian
 {
     public static Dictionary<string, string> Translations => new()
     {
-        // ═══════════════════ COMMON ═══════════════════
+        // COMMON
         ["enabled"] = "Aktivert",
         ["disabled"] = "Deaktivert",
         ["muted"] = "Dempet",
@@ -28,7 +28,7 @@ public static class Norwegian
         ["refresh"] = "Oppdater",
         ["details"] = "Detaljer...",
 
-        // ═══════════════════ PERFORMANCE MODES ═══════════════════
+        // PERFORMANCE MODES
         ["mode_silent"] = "Stille",
         ["mode_balanced"] = "Balansert",
         ["mode_turbo"] = "Turbo",
@@ -37,7 +37,7 @@ public static class Norwegian
         ["mode_prefix"] = "Modus: {0}",
         ["fans_power"] = "Vifter + Strøm",
 
-        // ═══════════════════ GPU MODES ═══════════════════
+        // GPU MODES
         ["gpu_eco"] = "Eco",
         ["gpu_standard"] = "Standard",
         ["gpu_ultimate"] = "Ultimate",
@@ -45,19 +45,19 @@ public static class Norwegian
         ["gpu_unknown"] = "Ukjent",
         ["gpu_mode_prefix"] = "GPU-modus: {0}",
 
-        // ═══════════════════ SENSOR INFO ═══════════════════
+        // SENSOR INFO
         ["cpu_fan_info"] = "CPU: {0} Vifte: {1}",
         ["gpu_fan_full_info"] = "GPU: {0}{1}  Vifte: {2}",
         ["gpu_fan_only"] = "GPU-vifte: {0}",
         ["mid_fan_info"] = "Midtvifte: {0}",
 
-        // ═══════════════════ SCREEN ═══════════════════
+        // SCREEN
         ["screen_prefix"] = "Bærbar skjerm: {0}Hz",
         ["screen_prefix_auto"] = "Bærbar skjerm: {0}Hz (Auto)",
         ["screen_auto"] = "Auto",
         ["screen_miniled"] = "MiniLED",
 
-        // ═══════════════════ KEYBOARD ═══════════════════
+        // KEYBOARD
         ["keyboard_header"] = "Bærbart tastatur",
         ["backlight"] = "Bakbelysning",
         ["extra"] = "Ekstra",
@@ -72,14 +72,14 @@ public static class Norwegian
         ["pick_color"] = "Velg farge",
         ["hex_label"] = "Hex:",
 
-        // ═══════════════════ BATTERY ═══════════════════
+        // BATTERY
         ["battery_limit_prefix"] = "Ladegrense: {0}%",
         ["discharging_watts"] = "Utlading: {0}W",
         ["charging_watts"] = "Lading: {0}W",
         ["plugged_in"] = "Koblet til strøm",
         ["charge_prefix"] = "Ladning: {0}%",
 
-        // ═══════════════════ FOOTER ═══════════════════
+        // FOOTER
         ["run_on_startup"] = "Kjør ved oppstart",
         ["unknown_asus"] = "Ukjent ASUS",
         ["title_prefix"] = "G-Helper - {0}",
@@ -92,7 +92,7 @@ public static class Norwegian
         ["features_prefix"] = "Funksjoner: {0}",
         ["no_features"] = "Ingen ASUS-spesifikke funksjoner oppdaget",
 
-        // ═══════════════════ FEATURE NAMES ═══════════════════
+        // FEATURE NAMES
         ["feature_perf_modes"] = "Ytelsesmoduser",
         ["feature_gpu_eco"] = "GPU Eco",
         ["feature_mux"] = "MUX-bryter",
@@ -101,7 +101,7 @@ public static class Norwegian
         ["feature_ppt"] = "PPT-grenser",
         ["feature_nv_boost"] = "NVIDIA Dynamic Boost",
 
-        // ═══════════════════ GPU TIPS & NOTIFICATIONS ═══════════════════
+        // GPU TIPS & NOTIFICATIONS
         ["gpu_pending_reboot"] = "{0} venter - start på nytt for å ta i bruk",
         ["gpu_pending_mode"] = "Modus",
         ["gpu_tip_eco"] = "dGPU er av - maksimal batteritid",
@@ -154,7 +154,7 @@ public static class Norwegian
         ["gpu_driver_after_reboot"] = "Etter omstart",
         ["gpu_driver_footer"] = "Bytt nå forsøker å laste ut GPU-driveren (administratorpassord\nkan være nødvendig). Etter omstart lagres til neste oppstart.",
 
-        // ═══════════════════ KEYBOARD NOTIFICATIONS ═══════════════════
+        // KEYBOARD NOTIFICATIONS
         ["kbd_off"] = "Av  \u25cb\u25cb\u25cb",
         ["kbd_low"] = "Lav  \u25cf\u25cb\u25cb",
         ["kbd_medium"] = "Middels  \u25cf\u25cf\u25cb",
@@ -162,7 +162,7 @@ public static class Norwegian
         ["kbd_level"] = "Nivå {0}",
         ["keyboard"] = "Tastatur",
 
-        // ═══════════════════ OTHER NOTIFICATIONS ═══════════════════
+        // OTHER NOTIFICATIONS
         ["performance"] = "Ytelse",
         ["aura"] = "Aura",
         ["microphone"] = "Mikrofon",
@@ -179,14 +179,14 @@ public static class Norwegian
         ["setup_required"] = "Oppsett påkrevd",
         ["udev_not_installed"] = "udev-regler er ikke installert. Kjør install.sh for full funksjonalitet (batteribegrensning, viftekontroll osv.)",
 
-        // ═══════════════════ SYSTEM TRAY ═══════════════════
+        // SYSTEM TRAY
         ["tray_tooltip"] = "G-Helper - {0}",
         ["tray_gpu_eco"] = "GPU: Eco (kun iGPU)",
         ["tray_gpu_standard"] = "GPU: Standard (dGPU)",
         ["tray_gpu_optimized"] = "GPU: Optimalisert (auto)",
         ["tray_gpu_ultimate"] = "GPU: Ultimate (MUX)",
 
-        // ═══════════════════ KEY ACTIONS ═══════════════════
+        // KEY ACTIONS
         ["action_none"] = "Ingen",
         ["action_ghelper"] = "Veksle G-Helper",
         ["action_performance"] = "Veksle ytelsesmodus",
@@ -202,12 +202,12 @@ public static class Norwegian
         ["action_camera"] = "Veksle kamera",
         ["action_touchpad"] = "Veksle styreplate",
 
-        // ═══════════════════ KEY NAMES ═══════════════════
+        // KEY NAMES
         ["key_m4"] = "ROG / M5-tast",
         ["key_fnf4"] = "Fn+F4 (Aura)",
         ["key_fnf5"] = "Fn+F5 / M4 (Ytelse)",
 
-        // ═══════════════════ EXTRA WINDOW ═══════════════════
+        // EXTRA WINDOW
         ["extra_title"] = "Ekstra innstillinger",
         ["kbd_backlight_header"] = "Tastaturbelysning",
         ["brightness"] = "Lysstyrke",
@@ -269,7 +269,7 @@ public static class Norwegian
         ["battery_health_unknown"] = "Batterihelse: --%",
         ["power_draw_discharge"] = "Strømforbruk: {0} mW (utlading)",
         ["power_draw_charge"] = "Strømforbruk: {0} mW (lading)",
-        ["power_draw_unknown"] = "Strømforbruk: -- mW",
+        ["power_draw_unknown"] = "Strømforbruk: - mW",
 
         ["system_info_header"] = "Systeminformasjon",
 
@@ -285,11 +285,11 @@ public static class Norwegian
         ["log_stdout"] = "Logger skrives til stdout - kjør fra terminal for å se utdata",
         ["kernel_warning"] = "\u26A0 Kernel 6.2+ anbefales for full funksjonsstøtte",
 
-        // ═══════════════════ LANGUAGE ═══════════════════
+        // LANGUAGE
         ["language_header"] = "Språk",
         ["language_auto"] = "Auto (system)",
 
-        // ═══════════════════ FANS WINDOW ═══════════════════
+        // FANS WINDOW
         ["fans_title"] = "Vifter og strøm",
         ["fan_curves"] = "Viftekurver",
         ["reset"] = "Tilbakestill",
@@ -307,7 +307,7 @@ public static class Norwegian
         ["firmware_control"] = "Firmware-kontroll",
         ["fan_sensor_format"] = "CPU: {0} / GPU: {1} Last: {2}   Midt: {3} RPM",
 
-        // ═══════════════════ BATTERY INFO WINDOW ═══════════════════
+        // BATTERY INFO WINDOW
         ["battery_info_title"] = "Batteriinformasjon",
         ["health_header"] = "Helse",
         ["health"] = "Helse",
@@ -329,7 +329,7 @@ public static class Norwegian
         ["discharging"] = "utlading",
         ["charging"] = "lading",
 
-        // ═══════════════════ UPDATES WINDOW ═══════════════════
+        // UPDATES WINDOW
         ["updates_title"] = "BIOS- og driveroppdateringer",
         ["updates_header"] = "BIOS- og driveroppdateringer",
         ["copy_diagnostics"] = "Kopier diagnostikk",
@@ -364,7 +364,7 @@ public static class Norwegian
         ["updates_title_format"] = "BIOS- og driveroppdateringer: {0} ({1} BIOS {2})",
         ["app_version_format"] = "G-Helper Linux v{0} - {1}",
 
-        // ═══════════════════ ARCADE GAME ═══════════════════
+        // ARCADE GAME
         ["arcade_title"] = "ROG Fighter",
         ["arcade_game_title"] = "ROG FIGHTER",
         ["arcade_move"] = "\u2190 \u2192 \u2191 \u2193 / W A S D  flytt",
@@ -384,7 +384,7 @@ public static class Norwegian
         ["arcade_new_highscore"] = "NY REKORD!",
         ["arcade_retry"] = "ENTER for å prøve igjen",
 
-        // ═══════════════════ AURA MODES ═══════════════════
+        // AURA MODES
         ["aura_static"] = "Statisk",
         ["aura_breathe"] = "Pust",
         ["aura_strobe"] = "Strobo",
@@ -399,12 +399,12 @@ public static class Norwegian
         ["aura_flash"] = "Blink",
         ["aura_no_modes"] = "Ingen moduser",
 
-        // ═══════════════════ AURA SPEEDS ═══════════════════
+        // AURA SPEEDS
         ["speed_slow"] = "Sakte",
         ["speed_normal"] = "Normal",
         ["speed_fast"] = "Rask",
 
-        // ═══════════════════ MISC ═══════════════════
+        // MISC
         ["ghelper"] = "G-Helper",
         ["asus_laptop_control"] = "ASUS bærbar kontroll (Linux)",
     };

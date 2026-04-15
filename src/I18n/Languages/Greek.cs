@@ -1,13 +1,13 @@
 namespace GHelper.Linux.I18n.Languages;
 
 /// <summary>
-/// Greek (el) — Ελληνικά
+/// Greek (el) - Ελληνικά
 /// </summary>
 public static class Greek
 {
     public static Dictionary<string, string> Translations => new()
     {
-        // ═══════════════════ COMMON ═══════════════════
+        // COMMON
         ["enabled"] = "Ενεργοποιημένο",
         ["disabled"] = "Απενεργοποιημένο",
         ["muted"] = "Σε σίγαση",
@@ -28,7 +28,7 @@ public static class Greek
         ["refresh"] = "Ανανέωση",
         ["details"] = "Λεπτομέρειες...",
 
-        // ═══════════════════ PERFORMANCE MODES ═══════════════════
+        // PERFORMANCE MODES
         ["mode_silent"] = "Αθόρυβο",
         ["mode_balanced"] = "Ισορροπημένο",
         ["mode_turbo"] = "Turbo",
@@ -37,7 +37,7 @@ public static class Greek
         ["mode_prefix"] = "Λειτουργία: {0}",
         ["fans_power"] = "Ανεμιστήρες + Ισχύς",
 
-        // ═══════════════════ GPU MODES ═══════════════════
+        // GPU MODES
         ["gpu_eco"] = "Eco",
         ["gpu_standard"] = "Standard",
         ["gpu_ultimate"] = "Ultimate",
@@ -45,19 +45,19 @@ public static class Greek
         ["gpu_unknown"] = "Άγνωστο",
         ["gpu_mode_prefix"] = "Λειτουργία GPU: {0}",
 
-        // ═══════════════════ SENSOR INFO ═══════════════════
+        // SENSOR INFO
         ["cpu_fan_info"] = "CPU: {0} Ανεμιστήρας: {1}",
         ["gpu_fan_full_info"] = "GPU: {0}{1}  Ανεμιστήρας: {2}",
         ["gpu_fan_only"] = "Ανεμιστήρας GPU: {0}",
         ["mid_fan_info"] = "Μεσαίος ανεμιστήρας: {0}",
 
-        // ═══════════════════ SCREEN ═══════════════════
+        // SCREEN
         ["screen_prefix"] = "Οθόνη φορητού: {0}Hz",
         ["screen_prefix_auto"] = "Οθόνη φορητού: {0}Hz (Auto)",
         ["screen_auto"] = "Auto",
         ["screen_miniled"] = "MiniLED",
 
-        // ═══════════════════ KEYBOARD ═══════════════════
+        // KEYBOARD
         ["keyboard_header"] = "Πληκτρολόγιο φορητού",
         ["backlight"] = "Οπίσθιος φωτισμός",
         ["extra"] = "Επιπλέον",
@@ -72,14 +72,14 @@ public static class Greek
         ["pick_color"] = "Επιλογή χρώματος",
         ["hex_label"] = "Hex:",
 
-        // ═══════════════════ BATTERY ═══════════════════
+        // BATTERY
         ["battery_limit_prefix"] = "Όριο φόρτισης μπαταρίας: {0}%",
         ["discharging_watts"] = "Εκφόρτιση: {0}W",
         ["charging_watts"] = "Φόρτιση: {0}W",
         ["plugged_in"] = "Συνδεδεμένο στο ρεύμα",
         ["charge_prefix"] = "Φόρτιση: {0}%",
 
-        // ═══════════════════ FOOTER ═══════════════════
+        // FOOTER
         ["run_on_startup"] = "Εκκίνηση κατά την εκκίνηση",
         ["unknown_asus"] = "Άγνωστο ASUS",
         ["title_prefix"] = "G-Helper - {0}",
@@ -92,7 +92,7 @@ public static class Greek
         ["features_prefix"] = "Χαρακτηριστικά: {0}",
         ["no_features"] = "Δεν εντοπίστηκαν χαρακτηριστικά ειδικά για ASUS",
 
-        // ═══════════════════ FEATURE NAMES ═══════════════════
+        // FEATURE NAMES
         ["feature_perf_modes"] = "Λειτουργίες απόδοσης",
         ["feature_gpu_eco"] = "GPU Eco",
         ["feature_mux"] = "Διακόπτης MUX",
@@ -101,7 +101,7 @@ public static class Greek
         ["feature_ppt"] = "Όρια PPT",
         ["feature_nv_boost"] = "NVIDIA Dynamic Boost",
 
-        // ═══════════════════ GPU TIPS & NOTIFICATIONS ═══════════════════
+        // GPU TIPS & NOTIFICATIONS
         ["gpu_pending_reboot"] = "{0} σε αναμονή - επανεκκίνηση για εφαρμογή",
         ["gpu_pending_mode"] = "Λειτουργία",
         ["gpu_tip_eco"] = "Η dGPU είναι απενεργοποιημένη - μέγιστη διάρκεια μπαταρίας",
@@ -154,7 +154,7 @@ public static class Greek
         ["gpu_driver_after_reboot"] = "Μετά την επανεκκίνηση",
         ["gpu_driver_footer"] = "Η αλλαγή τώρα προσπαθεί να αποφορτώσει το πρόγραμμα οδήγησης GPU (μπορεί\nνα απαιτηθεί κωδικός διαχειριστή). Μετά την επανεκκίνηση αποθηκεύεται για την επόμενη εκκίνηση.",
 
-        // ═══════════════════ KEYBOARD NOTIFICATIONS ═══════════════════
+        // KEYBOARD NOTIFICATIONS
         ["kbd_off"] = "Κλειστό  \u25cb\u25cb\u25cb",
         ["kbd_low"] = "Χαμηλό  \u25cf\u25cb\u25cb",
         ["kbd_medium"] = "Μεσαίο  \u25cf\u25cf\u25cb",
@@ -162,7 +162,7 @@ public static class Greek
         ["kbd_level"] = "Επίπεδο {0}",
         ["keyboard"] = "Πληκτρολόγιο",
 
-        // ═══════════════════ OTHER NOTIFICATIONS ═══════════════════
+        // OTHER NOTIFICATIONS
         ["performance"] = "Απόδοση",
         ["aura"] = "Aura",
         ["microphone"] = "Μικρόφωνο",
@@ -179,14 +179,14 @@ public static class Greek
         ["setup_required"] = "Απαιτείται ρύθμιση",
         ["udev_not_installed"] = "Οι κανόνες udev δεν έχουν εγκατασταθεί. Εκτελέστε install.sh για πλήρη λειτουργικότητα (όριο μπαταρίας, έλεγχος ανεμιστήρων κ.λπ.)",
 
-        // ═══════════════════ SYSTEM TRAY ═══════════════════
+        // SYSTEM TRAY
         ["tray_tooltip"] = "G-Helper - {0}",
         ["tray_gpu_eco"] = "GPU: Eco (μόνο iGPU)",
         ["tray_gpu_standard"] = "GPU: Standard (dGPU)",
         ["tray_gpu_optimized"] = "GPU: Βελτιστοποιημένο (auto)",
         ["tray_gpu_ultimate"] = "GPU: Ultimate (MUX)",
 
-        // ═══════════════════ KEY ACTIONS ═══════════════════
+        // KEY ACTIONS
         ["action_none"] = "Κανένα",
         ["action_ghelper"] = "Εναλλαγή G-Helper",
         ["action_performance"] = "Εναλλαγή λειτουργίας απόδοσης",
@@ -202,12 +202,12 @@ public static class Greek
         ["action_camera"] = "Εναλλαγή κάμερας",
         ["action_touchpad"] = "Εναλλαγή επιφάνειας αφής",
 
-        // ═══════════════════ KEY NAMES ═══════════════════
+        // KEY NAMES
         ["key_m4"] = "Πλήκτρο ROG / M5",
         ["key_fnf4"] = "Fn+F4 (Aura)",
         ["key_fnf5"] = "Fn+F5 / M4 (Απόδοση)",
 
-        // ═══════════════════ EXTRA WINDOW ═══════════════════
+        // EXTRA WINDOW
         ["extra_title"] = "Επιπλέον ρυθμίσεις",
         ["kbd_backlight_header"] = "Οπίσθιος φωτισμός πληκτρολογίου",
         ["brightness"] = "Φωτεινότητα",
@@ -269,7 +269,7 @@ public static class Greek
         ["battery_health_unknown"] = "Υγεία μπαταρίας: --%",
         ["power_draw_discharge"] = "Κατανάλωση ισχύος: {0} mW (εκφόρτιση)",
         ["power_draw_charge"] = "Κατανάλωση ισχύος: {0} mW (φόρτιση)",
-        ["power_draw_unknown"] = "Κατανάλωση ισχύος: -- mW",
+        ["power_draw_unknown"] = "Κατανάλωση ισχύος: - mW",
 
         ["system_info_header"] = "Πληροφορίες συστήματος",
 
@@ -285,11 +285,11 @@ public static class Greek
         ["log_stdout"] = "Τα αρχεία καταγραφής γράφονται στο stdout - εκτελέστε από τερματικό για προβολή",
         ["kernel_warning"] = "\u26A0 Συνιστάται Kernel 6.2+ για πλήρη υποστήριξη χαρακτηριστικών",
 
-        // ═══════════════════ LANGUAGE ═══════════════════
+        // LANGUAGE
         ["language_header"] = "Γλώσσα",
         ["language_auto"] = "Auto (σύστημα)",
 
-        // ═══════════════════ FANS WINDOW ═══════════════════
+        // FANS WINDOW
         ["fans_title"] = "Ανεμιστήρες και ισχύς",
         ["fan_curves"] = "Καμπύλες ανεμιστήρων",
         ["reset"] = "Επαναφορά",
@@ -307,7 +307,7 @@ public static class Greek
         ["firmware_control"] = "Έλεγχος firmware",
         ["fan_sensor_format"] = "CPU: {0} / GPU: {1} Φορτίο: {2}   Μεσαίος: {3} RPM",
 
-        // ═══════════════════ BATTERY INFO WINDOW ═══════════════════
+        // BATTERY INFO WINDOW
         ["battery_info_title"] = "Πληροφορίες μπαταρίας",
         ["health_header"] = "Υγεία",
         ["health"] = "Υγεία",
@@ -329,7 +329,7 @@ public static class Greek
         ["discharging"] = "εκφόρτιση",
         ["charging"] = "φόρτιση",
 
-        // ═══════════════════ UPDATES WINDOW ═══════════════════
+        // UPDATES WINDOW
         ["updates_title"] = "Ενημερώσεις BIOS και προγραμμάτων οδήγησης",
         ["updates_header"] = "Ενημερώσεις BIOS και προγραμμάτων οδήγησης",
         ["copy_diagnostics"] = "Αντιγραφή διαγνωστικών",
@@ -364,7 +364,7 @@ public static class Greek
         ["updates_title_format"] = "Ενημερώσεις BIOS και προγραμμάτων οδήγησης: {0} ({1} BIOS {2})",
         ["app_version_format"] = "G-Helper Linux v{0} - {1}",
 
-        // ═══════════════════ ARCADE GAME ═══════════════════
+        // ARCADE GAME
         ["arcade_title"] = "ROG Fighter",
         ["arcade_game_title"] = "ROG FIGHTER",
         ["arcade_move"] = "\u2190 \u2192 \u2191 \u2193 / W A S D  μετακίνηση",
@@ -384,7 +384,7 @@ public static class Greek
         ["arcade_new_highscore"] = "ΝΕΟ ΡΕΚΟΡ!",
         ["arcade_retry"] = "ENTER για επανάληψη",
 
-        // ═══════════════════ AURA MODES ═══════════════════
+        // AURA MODES
         ["aura_static"] = "Στατικό",
         ["aura_breathe"] = "Αναπνοή",
         ["aura_strobe"] = "Στροβοσκόπιο",
@@ -399,12 +399,12 @@ public static class Greek
         ["aura_flash"] = "Αναλαμπή",
         ["aura_no_modes"] = "Χωρίς λειτουργίες",
 
-        // ═══════════════════ AURA SPEEDS ═══════════════════
+        // AURA SPEEDS
         ["speed_slow"] = "Αργό",
         ["speed_normal"] = "Κανονικό",
         ["speed_fast"] = "Γρήγορο",
 
-        // ═══════════════════ MISC ═══════════════════
+        // MISC
         ["ghelper"] = "G-Helper",
         ["asus_laptop_control"] = "Έλεγχος φορητού ASUS (Linux)",
     };

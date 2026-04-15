@@ -46,12 +46,12 @@ public sealed class AttrDef
 /// </summary>
 public static class AsusAttributes
 {
-    // ── Performance / Thermal ──
+    // Performance / Thermal
 
     public static readonly AttrDef ThrottleThermalPolicy = new("throttle_thermal_policy",
         description: "Performance mode (quiet/balanced/performance)");
 
-    // ── PPT Power Limits ──
+    // PPT Power Limits
 
     public static readonly AttrDef PptPl1Spl = new("ppt_pl1_spl",
         description: "PL1 sustained power limit");
@@ -68,7 +68,7 @@ public static class AsusAttributes
     public static readonly AttrDef PptPlatformSppt = new("ppt_platform_sppt",
         description: "Platform SPPT power limit");
 
-    // ── NVIDIA GPU ──
+    // NVIDIA GPU
 
     public static readonly AttrDef NvDynamicBoost = new("nv_dynamic_boost",
         description: "NVIDIA dynamic boost");
@@ -83,7 +83,7 @@ public static class AsusAttributes
     public static readonly AttrDef NvTgp = new("nv_tgp",
         description: "NVIDIA settable TGP");
 
-    // ── GPU Mode ──
+    // GPU Mode
 
     public static readonly AttrDef DgpuDisable = new("dgpu_disable",
         description: "dGPU power (Eco mode)");
@@ -94,7 +94,7 @@ public static class AsusAttributes
     public static readonly AttrDef EgpuEnable = new("egpu_enable",
         description: "eGPU enable");
 
-    // ── Display ──
+    // Display
 
     public static readonly AttrDef PanelOd = new("panel_od", fwAttrName: "panel_overdrive",
         description: "Panel overdrive");
@@ -102,12 +102,12 @@ public static class AsusAttributes
     public static readonly AttrDef MiniLedMode = new("mini_led_mode",
         description: "Mini LED mode");
 
-    // ── System ──
+    // System
 
     public static readonly AttrDef BootSound = new("boot_sound",
         description: "Boot sound");
 
-    // ── All known attributes (for diagnostics enumeration) ──
+    // All known attributes (for diagnostics enumeration)
 
     public static readonly AttrDef[] All =
     {

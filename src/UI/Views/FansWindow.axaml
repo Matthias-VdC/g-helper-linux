@@ -13,7 +13,7 @@
 
     <Grid RowDefinitions="Auto,*,Auto">
 
-        <!-- ═══════════════════ HEADER ═══════════════════ -->
+        <!-- HEADER -->
         <Border Grid.Row="0" Classes="panel-header" Margin="10,10,10,5">
             <Grid ColumnDefinitions="*,Auto,Auto,Auto,Auto">
                 <StackPanel Grid.Column="0">
@@ -37,7 +37,7 @@
             </Grid>
         </Border>
 
-        <!-- ═══════════════════ CHARTS ═══════════════════ -->
+        <!-- CHARTS -->
         <Grid x:Name="chartGrid" Grid.Row="1" Margin="10,5" RowDefinitions="*,*,Auto">
             <!-- CPU Fan Chart -->
             <controls:FanCurveChart x:Name="chartCPU"
@@ -62,7 +62,7 @@
                                      IsVisible="False" />
         </Grid>
 
-        <!-- ═══════════════════ POWER LIMITS ═══════════════════ -->
+        <!-- POWER LIMITS -->
         <Border Grid.Row="2" Classes="panel" Margin="10,5,10,10">
             <StackPanel>
                 <TextBlock x:Name="headerPowerLimits" Classes="header" Text="Power Limits" Margin="0,0,0,8" />

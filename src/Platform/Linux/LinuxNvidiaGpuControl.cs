@@ -43,7 +43,7 @@ public class LinuxNvidiaGpuControl : IGpuControl
 
     public string? GetGpuName() => _gpuName;
 
-    // ── Temperature ──
+    // Temperature
 
     public int? GetCurrentTemp()
     {
@@ -51,7 +51,8 @@ public class LinuxNvidiaGpuControl : IGpuControl
         if (_hwmonDir != null)
         {
             int temp = SysfsHelper.ReadInt(Path.Combine(_hwmonDir, "temp1_input"), -1);
-            if (temp > 0) return temp / 1000;
+            if (temp > 0)
+                return temp / 1000;
         }
 
         // Method 2: nvidia-smi
@@ -62,7 +63,7 @@ public class LinuxNvidiaGpuControl : IGpuControl
         return null;
     }
 
-    // ── Utilization ──
+    // Utilization
 
     public int? GetGpuUse()
     {
@@ -73,7 +74,7 @@ public class LinuxNvidiaGpuControl : IGpuControl
         return null;
     }
 
-    // ── Clocks ──
+    // Clocks
 
     public int? GetCurrentClock()
     {
@@ -93,7 +94,7 @@ public class LinuxNvidiaGpuControl : IGpuControl
         return null;
     }
 
-    // ── Power ──
+    // Power
 
     public int? GetCurrentPower()
     {
@@ -104,11 +105,12 @@ public class LinuxNvidiaGpuControl : IGpuControl
         return null;
     }
 
-    // ── Clock Offsets ──
+    // Clock Offsets
 
     public void SetCoreClockOffset(int offsetMhz)
     {
-        if (!_available) return;
+        if (!_available)
+            return;
 
         // nvidia-settings requires X11. On X11, this works:
         // nvidia-settings -a "[gpu:0]/GPUGraphicsClockOffsetAllPerformanceLevels=<offset>"
@@ -129,7 +131,8 @@ public class LinuxNvidiaGpuControl : IGpuControl
 
     public void SetMemoryClockOffset(int offsetMhz)
     {
-        if (!_available) return;
+        if (!_available)
+            return;
 
         var result = SysfsHelper.RunCommand("nvidia-settings",
             $"-a \"[gpu:0]/GPUMemoryTransferRateOffsetAllPerformanceLevels={offsetMhz}\"");
@@ -152,15 +155,18 @@ public class LinuxNvidiaGpuControl : IGpuControl
         var output = RunNvidiaSmi(
             "--query-gpu=power.default_limit,power.min_limit,power.max_limit,enforced.power.limit",
             "--format=csv,noheader,nounits");
-        if (output == null) return null;
+        if (output == null)
+            return null;
 
         var parts = output.Split(',');
-        if (parts.Length < 4) return null;
+        if (parts.Length < 4)
+            return null;
 
         double ParseW(string s)
         {
             s = s.Trim();
-            if (double.TryParse(s, CultureInfo.InvariantCulture, out double v)) return v;
+            if (double.TryParse(s, CultureInfo.InvariantCulture, out double v))
+                return v;
             return -1;
         }
 
@@ -169,7 +175,8 @@ public class LinuxNvidiaGpuControl : IGpuControl
         var max = ParseW(parts[2]);
         var enf = ParseW(parts[3]);
 
-        if (def < 0 || min < 0 || max < 0) return null;
+        if (def < 0 || min < 0 || max < 0)
+            return null;
         return ((int)Math.Round(def), (int)Math.Round(min), (int)Math.Round(max), (int)Math.Round(enf));
     }
 
@@ -179,18 +186,18 @@ public class LinuxNvidiaGpuControl : IGpuControl
     /// </summary>
     public void ApplyGpuSettings(int powerW, int clockLockMhz)
     {
-        if (!_available) return;
+        if (!_available)
+            return;
 
         string clockCmd = clockLockMhz > 0
             ? $"nvidia-smi -lgc 0,{Math.Clamp(clockLockMhz, 200, 3000)}"
             : "nvidia-smi -rgc";
 
         SysfsHelper.RunPkexecBash($"nvidia-smi -pl {powerW} && {clockCmd}");
-        Helpers.Logger.WriteLine($"NVIDIA: Applied power={powerW}W, clock={
-            (clockLockMhz > 0 ? $"{clockLockMhz}MHz" : "unlocked")} (single pkexec)");
+        Helpers.Logger.WriteLine($"NVIDIA: Applied power={powerW}W, clock={(clockLockMhz > 0 ? $"{clockLockMhz}MHz" : "unlocked")} (single pkexec)");
     }
 
-    // ── Extended queries (not in interface but useful) ──
+    // Extended queries (not in interface but useful)
 
     /// <summary>Get comprehensive GPU status in one call.</summary>
     public (int? temp, int? usage, int? clock, int? memClock, int? power, int? fanSpeed)?
@@ -201,17 +208,22 @@ public class LinuxNvidiaGpuControl : IGpuControl
             "--query-gpu=temperature.gpu,utilization.gpu,clocks.current.graphics,clocks.current.memory,power.draw,fan.speed",
             "--format=csv,noheader,nounits");
 
-        if (output == null) return null;
+        if (output == null)
+            return null;
 
         var parts = output.Split(',');
-        if (parts.Length < 6) return null;
+        if (parts.Length < 6)
+            return null;
 
         int? ParsePart(string s)
         {
             s = s.Trim();
-            if (s == "[N/A]" || s == "N/A" || s == "") return null;
-            if (int.TryParse(s, out int v)) return v;
-            if (double.TryParse(s, CultureInfo.InvariantCulture, out double d)) return (int)Math.Round(d);
+            if (s == "[N/A]" || s == "N/A" || s == "")
+                return null;
+            if (int.TryParse(s, out int v))
+                return v;
+            if (double.TryParse(s, CultureInfo.InvariantCulture, out double d))
+                return (int)Math.Round(d);
             return null;
         }
 
@@ -225,7 +237,7 @@ public class LinuxNvidiaGpuControl : IGpuControl
         );
     }
 
-    // ── Private helpers ──
+    // Private helpers
 
     private bool CheckAvailability()
     {

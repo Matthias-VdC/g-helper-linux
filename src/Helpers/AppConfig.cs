@@ -126,7 +126,7 @@ public static class AppConfig
         }
     }
 
-    // ── Core Get/Set ──
+    // Core Get/Set
 
     public static int Get(string name, int empty = -1)
     {
@@ -138,8 +138,10 @@ public static class AppConfig
                     return intVal;
                 if (je.ValueKind == JsonValueKind.String && int.TryParse(je.GetString(), out intVal))
                     return intVal;
-                if (je.ValueKind == JsonValueKind.True) return 1;
-                if (je.ValueKind == JsonValueKind.False) return 0;
+                if (je.ValueKind == JsonValueKind.True)
+                    return 1;
+                if (je.ValueKind == JsonValueKind.False)
+                    return 0;
             }
             return empty;
         }
@@ -208,7 +210,7 @@ public static class AppConfig
         ScheduleWrite();
     }
 
-    // ── Mode-aware Get/Set (per performance mode) ──
+    // Mode-aware Get/Set (per performance mode)
 
     public static int GetMode(string name, int empty = -1)
     {
@@ -245,7 +247,7 @@ public static class AppConfig
         Remove($"{name}_{mode}");
     }
 
-    // ── Fan curve config ──
+    // Fan curve config
 
     public static string GetFanParamName(int fanIndex, string paramName = "fan_profile")
     {
@@ -310,11 +312,12 @@ public static class AppConfig
         };
     }
 
-    // ── Model detection (Linux: DMI sysfs) ──
+    // Model detection (Linux: DMI sysfs)
 
     public static string GetModel()
     {
-        if (_model != null) return _model;
+        if (_model != null)
+            return _model;
 
         _model = Platform.Linux.SysfsHelper.ReadAttribute(
             Path.Combine(Platform.Linux.SysfsHelper.DmiId, "product_name")) ?? "";
@@ -326,14 +329,16 @@ public static class AppConfig
     {
         string model = GetModel();
         int trim = model.LastIndexOf('_');
-        if (trim > 0) model = model[..trim];
+        if (trim > 0)
+            model = model[..trim];
         return model;
     }
 
     /// <summary>Get BIOS version and model short name from DMI bios_version.</summary>
     public static (string? bios, string? modelShort) GetBiosAndModel()
     {
-        if (_bios != null && _modelShort != null) return (_bios, _modelShort);
+        if (_bios != null && _modelShort != null)
+            return (_bios, _modelShort);
 
         string? biosVer = Platform.Linux.SysfsHelper.ReadAttribute(
             Path.Combine(Platform.Linux.SysfsHelper.DmiId, "bios_version"));
@@ -360,7 +365,7 @@ public static class AppConfig
         return GetModel().Contains(contains, StringComparison.OrdinalIgnoreCase);
     }
 
-    // ── Model queries (ported from Windows AppConfig — all 67 methods) ──
+    // Model queries (ported from Windows AppConfig - all 67 methods)
 
     // Brand / family
     public static bool IsTUF() => ContainsModel("TUF") || ContainsModel("TX Gaming") || ContainsModel("TX Air");
@@ -483,7 +488,7 @@ public static class AppConfig
     // Battery-specific config check (original logic: fallback to zone config if bat-specific not set)
     public static bool IsOnBattery(string zone) => Get(zone + "_bat", Get(zone)) != 0;
 
-    // ── Helpers ──
+    // Helpers
 
     private static int GetCurrentMode()
     {

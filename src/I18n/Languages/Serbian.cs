@@ -1,13 +1,13 @@
 namespace GHelper.Linux.I18n.Languages;
 
 /// <summary>
-/// Serbian (sr) — Српски
+/// Serbian (sr) - Српски
 /// </summary>
 public static class Serbian
 {
     public static Dictionary<string, string> Translations => new()
     {
-        // ═══════════════════ COMMON ═══════════════════
+        // COMMON
         ["enabled"] = "Укључено",
         ["disabled"] = "Искључено",
         ["muted"] = "Утишано",
@@ -28,7 +28,7 @@ public static class Serbian
         ["refresh"] = "Освежи",
         ["details"] = "Детаљи...",
 
-        // ═══════════════════ PERFORMANCE MODES ═══════════════════
+        // PERFORMANCE MODES
         ["mode_silent"] = "Тих",
         ["mode_balanced"] = "Балансиран",
         ["mode_turbo"] = "Турбо",
@@ -37,7 +37,7 @@ public static class Serbian
         ["mode_prefix"] = "Режим: {0}",
         ["fans_power"] = "Вентилатори + Напајање",
 
-        // ═══════════════════ GPU MODES ═══════════════════
+        // GPU MODES
         ["gpu_eco"] = "Eco",
         ["gpu_standard"] = "Standard",
         ["gpu_ultimate"] = "Ultimate",
@@ -45,19 +45,19 @@ public static class Serbian
         ["gpu_unknown"] = "Непознат",
         ["gpu_mode_prefix"] = "GPU режим: {0}",
 
-        // ═══════════════════ SENSOR INFO ═══════════════════
+        // SENSOR INFO
         ["cpu_fan_info"] = "CPU: {0} Вентилатор: {1}",
         ["gpu_fan_full_info"] = "GPU: {0}{1}  Вентилатор: {2}",
         ["gpu_fan_only"] = "GPU вентилатор: {0}",
         ["mid_fan_info"] = "Средњи вентилатор: {0}",
 
-        // ═══════════════════ SCREEN ═══════════════════
+        // SCREEN
         ["screen_prefix"] = "Екран лаптопа: {0}Hz",
         ["screen_prefix_auto"] = "Екран лаптопа: {0}Hz (Ауто)",
         ["screen_auto"] = "Ауто",
         ["screen_miniled"] = "MiniLED",
 
-        // ═══════════════════ KEYBOARD ═══════════════════
+        // KEYBOARD
         ["keyboard_header"] = "Тастатура лаптопа",
         ["backlight"] = "Позадинско осветљење",
         ["extra"] = "Додатно",
@@ -72,14 +72,14 @@ public static class Serbian
         ["pick_color"] = "Изабери боју",
         ["hex_label"] = "Hex:",
 
-        // ═══════════════════ BATTERY ═══════════════════
+        // BATTERY
         ["battery_limit_prefix"] = "Ограничење пуњења: {0}%",
         ["discharging_watts"] = "Пражњење: {0}W",
         ["charging_watts"] = "Пуњење: {0}W",
         ["plugged_in"] = "Прикључено",
         ["charge_prefix"] = "Напуњеност: {0}%",
 
-        // ═══════════════════ FOOTER ═══════════════════
+        // FOOTER
         ["run_on_startup"] = "Покрени при покретању",
         ["unknown_asus"] = "Непознат ASUS",
         ["title_prefix"] = "G-Helper - {0}",
@@ -92,7 +92,7 @@ public static class Serbian
         ["features_prefix"] = "Функције: {0}",
         ["no_features"] = "Нису откривене ASUS-специфичне функције",
 
-        // ═══════════════════ FEATURE NAMES ═══════════════════
+        // FEATURE NAMES
         ["feature_perf_modes"] = "Режими перформанси",
         ["feature_gpu_eco"] = "GPU Eco",
         ["feature_mux"] = "MUX прекидач",
@@ -101,7 +101,7 @@ public static class Serbian
         ["feature_ppt"] = "PPT ограничења",
         ["feature_nv_boost"] = "NVIDIA Dynamic Boost",
 
-        // ═══════════════════ GPU TIPS & NOTIFICATIONS ═══════════════════
+        // GPU TIPS & NOTIFICATIONS
         ["gpu_pending_reboot"] = "{0} на чекању - рестартујте за примену",
         ["gpu_pending_mode"] = "Режим",
         ["gpu_tip_eco"] = "dGPU је искључен - максимални век батерије",
@@ -154,7 +154,7 @@ public static class Serbian
         ["gpu_driver_after_reboot"] = "После рестарта",
         ["gpu_driver_footer"] = "Пребаци сада покушава да искључи GPU драјвер (можда ће бити\nпотребна администраторска лозинка). После рестарта чува за следеће покретање.",
 
-        // ═══════════════════ KEYBOARD NOTIFICATIONS ═══════════════════
+        // KEYBOARD NOTIFICATIONS
         ["kbd_off"] = "Искључено  \u25cb\u25cb\u25cb",
         ["kbd_low"] = "Ниско  \u25cf\u25cb\u25cb",
         ["kbd_medium"] = "Средње  \u25cf\u25cf\u25cb",
@@ -162,7 +162,7 @@ public static class Serbian
         ["kbd_level"] = "Ниво {0}",
         ["keyboard"] = "Тастатура",
 
-        // ═══════════════════ OTHER NOTIFICATIONS ═══════════════════
+        // OTHER NOTIFICATIONS
         ["performance"] = "Перформансе",
         ["aura"] = "Аура",
         ["microphone"] = "Микрофон",
@@ -179,14 +179,14 @@ public static class Serbian
         ["setup_required"] = "Потребно подешавање",
         ["udev_not_installed"] = "udev правила нису инсталирана. Покрените install.sh за пуну функционалност (ограничење батерије, контрола вентилатора, итд.)",
 
-        // ═══════════════════ SYSTEM TRAY ═══════════════════
+        // SYSTEM TRAY
         ["tray_tooltip"] = "G-Helper - {0}",
         ["tray_gpu_eco"] = "GPU: Eco (само iGPU)",
         ["tray_gpu_standard"] = "GPU: Standard (dGPU)",
         ["tray_gpu_optimized"] = "GPU: Оптимизован (ауто)",
         ["tray_gpu_ultimate"] = "GPU: Ultimate (MUX)",
 
-        // ═══════════════════ KEY ACTIONS ═══════════════════
+        // KEY ACTIONS
         ["action_none"] = "Ништа",
         ["action_ghelper"] = "Укључи/Искључи G-Helper",
         ["action_performance"] = "Промени режим перформанси",
@@ -202,12 +202,12 @@ public static class Serbian
         ["action_camera"] = "Укључи/Искључи камеру",
         ["action_touchpad"] = "Укључи/Искључи тачпед",
 
-        // ═══════════════════ KEY NAMES ═══════════════════
+        // KEY NAMES
         ["key_m4"] = "ROG / M5 тастер",
         ["key_fnf4"] = "Fn+F4 (Aura)",
         ["key_fnf5"] = "Fn+F5 / M4 (Перформансе)",
 
-        // ═══════════════════ EXTRA WINDOW ═══════════════════
+        // EXTRA WINDOW
         ["extra_title"] = "Додатна подешавања",
         ["kbd_backlight_header"] = "Позадинско осветљење тастатуре",
         ["brightness"] = "Осветљеност",
@@ -269,7 +269,7 @@ public static class Serbian
         ["battery_health_unknown"] = "Здравље батерије: --%",
         ["power_draw_discharge"] = "Потрошња: {0} mW (пражњење)",
         ["power_draw_charge"] = "Потрошња: {0} mW (пуњење)",
-        ["power_draw_unknown"] = "Потрошња: -- mW",
+        ["power_draw_unknown"] = "Потрошња: - mW",
 
         ["system_info_header"] = "Информације о систему",
 
@@ -285,11 +285,11 @@ public static class Serbian
         ["log_stdout"] = "Логови се исписују на stdout - покрените из терминала да видите излаз",
         ["kernel_warning"] = "\u26A0 Препоручује се кернел 6.2+ за пуну подршку функција",
 
-        // ═══════════════════ LANGUAGE ═══════════════════
+        // LANGUAGE
         ["language_header"] = "Језик",
         ["language_auto"] = "Ауто (системски)",
 
-        // ═══════════════════ FANS WINDOW ═══════════════════
+        // FANS WINDOW
         ["fans_title"] = "Вентилатори и напајање",
         ["fan_curves"] = "Криве вентилатора",
         ["reset"] = "Ресетуј",
@@ -307,7 +307,7 @@ public static class Serbian
         ["firmware_control"] = "Контрола фирмвера",
         ["fan_sensor_format"] = "CPU: {0} / GPU: {1} Оптерећење: {2}   Средњи: {3} RPM",
 
-        // ═══════════════════ BATTERY INFO WINDOW ═══════════════════
+        // BATTERY INFO WINDOW
         ["battery_info_title"] = "Информације о батерији",
         ["health_header"] = "Здравље",
         ["health"] = "Здравље",
@@ -329,7 +329,7 @@ public static class Serbian
         ["discharging"] = "пражњење",
         ["charging"] = "пуњење",
 
-        // ═══════════════════ UPDATES WINDOW ═══════════════════
+        // UPDATES WINDOW
         ["updates_title"] = "BIOS и ажурирања драјвера",
         ["updates_header"] = "BIOS и ажурирања драјвера",
         ["copy_diagnostics"] = "Копирај дијагностику",
@@ -364,7 +364,7 @@ public static class Serbian
         ["updates_title_format"] = "BIOS и ажурирања драјвера: {0} ({1} BIOS {2})",
         ["app_version_format"] = "G-Helper Linux v{0} - {1}",
 
-        // ═══════════════════ ARCADE GAME ═══════════════════
+        // ARCADE GAME
         ["arcade_title"] = "ROG Fighter",
         ["arcade_game_title"] = "ROG FIGHTER",
         ["arcade_move"] = "\u2190 \u2192 \u2191 \u2193 / W A S D  кретање",
@@ -384,7 +384,7 @@ public static class Serbian
         ["arcade_new_highscore"] = "НОВИ НАЈБОЉИ РЕЗУЛТАТ!",
         ["arcade_retry"] = "ENTER за поновни покушај",
 
-        // ═══════════════════ AURA MODES ═══════════════════
+        // AURA MODES
         ["aura_static"] = "Статичан",
         ["aura_breathe"] = "Дисање",
         ["aura_strobe"] = "Стробоскоп",
@@ -399,12 +399,12 @@ public static class Serbian
         ["aura_flash"] = "Блесак",
         ["aura_no_modes"] = "Нема режима",
 
-        // ═══════════════════ AURA SPEEDS ═══════════════════
+        // AURA SPEEDS
         ["speed_slow"] = "Споро",
         ["speed_normal"] = "Нормално",
         ["speed_fast"] = "Брзо",
 
-        // ═══════════════════ MISC ═══════════════════
+        // MISC
         ["ghelper"] = "G-Helper",
         ["asus_laptop_control"] = "ASUS контрола лаптопа (Linux)",
     };

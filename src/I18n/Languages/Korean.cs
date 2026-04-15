@@ -1,13 +1,13 @@
 namespace GHelper.Linux.I18n.Languages;
 
 /// <summary>
-/// Korean (ko) — 한국어
+/// Korean (ko) - 한국어
 /// </summary>
 public static class Korean
 {
     public static Dictionary<string, string> Translations => new()
     {
-        // ═══════════════════ COMMON ═══════════════════
+        // COMMON
         ["enabled"] = "활성화됨",
         ["disabled"] = "비활성화됨",
         ["muted"] = "음소거됨",
@@ -28,7 +28,7 @@ public static class Korean
         ["refresh"] = "새로고침",
         ["details"] = "상세...",
 
-        // ═══════════════════ PERFORMANCE MODES ═══════════════════
+        // PERFORMANCE MODES
         ["mode_silent"] = "저소음",
         ["mode_balanced"] = "균형",
         ["mode_turbo"] = "터보",
@@ -37,7 +37,7 @@ public static class Korean
         ["mode_prefix"] = "모드: {0}",
         ["fans_power"] = "팬 + 전력",
 
-        // ═══════════════════ GPU MODES ═══════════════════
+        // GPU MODES
         ["gpu_eco"] = "Eco",
         ["gpu_standard"] = "Standard",
         ["gpu_ultimate"] = "Ultimate",
@@ -45,19 +45,19 @@ public static class Korean
         ["gpu_unknown"] = "알 수 없음",
         ["gpu_mode_prefix"] = "GPU 모드: {0}",
 
-        // ═══════════════════ SENSOR INFO ═══════════════════
+        // SENSOR INFO
         ["cpu_fan_info"] = "CPU: {0} 팬: {1}",
         ["gpu_fan_full_info"] = "GPU: {0}{1}  팬: {2}",
         ["gpu_fan_only"] = "GPU 팬: {0}",
         ["mid_fan_info"] = "중간 팬: {0}",
 
-        // ═══════════════════ SCREEN ═══════════════════
+        // SCREEN
         ["screen_prefix"] = "노트북 화면: {0}Hz",
         ["screen_prefix_auto"] = "노트북 화면: {0}Hz (자동)",
         ["screen_auto"] = "자동",
         ["screen_miniled"] = "MiniLED",
 
-        // ═══════════════════ KEYBOARD ═══════════════════
+        // KEYBOARD
         ["keyboard_header"] = "노트북 키보드",
         ["backlight"] = "백라이트",
         ["extra"] = "추가",
@@ -72,14 +72,14 @@ public static class Korean
         ["pick_color"] = "색상 선택",
         ["hex_label"] = "Hex:",
 
-        // ═══════════════════ BATTERY ═══════════════════
+        // BATTERY
         ["battery_limit_prefix"] = "배터리 충전 제한: {0}%",
         ["discharging_watts"] = "방전 중: {0}W",
         ["charging_watts"] = "충전 중: {0}W",
         ["plugged_in"] = "전원 연결됨",
         ["charge_prefix"] = "충전: {0}%",
 
-        // ═══════════════════ FOOTER ═══════════════════
+        // FOOTER
         ["run_on_startup"] = "시작 시 실행",
         ["unknown_asus"] = "알 수 없는 ASUS",
         ["title_prefix"] = "G-Helper - {0}",
@@ -92,7 +92,7 @@ public static class Korean
         ["features_prefix"] = "기능: {0}",
         ["no_features"] = "ASUS 전용 기능이 감지되지 않았습니다",
 
-        // ═══════════════════ FEATURE NAMES ═══════════════════
+        // FEATURE NAMES
         ["feature_perf_modes"] = "성능 모드",
         ["feature_gpu_eco"] = "GPU Eco",
         ["feature_mux"] = "MUX 스위치",
@@ -101,7 +101,7 @@ public static class Korean
         ["feature_ppt"] = "PPT 제한",
         ["feature_nv_boost"] = "NVIDIA 다이나믹 부스트",
 
-        // ═══════════════════ GPU TIPS & NOTIFICATIONS ═══════════════════
+        // GPU TIPS & NOTIFICATIONS
         ["gpu_pending_reboot"] = "{0} 대기 중 - 재부팅하여 적용",
         ["gpu_pending_mode"] = "모드",
         ["gpu_tip_eco"] = "dGPU 꺼짐 - 최대 배터리 수명",
@@ -154,7 +154,7 @@ public static class Korean
         ["gpu_driver_after_reboot"] = "재부팅 후",
         ["gpu_driver_footer"] = "\"지금 전환\"은 GPU 드라이버 언로드를 시도합니다(관리자\n비밀번호가 필요할 수 있습니다). \"재부팅 후\"는 다음 시작 시 저장됩니다.",
 
-        // ═══════════════════ KEYBOARD NOTIFICATIONS ═══════════════════
+        // KEYBOARD NOTIFICATIONS
         ["kbd_off"] = "끄기  \u25cb\u25cb\u25cb",
         ["kbd_low"] = "낮음  \u25cf\u25cb\u25cb",
         ["kbd_medium"] = "중간  \u25cf\u25cf\u25cb",
@@ -162,7 +162,7 @@ public static class Korean
         ["kbd_level"] = "레벨 {0}",
         ["keyboard"] = "키보드",
 
-        // ═══════════════════ OTHER NOTIFICATIONS ═══════════════════
+        // OTHER NOTIFICATIONS
         ["performance"] = "성능",
         ["aura"] = "Aura",
         ["microphone"] = "마이크",
@@ -179,14 +179,14 @@ public static class Korean
         ["setup_required"] = "설정이 필요합니다",
         ["udev_not_installed"] = "udev 규칙이 설치되지 않았습니다. 전체 기능(배터리 제한, 팬 제어 등)을 사용하려면 install.sh를 실행하세요",
 
-        // ═══════════════════ SYSTEM TRAY ═══════════════════
+        // SYSTEM TRAY
         ["tray_tooltip"] = "G-Helper - {0}",
         ["tray_gpu_eco"] = "GPU: Eco (iGPU 전용)",
         ["tray_gpu_standard"] = "GPU: Standard (dGPU)",
         ["tray_gpu_optimized"] = "GPU: 최적화 (자동)",
         ["tray_gpu_ultimate"] = "GPU: Ultimate (MUX)",
 
-        // ═══════════════════ KEY ACTIONS ═══════════════════
+        // KEY ACTIONS
         ["action_none"] = "없음",
         ["action_ghelper"] = "G-Helper 표시/숨기기",
         ["action_performance"] = "성능 모드 순환",
@@ -202,12 +202,12 @@ public static class Korean
         ["action_camera"] = "카메라 전환",
         ["action_touchpad"] = "터치패드 전환",
 
-        // ═══════════════════ KEY NAMES ═══════════════════
+        // KEY NAMES
         ["key_m4"] = "ROG / M5 키",
         ["key_fnf4"] = "Fn+F4 (Aura)",
         ["key_fnf5"] = "Fn+F5 / M4 (성능)",
 
-        // ═══════════════════ EXTRA WINDOW ═══════════════════
+        // EXTRA WINDOW
         ["extra_title"] = "추가 설정",
         ["kbd_backlight_header"] = "키보드 백라이트",
         ["brightness"] = "밝기",
@@ -269,7 +269,7 @@ public static class Korean
         ["battery_health_unknown"] = "배터리 건강 상태: --%",
         ["power_draw_discharge"] = "소비 전력: {0} mW (방전 중)",
         ["power_draw_charge"] = "소비 전력: {0} mW (충전 중)",
-        ["power_draw_unknown"] = "소비 전력: -- mW",
+        ["power_draw_unknown"] = "소비 전력: - mW",
 
         ["system_info_header"] = "시스템 정보",
 
@@ -285,11 +285,11 @@ public static class Korean
         ["log_stdout"] = "로그가 stdout에 기록됩니다 - 출력을 보려면 터미널에서 실행하세요",
         ["kernel_warning"] = "\u26A0 전체 기능 지원을 위해 커널 6.2 이상을 권장합니다",
 
-        // ═══════════════════ LANGUAGE ═══════════════════
+        // LANGUAGE
         ["language_header"] = "언어",
         ["language_auto"] = "자동 (시스템)",
 
-        // ═══════════════════ FANS WINDOW ═══════════════════
+        // FANS WINDOW
         ["fans_title"] = "팬 & 전력",
         ["fan_curves"] = "팬 곡선",
         ["reset"] = "초기화",
@@ -307,7 +307,7 @@ public static class Korean
         ["firmware_control"] = "펌웨어 제어",
         ["fan_sensor_format"] = "CPU: {0} / GPU: {1} 부하: {2}   중간: {3} RPM",
 
-        // ═══════════════════ BATTERY INFO WINDOW ═══════════════════
+        // BATTERY INFO WINDOW
         ["battery_info_title"] = "배터리 정보",
         ["health_header"] = "건강 상태",
         ["health"] = "건강 상태",
@@ -329,7 +329,7 @@ public static class Korean
         ["discharging"] = "방전 중",
         ["charging"] = "충전 중",
 
-        // ═══════════════════ UPDATES WINDOW ═══════════════════
+        // UPDATES WINDOW
         ["updates_title"] = "BIOS & 드라이버 업데이트",
         ["updates_header"] = "BIOS & 드라이버 업데이트",
         ["copy_diagnostics"] = "진단 정보 복사",
@@ -364,7 +364,7 @@ public static class Korean
         ["updates_title_format"] = "BIOS & 드라이버 업데이트: {0} ({1} BIOS {2})",
         ["app_version_format"] = "G-Helper Linux v{0} - {1}",
 
-        // ═══════════════════ ARCADE GAME ═══════════════════
+        // ARCADE GAME
         ["arcade_title"] = "ROG Fighter",
         ["arcade_game_title"] = "ROG FIGHTER",
         ["arcade_move"] = "\u2190 \u2192 \u2191 \u2193 / W A S D  이동",
@@ -384,7 +384,7 @@ public static class Korean
         ["arcade_new_highscore"] = "새 최고 점수!",
         ["arcade_retry"] = "ENTER로 재시도",
 
-        // ═══════════════════ AURA MODES ═══════════════════
+        // AURA MODES
         ["aura_static"] = "정적",
         ["aura_breathe"] = "호흡",
         ["aura_strobe"] = "스트로브",
@@ -399,12 +399,12 @@ public static class Korean
         ["aura_flash"] = "플래시",
         ["aura_no_modes"] = "모드 없음",
 
-        // ═══════════════════ AURA SPEEDS ═══════════════════
+        // AURA SPEEDS
         ["speed_slow"] = "느림",
         ["speed_normal"] = "보통",
         ["speed_fast"] = "빠름",
 
-        // ═══════════════════ MISC ═══════════════════
+        // MISC
         ["ghelper"] = "G-Helper",
         ["asus_laptop_control"] = "ASUS 노트북 제어 (Linux)",
     };

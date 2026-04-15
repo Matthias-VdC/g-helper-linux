@@ -1,13 +1,13 @@
 namespace GHelper.Linux.I18n.Languages;
 
 /// <summary>
-/// Arabic (ar) — العربية
+/// Arabic (ar) - العربية
 /// </summary>
 public static class Arabic
 {
     public static Dictionary<string, string> Translations => new()
     {
-        // ═══════════════════ COMMON ═══════════════════
+        // COMMON
         ["enabled"] = "مُفعَّل",
         ["disabled"] = "مُعطَّل",
         ["muted"] = "صامت",
@@ -28,7 +28,7 @@ public static class Arabic
         ["refresh"] = "تحديث",
         ["details"] = "التفاصيل...",
 
-        // ═══════════════════ PERFORMANCE MODES ═══════════════════
+        // PERFORMANCE MODES
         ["mode_silent"] = "صامت",
         ["mode_balanced"] = "متوازن",
         ["mode_turbo"] = "توربو",
@@ -37,7 +37,7 @@ public static class Arabic
         ["mode_prefix"] = "الوضع: {0}",
         ["fans_power"] = "المراوح + الطاقة",
 
-        // ═══════════════════ GPU MODES ═══════════════════
+        // GPU MODES
         ["gpu_eco"] = "Eco",
         ["gpu_standard"] = "Standard",
         ["gpu_ultimate"] = "Ultimate",
@@ -45,19 +45,19 @@ public static class Arabic
         ["gpu_unknown"] = "غير معروف",
         ["gpu_mode_prefix"] = "وضع GPU: {0}",
 
-        // ═══════════════════ SENSOR INFO ═══════════════════
+        // SENSOR INFO
         ["cpu_fan_info"] = "CPU: {0} المروحة: {1}",
         ["gpu_fan_full_info"] = "GPU: {0}{1}  المروحة: {2}",
         ["gpu_fan_only"] = "مروحة GPU: {0}",
         ["mid_fan_info"] = "المروحة الوسطى: {0}",
 
-        // ═══════════════════ SCREEN ═══════════════════
+        // SCREEN
         ["screen_prefix"] = "شاشة الحاسوب المحمول: {0}Hz",
         ["screen_prefix_auto"] = "شاشة الحاسوب المحمول: {0}Hz (تلقائي)",
         ["screen_auto"] = "تلقائي",
         ["screen_miniled"] = "MiniLED",
 
-        // ═══════════════════ KEYBOARD ═══════════════════
+        // KEYBOARD
         ["keyboard_header"] = "لوحة مفاتيح الحاسوب المحمول",
         ["backlight"] = "الإضاءة الخلفية",
         ["extra"] = "إضافي",
@@ -72,14 +72,14 @@ public static class Arabic
         ["pick_color"] = "اختيار اللون",
         ["hex_label"] = "Hex:",
 
-        // ═══════════════════ BATTERY ═══════════════════
+        // BATTERY
         ["battery_limit_prefix"] = "حد شحن البطارية: {0}%",
         ["discharging_watts"] = "تفريغ: {0}W",
         ["charging_watts"] = "شحن: {0}W",
         ["plugged_in"] = "متصل بالتيار",
         ["charge_prefix"] = "الشحن: {0}%",
 
-        // ═══════════════════ FOOTER ═══════════════════
+        // FOOTER
         ["run_on_startup"] = "تشغيل عند بدء التشغيل",
         ["unknown_asus"] = "ASUS غير معروف",
         ["title_prefix"] = "G-Helper - {0}",
@@ -92,7 +92,7 @@ public static class Arabic
         ["features_prefix"] = "الميزات: {0}",
         ["no_features"] = "لم يتم اكتشاف ميزات خاصة بـ ASUS",
 
-        // ═══════════════════ FEATURE NAMES ═══════════════════
+        // FEATURE NAMES
         ["feature_perf_modes"] = "أوضاع الأداء",
         ["feature_gpu_eco"] = "GPU Eco",
         ["feature_mux"] = "مفتاح MUX",
@@ -101,7 +101,7 @@ public static class Arabic
         ["feature_ppt"] = "حدود PPT",
         ["feature_nv_boost"] = "التعزيز الديناميكي من NVIDIA",
 
-        // ═══════════════════ GPU TIPS & NOTIFICATIONS ═══════════════════
+        // GPU TIPS & NOTIFICATIONS
         ["gpu_pending_reboot"] = "{0} قيد الانتظار - أعد التشغيل للتطبيق",
         ["gpu_pending_mode"] = "الوضع",
         ["gpu_tip_eco"] = "dGPU مُعطَّل - أقصى عمر للبطارية",
@@ -154,7 +154,7 @@ public static class Arabic
         ["gpu_driver_after_reboot"] = "بعد إعادة التشغيل",
         ["gpu_driver_footer"] = "\"التبديل الآن\" يحاول إلغاء تحميل تعريف GPU (قد تكون كلمة مرور\nالمسؤول مطلوبة). \"بعد إعادة التشغيل\" يحفظ للتشغيل التالي.",
 
-        // ═══════════════════ KEYBOARD NOTIFICATIONS ═══════════════════
+        // KEYBOARD NOTIFICATIONS
         ["kbd_off"] = "إيقاف  \u25cb\u25cb\u25cb",
         ["kbd_low"] = "منخفض  \u25cf\u25cb\u25cb",
         ["kbd_medium"] = "متوسط  \u25cf\u25cf\u25cb",
@@ -162,7 +162,7 @@ public static class Arabic
         ["kbd_level"] = "المستوى {0}",
         ["keyboard"] = "لوحة المفاتيح",
 
-        // ═══════════════════ OTHER NOTIFICATIONS ═══════════════════
+        // OTHER NOTIFICATIONS
         ["performance"] = "الأداء",
         ["aura"] = "Aura",
         ["microphone"] = "الميكروفون",
@@ -179,14 +179,14 @@ public static class Arabic
         ["setup_required"] = "الإعداد مطلوب",
         ["udev_not_installed"] = "قواعد udev غير مثبّتة. قم بتشغيل install.sh للحصول على الوظائف الكاملة (حد البطارية، التحكم بالمروحة، إلخ)",
 
-        // ═══════════════════ SYSTEM TRAY ═══════════════════
+        // SYSTEM TRAY
         ["tray_tooltip"] = "G-Helper - {0}",
         ["tray_gpu_eco"] = "GPU: Eco (iGPU فقط)",
         ["tray_gpu_standard"] = "GPU: Standard (dGPU)",
         ["tray_gpu_optimized"] = "GPU: مُحسَّن (تلقائي)",
         ["tray_gpu_ultimate"] = "GPU: Ultimate (MUX)",
 
-        // ═══════════════════ KEY ACTIONS ═══════════════════
+        // KEY ACTIONS
         ["action_none"] = "لا شيء",
         ["action_ghelper"] = "تبديل G-Helper",
         ["action_performance"] = "تبديل وضع الأداء",
@@ -202,12 +202,12 @@ public static class Arabic
         ["action_camera"] = "تبديل الكاميرا",
         ["action_touchpad"] = "تبديل لوحة اللمس",
 
-        // ═══════════════════ KEY NAMES ═══════════════════
+        // KEY NAMES
         ["key_m4"] = "مفتاح ROG / M5",
         ["key_fnf4"] = "Fn+F4 (Aura)",
         ["key_fnf5"] = "Fn+F5 / M4 (الأداء)",
 
-        // ═══════════════════ EXTRA WINDOW ═══════════════════
+        // EXTRA WINDOW
         ["extra_title"] = "إعدادات إضافية",
         ["kbd_backlight_header"] = "إضاءة لوحة المفاتيح الخلفية",
         ["brightness"] = "السطوع",
@@ -269,7 +269,7 @@ public static class Arabic
         ["battery_health_unknown"] = "صحة البطارية: --%",
         ["power_draw_discharge"] = "استهلاك الطاقة: {0} mW (تفريغ)",
         ["power_draw_charge"] = "استهلاك الطاقة: {0} mW (شحن)",
-        ["power_draw_unknown"] = "استهلاك الطاقة: -- mW",
+        ["power_draw_unknown"] = "استهلاك الطاقة: - mW",
 
         ["system_info_header"] = "معلومات النظام",
 
@@ -285,11 +285,11 @@ public static class Arabic
         ["log_stdout"] = "يتم كتابة السجلات إلى stdout - شغّل من الطرفية لرؤية المخرجات",
         ["kernel_warning"] = "\u26A0 يُنصح بالنواة 6.2 أو أحدث لدعم كامل الميزات",
 
-        // ═══════════════════ LANGUAGE ═══════════════════
+        // LANGUAGE
         ["language_header"] = "اللغة",
         ["language_auto"] = "تلقائي (النظام)",
 
-        // ═══════════════════ FANS WINDOW ═══════════════════
+        // FANS WINDOW
         ["fans_title"] = "المراوح والطاقة",
         ["fan_curves"] = "منحنيات المروحة",
         ["reset"] = "إعادة تعيين",
@@ -307,7 +307,7 @@ public static class Arabic
         ["firmware_control"] = "التحكم بالبرنامج الثابت",
         ["fan_sensor_format"] = "CPU: {0} / GPU: {1} الحمل: {2}   الوسطى: {3} RPM",
 
-        // ═══════════════════ BATTERY INFO WINDOW ═══════════════════
+        // BATTERY INFO WINDOW
         ["battery_info_title"] = "معلومات البطارية",
         ["health_header"] = "الصحة",
         ["health"] = "الصحة",
@@ -329,7 +329,7 @@ public static class Arabic
         ["discharging"] = "تفريغ",
         ["charging"] = "شحن",
 
-        // ═══════════════════ UPDATES WINDOW ═══════════════════
+        // UPDATES WINDOW
         ["updates_title"] = "تحديثات BIOS والتعريفات",
         ["updates_header"] = "تحديثات BIOS والتعريفات",
         ["copy_diagnostics"] = "نسخ التشخيصات",
@@ -364,7 +364,7 @@ public static class Arabic
         ["updates_title_format"] = "تحديثات BIOS والتعريفات: {0} ({1} BIOS {2})",
         ["app_version_format"] = "G-Helper Linux v{0} - {1}",
 
-        // ═══════════════════ ARCADE GAME ═══════════════════
+        // ARCADE GAME
         ["arcade_title"] = "ROG Fighter",
         ["arcade_game_title"] = "ROG FIGHTER",
         ["arcade_move"] = "\u2190 \u2192 \u2191 \u2193 / W A S D  تحرّك",
@@ -384,7 +384,7 @@ public static class Arabic
         ["arcade_new_highscore"] = "أعلى نتيجة جديدة!",
         ["arcade_retry"] = "ENTER لإعادة المحاولة",
 
-        // ═══════════════════ AURA MODES ═══════════════════
+        // AURA MODES
         ["aura_static"] = "ثابت",
         ["aura_breathe"] = "تنفس",
         ["aura_strobe"] = "وميض",
@@ -399,12 +399,12 @@ public static class Arabic
         ["aura_flash"] = "وميض سريع",
         ["aura_no_modes"] = "لا توجد أوضاع",
 
-        // ═══════════════════ AURA SPEEDS ═══════════════════
+        // AURA SPEEDS
         ["speed_slow"] = "بطيء",
         ["speed_normal"] = "عادي",
         ["speed_fast"] = "سريع",
 
-        // ═══════════════════ MISC ═══════════════════
+        // MISC
         ["ghelper"] = "G-Helper",
         ["asus_laptop_control"] = "التحكم بحاسوب ASUS المحمول (Linux)",
     };

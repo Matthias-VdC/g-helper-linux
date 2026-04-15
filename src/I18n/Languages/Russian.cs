@@ -4,7 +4,7 @@ public static class Russian
 {
     public static Dictionary<string, string> Translations => new()
     {
-        // ═══════════════════ COMMON ═══════════════════
+        // COMMON
         ["enabled"] = "Включено",
         ["disabled"] = "Отключено",
         ["muted"] = "Без звука",
@@ -25,7 +25,7 @@ public static class Russian
         ["refresh"] = "Обновить",
         ["details"] = "Подробнее...",
 
-        // ═══════════════════ PERFORMANCE MODES ═══════════════════
+        // PERFORMANCE MODES
         ["mode_silent"] = "Тихий",
         ["mode_balanced"] = "Сбалансированный",
         ["mode_turbo"] = "Турбо",
@@ -34,7 +34,7 @@ public static class Russian
         ["mode_prefix"] = "Режим: {0}",
         ["fans_power"] = "Вентиляторы + Питание",
 
-        // ═══════════════════ GPU MODES ═══════════════════
+        // GPU MODES
         ["gpu_eco"] = "Eco",
         ["gpu_standard"] = "Standard",
         ["gpu_ultimate"] = "Ultimate",
@@ -42,19 +42,19 @@ public static class Russian
         ["gpu_unknown"] = "Неизвестно",
         ["gpu_mode_prefix"] = "Режим GPU: {0}",
 
-        // ═══════════════════ SENSOR INFO ═══════════════════
+        // SENSOR INFO
         ["cpu_fan_info"] = "CPU: {0} Вент.: {1}",
         ["gpu_fan_full_info"] = "GPU: {0}{1}  Вент.: {2}",
         ["gpu_fan_only"] = "Вент. GPU: {0}",
         ["mid_fan_info"] = "Средний вент.: {0}",
 
-        // ═══════════════════ SCREEN ═══════════════════
+        // SCREEN
         ["screen_prefix"] = "Экран ноутбука: {0}Hz",
         ["screen_prefix_auto"] = "Экран ноутбука: {0}Hz (Авто)",
         ["screen_auto"] = "Авто",
         ["screen_miniled"] = "MiniLED",
 
-        // ═══════════════════ KEYBOARD ═══════════════════
+        // KEYBOARD
         ["keyboard_header"] = "Клавиатура ноутбука",
         ["backlight"] = "Подсветка",
         ["extra"] = "Дополнительно",
@@ -69,14 +69,14 @@ public static class Russian
         ["pick_color"] = "Выбрать цвет",
         ["hex_label"] = "Hex:",
 
-        // ═══════════════════ BATTERY ═══════════════════
+        // BATTERY
         ["battery_limit_prefix"] = "Лимит заряда: {0}%",
         ["discharging_watts"] = "Разряд: {0}W",
         ["charging_watts"] = "Зарядка: {0}W",
         ["plugged_in"] = "Подключено к сети",
         ["charge_prefix"] = "Заряд: {0}%",
 
-        // ═══════════════════ FOOTER ═══════════════════
+        // FOOTER
         ["run_on_startup"] = "Запуск при старте",
         ["unknown_asus"] = "Неизвестный ASUS",
         ["title_prefix"] = "G-Helper - {0}",
@@ -89,7 +89,7 @@ public static class Russian
         ["features_prefix"] = "Функции: {0}",
         ["no_features"] = "Специфические функции ASUS не обнаружены",
 
-        // ═══════════════════ FEATURE NAMES ═══════════════════
+        // FEATURE NAMES
         ["feature_perf_modes"] = "Режимы производительности",
         ["feature_gpu_eco"] = "GPU Eco",
         ["feature_mux"] = "MUX-переключатель",
@@ -98,7 +98,7 @@ public static class Russian
         ["feature_ppt"] = "Лимиты PPT",
         ["feature_nv_boost"] = "NVIDIA Dynamic Boost",
 
-        // ═══════════════════ GPU TIPS & NOTIFICATIONS ═══════════════════
+        // GPU TIPS & NOTIFICATIONS
         ["gpu_pending_reboot"] = "{0} ожидает - перезагрузите для применения",
         ["gpu_pending_mode"] = "Режим",
         ["gpu_tip_eco"] = "dGPU выключена - максимальное время работы от батареи",
@@ -151,7 +151,7 @@ public static class Russian
         ["gpu_driver_after_reboot"] = "После перезагрузки",
         ["gpu_driver_footer"] = "«Переключить сейчас» попытается выгрузить драйвер GPU (может\nпотребоваться пароль администратора). «После перезагрузки» сохранит настройку.",
 
-        // ═══════════════════ KEYBOARD NOTIFICATIONS ═══════════════════
+        // KEYBOARD NOTIFICATIONS
         ["kbd_off"] = "Выкл  \u25cb\u25cb\u25cb",
         ["kbd_low"] = "Низкая  \u25cf\u25cb\u25cb",
         ["kbd_medium"] = "Средняя  \u25cf\u25cf\u25cb",
@@ -159,7 +159,7 @@ public static class Russian
         ["kbd_level"] = "Уровень {0}",
         ["keyboard"] = "Клавиатура",
 
-        // ═══════════════════ OTHER NOTIFICATIONS ═══════════════════
+        // OTHER NOTIFICATIONS
         ["performance"] = "Производительность",
         ["aura"] = "Aura",
         ["microphone"] = "Микрофон",
@@ -176,14 +176,14 @@ public static class Russian
         ["setup_required"] = "Требуется настройка",
         ["udev_not_installed"] = "Правила udev не установлены. Запустите install.sh для полной функциональности (лимит батареи, управление вентиляторами и т.д.)",
 
-        // ═══════════════════ SYSTEM TRAY ═══════════════════
+        // SYSTEM TRAY
         ["tray_tooltip"] = "G-Helper - {0}",
         ["tray_gpu_eco"] = "GPU: Eco (только iGPU)",
         ["tray_gpu_standard"] = "GPU: Standard (dGPU)",
         ["tray_gpu_optimized"] = "GPU: Оптимизированный (авто)",
         ["tray_gpu_ultimate"] = "GPU: Ultimate (MUX)",
 
-        // ═══════════════════ KEY ACTIONS ═══════════════════
+        // KEY ACTIONS
         ["action_none"] = "Нет",
         ["action_ghelper"] = "Показать/скрыть G-Helper",
         ["action_performance"] = "Переключить режим производительности",
@@ -199,12 +199,12 @@ public static class Russian
         ["action_camera"] = "Вкл/выкл камеру",
         ["action_touchpad"] = "Вкл/выкл тачпад",
 
-        // ═══════════════════ KEY NAMES ═══════════════════
+        // KEY NAMES
         ["key_m4"] = "Клавиша ROG / M5",
         ["key_fnf4"] = "Fn+F4 (Aura)",
         ["key_fnf5"] = "Fn+F5 / M4 (Производительность)",
 
-        // ═══════════════════ EXTRA WINDOW ═══════════════════
+        // EXTRA WINDOW
         ["extra_title"] = "Дополнительные настройки",
         ["kbd_backlight_header"] = "Подсветка клавиатуры",
         ["brightness"] = "Яркость",
@@ -266,7 +266,7 @@ public static class Russian
         ["battery_health_unknown"] = "Здоровье батареи: --%",
         ["power_draw_discharge"] = "Потребление: {0} мВт (разряд)",
         ["power_draw_charge"] = "Потребление: {0} мВт (зарядка)",
-        ["power_draw_unknown"] = "Потребление: -- мВт",
+        ["power_draw_unknown"] = "Потребление: - мВт",
 
         ["system_info_header"] = "Информация о системе",
 
@@ -282,11 +282,11 @@ public static class Russian
         ["log_stdout"] = "Логи выводятся в stdout - запустите из терминала для просмотра",
         ["kernel_warning"] = "\u26A0 Для полной поддержки функций рекомендуется ядро 6.2+",
 
-        // ═══════════════════ LANGUAGE ═══════════════════
+        // LANGUAGE
         ["language_header"] = "Язык",
         ["language_auto"] = "Авто (системный)",
 
-        // ═══════════════════ FANS WINDOW ═══════════════════
+        // FANS WINDOW
         ["fans_title"] = "Вентиляторы и питание",
         ["fan_curves"] = "Кривые вентиляторов",
         ["reset"] = "Сброс",
@@ -304,7 +304,7 @@ public static class Russian
         ["firmware_control"] = "Управление прошивкой",
         ["fan_sensor_format"] = "CPU: {0} / GPU: {1} Нагрузка: {2}   Средний: {3} RPM",
 
-        // ═══════════════════ BATTERY INFO WINDOW ═══════════════════
+        // BATTERY INFO WINDOW
         ["battery_info_title"] = "Информация о батарее",
         ["health_header"] = "Здоровье",
         ["health"] = "Здоровье",
@@ -326,7 +326,7 @@ public static class Russian
         ["discharging"] = "разряд",
         ["charging"] = "зарядка",
 
-        // ═══════════════════ UPDATES WINDOW ═══════════════════
+        // UPDATES WINDOW
         ["updates_title"] = "Обновления BIOS и драйверов",
         ["updates_header"] = "Обновления BIOS и драйверов",
         ["copy_diagnostics"] = "Копировать диагностику",
@@ -361,7 +361,7 @@ public static class Russian
         ["updates_title_format"] = "Обновления BIOS и драйверов: {0} ({1} BIOS {2})",
         ["app_version_format"] = "G-Helper Linux v{0} - {1}",
 
-        // ═══════════════════ ARCADE GAME ═══════════════════
+        // ARCADE GAME
         ["arcade_title"] = "ROG Fighter",
         ["arcade_game_title"] = "ROG FIGHTER",
         ["arcade_move"] = "\u2190 \u2192 \u2191 \u2193 / W A S D  движение",
@@ -381,7 +381,7 @@ public static class Russian
         ["arcade_new_highscore"] = "НОВЫЙ РЕКОРД!",
         ["arcade_retry"] = "ENTER для повтора",
 
-        // ═══════════════════ AURA MODES ═══════════════════
+        // AURA MODES
         ["aura_static"] = "Статичный",
         ["aura_breathe"] = "Дыхание",
         ["aura_strobe"] = "Стробоскоп",
@@ -396,12 +396,12 @@ public static class Russian
         ["aura_flash"] = "Вспышка",
         ["aura_no_modes"] = "Нет режимов",
 
-        // ═══════════════════ AURA SPEEDS ═══════════════════
+        // AURA SPEEDS
         ["speed_slow"] = "Медленно",
         ["speed_normal"] = "Нормально",
         ["speed_fast"] = "Быстро",
 
-        // ═══════════════════ MISC ═══════════════════
+        // MISC
         ["ghelper"] = "G-Helper",
         ["asus_laptop_control"] = "Управление ноутбуком ASUS (Linux)",
     };

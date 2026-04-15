@@ -4,7 +4,7 @@ public static class Czech
 {
     public static Dictionary<string, string> Translations => new()
     {
-        // ═══════════════════ COMMON ═══════════════════
+        // COMMON
         ["enabled"] = "Povoleno",
         ["disabled"] = "Zakázáno",
         ["muted"] = "Ztlumeno",
@@ -25,7 +25,7 @@ public static class Czech
         ["refresh"] = "Obnovit",
         ["details"] = "Podrobnosti...",
 
-        // ═══════════════════ PERFORMANCE MODES ═══════════════════
+        // PERFORMANCE MODES
         ["mode_silent"] = "Tichý",
         ["mode_balanced"] = "Vyvážený",
         ["mode_turbo"] = "Turbo",
@@ -34,7 +34,7 @@ public static class Czech
         ["mode_prefix"] = "Režim: {0}",
         ["fans_power"] = "Ventilátory + Napájení",
 
-        // ═══════════════════ GPU MODES ═══════════════════
+        // GPU MODES
         ["gpu_eco"] = "Eco",
         ["gpu_standard"] = "Standard",
         ["gpu_ultimate"] = "Ultimate",
@@ -42,19 +42,19 @@ public static class Czech
         ["gpu_unknown"] = "Neznámý",
         ["gpu_mode_prefix"] = "Režim GPU: {0}",
 
-        // ═══════════════════ SENSOR INFO ═══════════════════
+        // SENSOR INFO
         ["cpu_fan_info"] = "CPU: {0} Vent.: {1}",
         ["gpu_fan_full_info"] = "GPU: {0}{1}  Vent.: {2}",
         ["gpu_fan_only"] = "Vent. GPU: {0}",
         ["mid_fan_info"] = "Střed. vent.: {0}",
 
-        // ═══════════════════ SCREEN ═══════════════════
+        // SCREEN
         ["screen_prefix"] = "Displej notebooku: {0}Hz",
         ["screen_prefix_auto"] = "Displej notebooku: {0}Hz (Auto)",
         ["screen_auto"] = "Auto",
         ["screen_miniled"] = "MiniLED",
 
-        // ═══════════════════ KEYBOARD ═══════════════════
+        // KEYBOARD
         ["keyboard_header"] = "Klávesnice notebooku",
         ["backlight"] = "Podsvícení",
         ["extra"] = "Další",
@@ -69,14 +69,14 @@ public static class Czech
         ["pick_color"] = "Vybrat barvu",
         ["hex_label"] = "Hex:",
 
-        // ═══════════════════ BATTERY ═══════════════════
+        // BATTERY
         ["battery_limit_prefix"] = "Limit nabíjení baterie: {0}%",
         ["discharging_watts"] = "Vybíjení: {0}W",
         ["charging_watts"] = "Nabíjení: {0}W",
         ["plugged_in"] = "Připojeno k napájení",
         ["charge_prefix"] = "Nabití: {0}%",
 
-        // ═══════════════════ FOOTER ═══════════════════
+        // FOOTER
         ["run_on_startup"] = "Spustit při startu",
         ["unknown_asus"] = "Neznámý ASUS",
         ["title_prefix"] = "G-Helper - {0}",
@@ -89,7 +89,7 @@ public static class Czech
         ["features_prefix"] = "Funkce: {0}",
         ["no_features"] = "Nebyly zjištěny žádné funkce specifické pro ASUS",
 
-        // ═══════════════════ FEATURE NAMES ═══════════════════
+        // FEATURE NAMES
         ["feature_perf_modes"] = "Režimy výkonu",
         ["feature_gpu_eco"] = "GPU Eco",
         ["feature_mux"] = "Přepínač MUX",
@@ -98,7 +98,7 @@ public static class Czech
         ["feature_ppt"] = "Limity PPT",
         ["feature_nv_boost"] = "NVIDIA Dynamic Boost",
 
-        // ═══════════════════ GPU TIPS & NOTIFICATIONS ═══════════════════
+        // GPU TIPS & NOTIFICATIONS
         ["gpu_pending_reboot"] = "{0} čeká - restartujte pro použití",
         ["gpu_pending_mode"] = "Režim",
         ["gpu_tip_eco"] = "dGPU je vypnutý - maximální výdrž baterie",
@@ -151,7 +151,7 @@ public static class Czech
         ["gpu_driver_after_reboot"] = "Po restartu",
         ["gpu_driver_footer"] = "Přepnout nyní se pokusí odebrat ovladač GPU (může být\nvyžadováno heslo správce). Po restartu uloží na příští spuštění.",
 
-        // ═══════════════════ KEYBOARD NOTIFICATIONS ═══════════════════
+        // KEYBOARD NOTIFICATIONS
         ["kbd_off"] = "Vyp.  \u25cb\u25cb\u25cb",
         ["kbd_low"] = "Nízké  \u25cf\u25cb\u25cb",
         ["kbd_medium"] = "Střední  \u25cf\u25cf\u25cb",
@@ -159,7 +159,7 @@ public static class Czech
         ["kbd_level"] = "Úroveň {0}",
         ["keyboard"] = "Klávesnice",
 
-        // ═══════════════════ OTHER NOTIFICATIONS ═══════════════════
+        // OTHER NOTIFICATIONS
         ["performance"] = "Výkon",
         ["aura"] = "Aura",
         ["microphone"] = "Mikrofon",
@@ -176,14 +176,14 @@ public static class Czech
         ["setup_required"] = "Vyžadováno nastavení",
         ["udev_not_installed"] = "Pravidla udev nejsou nainstalována. Spusťte install.sh pro plnou funkčnost (limit baterie, ovládání ventilátorů atd.)",
 
-        // ═══════════════════ SYSTEM TRAY ═══════════════════
+        // SYSTEM TRAY
         ["tray_tooltip"] = "G-Helper - {0}",
         ["tray_gpu_eco"] = "GPU: Eco (pouze iGPU)",
         ["tray_gpu_standard"] = "GPU: Standard (dGPU)",
         ["tray_gpu_optimized"] = "GPU: Optimalizovaný (auto)",
         ["tray_gpu_ultimate"] = "GPU: Ultimate (MUX)",
 
-        // ═══════════════════ KEY ACTIONS ═══════════════════
+        // KEY ACTIONS
         ["action_none"] = "Žádná",
         ["action_ghelper"] = "Přepnout G-Helper",
         ["action_performance"] = "Přepnout režim výkonu",
@@ -199,12 +199,12 @@ public static class Czech
         ["action_camera"] = "Přepnout kameru",
         ["action_touchpad"] = "Přepnout touchpad",
 
-        // ═══════════════════ KEY NAMES ═══════════════════
+        // KEY NAMES
         ["key_m4"] = "Klávesa ROG / M5",
         ["key_fnf4"] = "Fn+F4 (Aura)",
         ["key_fnf5"] = "Fn+F5 / M4 (Výkon)",
 
-        // ═══════════════════ EXTRA WINDOW ═══════════════════
+        // EXTRA WINDOW
         ["extra_title"] = "Další nastavení",
         ["kbd_backlight_header"] = "Podsvícení klávesnice",
         ["brightness"] = "Jas",
@@ -266,7 +266,7 @@ public static class Czech
         ["battery_health_unknown"] = "Zdraví baterie: --%",
         ["power_draw_discharge"] = "Spotřeba: {0} mW (vybíjení)",
         ["power_draw_charge"] = "Spotřeba: {0} mW (nabíjení)",
-        ["power_draw_unknown"] = "Spotřeba: -- mW",
+        ["power_draw_unknown"] = "Spotřeba: - mW",
 
         ["system_info_header"] = "Systémové informace",
 
@@ -282,11 +282,11 @@ public static class Czech
         ["log_stdout"] = "Logy jsou vypisovány na stdout - spusťte z terminálu pro zobrazení výstupu",
         ["kernel_warning"] = "\u26A0 Doporučeno jádro 6.2+ pro plnou podporu funkcí",
 
-        // ═══════════════════ LANGUAGE ═══════════════════
+        // LANGUAGE
         ["language_header"] = "Jazyk",
         ["language_auto"] = "Auto (systémový)",
 
-        // ═══════════════════ FANS WINDOW ═══════════════════
+        // FANS WINDOW
         ["fans_title"] = "Ventilátory a napájení",
         ["fan_curves"] = "Křivky ventilátorů",
         ["reset"] = "Resetovat",
@@ -304,7 +304,7 @@ public static class Czech
         ["firmware_control"] = "Ovládání firmwaru",
         ["fan_sensor_format"] = "CPU: {0} / GPU: {1} Zátěž: {2}   Střed.: {3} RPM",
 
-        // ═══════════════════ BATTERY INFO WINDOW ═══════════════════
+        // BATTERY INFO WINDOW
         ["battery_info_title"] = "Informace o baterii",
         ["health_header"] = "Zdraví",
         ["health"] = "Zdraví",
@@ -326,7 +326,7 @@ public static class Czech
         ["discharging"] = "vybíjení",
         ["charging"] = "nabíjení",
 
-        // ═══════════════════ UPDATES WINDOW ═══════════════════
+        // UPDATES WINDOW
         ["updates_title"] = "Aktualizace BIOS a ovladačů",
         ["updates_header"] = "Aktualizace BIOS a ovladačů",
         ["copy_diagnostics"] = "Kopírovat diagnostiku",
@@ -361,7 +361,7 @@ public static class Czech
         ["updates_title_format"] = "Aktualizace BIOS a ovladačů: {0} ({1} BIOS {2})",
         ["app_version_format"] = "G-Helper Linux v{0} - {1}",
 
-        // ═══════════════════ ARCADE GAME ═══════════════════
+        // ARCADE GAME
         ["arcade_title"] = "ROG Fighter",
         ["arcade_game_title"] = "ROG FIGHTER",
         ["arcade_move"] = "\u2190 \u2192 \u2191 \u2193 / W A S D  pohyb",
@@ -381,7 +381,7 @@ public static class Czech
         ["arcade_new_highscore"] = "NOVÉ NEJLEPŠÍ SKÓRE!",
         ["arcade_retry"] = "ENTER pro opakování",
 
-        // ═══════════════════ AURA MODES ═══════════════════
+        // AURA MODES
         ["aura_static"] = "Statický",
         ["aura_breathe"] = "Dýchání",
         ["aura_strobe"] = "Stroboskop",
@@ -396,12 +396,12 @@ public static class Czech
         ["aura_flash"] = "Záblesk",
         ["aura_no_modes"] = "Žádné režimy",
 
-        // ═══════════════════ AURA SPEEDS ═══════════════════
+        // AURA SPEEDS
         ["speed_slow"] = "Pomalý",
         ["speed_normal"] = "Normální",
         ["speed_fast"] = "Rychlý",
 
-        // ═══════════════════ MISC ═══════════════════
+        // MISC
         ["ghelper"] = "G-Helper",
         ["asus_laptop_control"] = "Ovládání notebooku ASUS (Linux)",
     };

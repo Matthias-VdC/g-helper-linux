@@ -4,7 +4,7 @@ public static class Hungarian
 {
     public static Dictionary<string, string> Translations => new()
     {
-        // ═══════════════════ COMMON ═══════════════════
+        // COMMON
         ["enabled"] = "Engedélyezve",
         ["disabled"] = "Letiltva",
         ["muted"] = "Némítva",
@@ -25,7 +25,7 @@ public static class Hungarian
         ["refresh"] = "Frissítés",
         ["details"] = "Részletek...",
 
-        // ═══════════════════ PERFORMANCE MODES ═══════════════════
+        // PERFORMANCE MODES
         ["mode_silent"] = "Csendes",
         ["mode_balanced"] = "Kiegyensúlyozott",
         ["mode_turbo"] = "Turbo",
@@ -34,7 +34,7 @@ public static class Hungarian
         ["mode_prefix"] = "Mód: {0}",
         ["fans_power"] = "Ventilátorok + Teljesítmény",
 
-        // ═══════════════════ GPU MODES ═══════════════════
+        // GPU MODES
         ["gpu_eco"] = "Eco",
         ["gpu_standard"] = "Standard",
         ["gpu_ultimate"] = "Ultimate",
@@ -42,19 +42,19 @@ public static class Hungarian
         ["gpu_unknown"] = "Ismeretlen",
         ["gpu_mode_prefix"] = "GPU mód: {0}",
 
-        // ═══════════════════ SENSOR INFO ═══════════════════
+        // SENSOR INFO
         ["cpu_fan_info"] = "CPU: {0} Vent.: {1}",
         ["gpu_fan_full_info"] = "GPU: {0}{1}  Vent.: {2}",
         ["gpu_fan_only"] = "GPU vent.: {0}",
         ["mid_fan_info"] = "Közép vent.: {0}",
 
-        // ═══════════════════ SCREEN ═══════════════════
+        // SCREEN
         ["screen_prefix"] = "Laptop képernyő: {0}Hz",
         ["screen_prefix_auto"] = "Laptop képernyő: {0}Hz (Auto)",
         ["screen_auto"] = "Auto",
         ["screen_miniled"] = "MiniLED",
 
-        // ═══════════════════ KEYBOARD ═══════════════════
+        // KEYBOARD
         ["keyboard_header"] = "Laptop billentyűzet",
         ["backlight"] = "Háttérvilágítás",
         ["extra"] = "Extra",
@@ -69,14 +69,14 @@ public static class Hungarian
         ["pick_color"] = "Szín kiválasztása",
         ["hex_label"] = "Hex:",
 
-        // ═══════════════════ BATTERY ═══════════════════
+        // BATTERY
         ["battery_limit_prefix"] = "Akkumulátor töltési korlát: {0}%",
         ["discharging_watts"] = "Merülés: {0}W",
         ["charging_watts"] = "Töltés: {0}W",
         ["plugged_in"] = "Csatlakoztatva",
         ["charge_prefix"] = "Töltöttség: {0}%",
 
-        // ═══════════════════ FOOTER ═══════════════════
+        // FOOTER
         ["run_on_startup"] = "Futtatás indításkor",
         ["unknown_asus"] = "Ismeretlen ASUS",
         ["title_prefix"] = "G-Helper - {0}",
@@ -89,7 +89,7 @@ public static class Hungarian
         ["features_prefix"] = "Funkciók: {0}",
         ["no_features"] = "Nem találhatók ASUS-specifikus funkciók",
 
-        // ═══════════════════ FEATURE NAMES ═══════════════════
+        // FEATURE NAMES
         ["feature_perf_modes"] = "Teljesítmény módok",
         ["feature_gpu_eco"] = "GPU Eco",
         ["feature_mux"] = "MUX kapcsoló",
@@ -98,7 +98,7 @@ public static class Hungarian
         ["feature_ppt"] = "PPT korlátok",
         ["feature_nv_boost"] = "NVIDIA Dynamic Boost",
 
-        // ═══════════════════ GPU TIPS & NOTIFICATIONS ═══════════════════
+        // GPU TIPS & NOTIFICATIONS
         ["gpu_pending_reboot"] = "{0} függőben - indítsa újra az alkalmazáshoz",
         ["gpu_pending_mode"] = "Mód",
         ["gpu_tip_eco"] = "dGPU kikapcsolva - maximális akkumulátor élettartam",
@@ -151,7 +151,7 @@ public static class Hungarian
         ["gpu_driver_after_reboot"] = "Újraindítás után",
         ["gpu_driver_footer"] = "A Váltás most megpróbálja eltávolítani a GPU illesztőprogramot (rendszergazda\njelszó szükséges lehet). Az Újraindítás után elmenti a következő indításra.",
 
-        // ═══════════════════ KEYBOARD NOTIFICATIONS ═══════════════════
+        // KEYBOARD NOTIFICATIONS
         ["kbd_off"] = "Ki  \u25cb\u25cb\u25cb",
         ["kbd_low"] = "Alacsony  \u25cf\u25cb\u25cb",
         ["kbd_medium"] = "Közepes  \u25cf\u25cf\u25cb",
@@ -159,7 +159,7 @@ public static class Hungarian
         ["kbd_level"] = "Szint {0}",
         ["keyboard"] = "Billentyűzet",
 
-        // ═══════════════════ OTHER NOTIFICATIONS ═══════════════════
+        // OTHER NOTIFICATIONS
         ["performance"] = "Teljesítmény",
         ["aura"] = "Aura",
         ["microphone"] = "Mikrofon",
@@ -176,14 +176,14 @@ public static class Hungarian
         ["setup_required"] = "Beállítás szükséges",
         ["udev_not_installed"] = "Az udev szabályok nincsenek telepítve. Futtassa az install.sh-t a teljes funkcionalitáshoz (akkumulátor korlát, ventilátor vezérlés stb.)",
 
-        // ═══════════════════ SYSTEM TRAY ═══════════════════
+        // SYSTEM TRAY
         ["tray_tooltip"] = "G-Helper - {0}",
         ["tray_gpu_eco"] = "GPU: Eco (csak iGPU)",
         ["tray_gpu_standard"] = "GPU: Standard (dGPU)",
         ["tray_gpu_optimized"] = "GPU: Optimalizált (auto)",
         ["tray_gpu_ultimate"] = "GPU: Ultimate (MUX)",
 
-        // ═══════════════════ KEY ACTIONS ═══════════════════
+        // KEY ACTIONS
         ["action_none"] = "Nincs",
         ["action_ghelper"] = "G-Helper váltása",
         ["action_performance"] = "Teljesítmény mód váltása",
@@ -199,12 +199,12 @@ public static class Hungarian
         ["action_camera"] = "Kamera váltása",
         ["action_touchpad"] = "Érintőpad váltása",
 
-        // ═══════════════════ KEY NAMES ═══════════════════
+        // KEY NAMES
         ["key_m4"] = "ROG / M5 gomb",
         ["key_fnf4"] = "Fn+F4 (Aura)",
         ["key_fnf5"] = "Fn+F5 / M4 (Teljesítmény)",
 
-        // ═══════════════════ EXTRA WINDOW ═══════════════════
+        // EXTRA WINDOW
         ["extra_title"] = "További beállítások",
         ["kbd_backlight_header"] = "Billentyűzet háttérvilágítás",
         ["brightness"] = "Fényerő",
@@ -266,7 +266,7 @@ public static class Hungarian
         ["battery_health_unknown"] = "Akkumulátor állapot: --%",
         ["power_draw_discharge"] = "Energiafogyasztás: {0} mW (merülés)",
         ["power_draw_charge"] = "Energiafogyasztás: {0} mW (töltés)",
-        ["power_draw_unknown"] = "Energiafogyasztás: -- mW",
+        ["power_draw_unknown"] = "Energiafogyasztás: - mW",
 
         ["system_info_header"] = "Rendszer információ",
 
@@ -282,11 +282,11 @@ public static class Hungarian
         ["log_stdout"] = "A naplók az stdout-ra íródnak - futtassa terminálból a kimenet megtekintéséhez",
         ["kernel_warning"] = "\u26A0 Kernel 6.2+ ajánlott a teljes funkció támogatáshoz",
 
-        // ═══════════════════ LANGUAGE ═══════════════════
+        // LANGUAGE
         ["language_header"] = "Nyelv",
         ["language_auto"] = "Auto (rendszer)",
 
-        // ═══════════════════ FANS WINDOW ═══════════════════
+        // FANS WINDOW
         ["fans_title"] = "Ventilátorok és teljesítmény",
         ["fan_curves"] = "Ventilátor görbék",
         ["reset"] = "Visszaállítás",
@@ -304,7 +304,7 @@ public static class Hungarian
         ["firmware_control"] = "Firmware vezérlés",
         ["fan_sensor_format"] = "CPU: {0} / GPU: {1} Terhelés: {2}   Közép: {3} RPM",
 
-        // ═══════════════════ BATTERY INFO WINDOW ═══════════════════
+        // BATTERY INFO WINDOW
         ["battery_info_title"] = "Akkumulátor információ",
         ["health_header"] = "Állapot",
         ["health"] = "Állapot",
@@ -326,7 +326,7 @@ public static class Hungarian
         ["discharging"] = "merülés",
         ["charging"] = "töltés",
 
-        // ═══════════════════ UPDATES WINDOW ═══════════════════
+        // UPDATES WINDOW
         ["updates_title"] = "BIOS és illesztőprogram frissítések",
         ["updates_header"] = "BIOS és illesztőprogram frissítések",
         ["copy_diagnostics"] = "Diagnosztika másolása",
@@ -361,7 +361,7 @@ public static class Hungarian
         ["updates_title_format"] = "BIOS és illesztőprogram frissítések: {0} ({1} BIOS {2})",
         ["app_version_format"] = "G-Helper Linux v{0} - {1}",
 
-        // ═══════════════════ ARCADE GAME ═══════════════════
+        // ARCADE GAME
         ["arcade_title"] = "ROG Fighter",
         ["arcade_game_title"] = "ROG FIGHTER",
         ["arcade_move"] = "\u2190 \u2192 \u2191 \u2193 / W A S D  mozgás",
@@ -381,7 +381,7 @@ public static class Hungarian
         ["arcade_new_highscore"] = "ÚJ LEGJOBB PONTSZÁM!",
         ["arcade_retry"] = "ENTER az újrapróbáláshoz",
 
-        // ═══════════════════ AURA MODES ═══════════════════
+        // AURA MODES
         ["aura_static"] = "Statikus",
         ["aura_breathe"] = "Lélegzés",
         ["aura_strobe"] = "Villogás",
@@ -396,12 +396,12 @@ public static class Hungarian
         ["aura_flash"] = "Villanás",
         ["aura_no_modes"] = "Nincs mód",
 
-        // ═══════════════════ AURA SPEEDS ═══════════════════
+        // AURA SPEEDS
         ["speed_slow"] = "Lassú",
         ["speed_normal"] = "Normál",
         ["speed_fast"] = "Gyors",
 
-        // ═══════════════════ MISC ═══════════════════
+        // MISC
         ["ghelper"] = "G-Helper",
         ["asus_laptop_control"] = "ASUS laptop vezérlés (Linux)",
     };

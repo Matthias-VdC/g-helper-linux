@@ -21,20 +21,20 @@ public enum GpuMode
 /// </summary>
 public enum GpuSwitchResult
 {
-    /// <summary>Mode applied immediately — hardware state changed.</summary>
+    /// <summary>Mode applied immediately - hardware state changed.</summary>
     Applied,
-    /// <summary>Hardware already in the desired state — no write needed.</summary>
+    /// <summary>Hardware already in the desired state - no write needed.</summary>
     AlreadySet,
-    /// <summary>MUX change latched — reboot required to take effect.</summary>
+    /// <summary>MUX change latched - reboot required to take effect.</summary>
     RebootRequired,
-    /// <summary>dGPU driver is active — cannot safely write dgpu_disable=1.
+    /// <summary>dGPU driver is active - cannot safely write dgpu_disable=1.
     /// UI should show confirmation dialog (Switch Now / After Reboot / Cancel).</summary>
     DriverBlocking,
     /// <summary>Mode saved to config for next reboot (user chose "After Reboot").</summary>
     Deferred,
     /// <summary>Write failed (sysfs error, permission denied, etc.).</summary>
     Failed,
-    /// <summary>Eco mode blocked — MUX was set to 0 (Ultimate) this boot session. Reboot first.</summary>
+    /// <summary>Eco mode blocked - MUX was set to 0 (Ultimate) this boot session. Reboot first.</summary>
     EcoBlocked
 }
 
@@ -57,7 +57,7 @@ public class GpuModeController
     private readonly IPowerManager _power;
 
     /// <summary>Lock to prevent concurrent GPU mode operations.
-    /// Writing dgpu_disable can block for 30-60 seconds — we must not queue multiple writes.
+    /// Writing dgpu_disable can block for 30-60 seconds - we must not queue multiple writes.
     /// SemaphoreSlim(1,1) provides atomic check-and-acquire, eliminating the TOCTOU race
     /// that existed with the previous volatile bool approach.</summary>
     private readonly SemaphoreSlim _switchLock = new(1, 1);
@@ -87,10 +87,10 @@ public class GpuModeController
     /// <summary>
     /// Return the effective MUX value: if we latched a change this session, return
     /// the latched value. Otherwise return actual hardware state.
-    /// Used by ComputeAndExecute(), ExecuteDisableDgpu(), ScheduleModeForReboot() —
+    /// Used by ComputeAndExecute(), ExecuteDisableDgpu(), ScheduleModeForReboot()
     /// methods that need to know "what MUX will be after reboot".
     /// NOT used by GetCurrentMode(), AutoGpuSwitch(), IsPendingReboot(),
-    /// ApplyPendingOnStartup(), ApplyPendingOnShutdown() — those need actual hardware.
+    /// ApplyPendingOnStartup(), ApplyPendingOnShutdown() - those need actual hardware.
     /// </summary>
     private int GetEffectiveMux()
     {
@@ -108,13 +108,14 @@ public class GpuModeController
         try
         {
             string? stored = AppConfig.GetString("mux_zero_latched_boot_id");
-            if (string.IsNullOrEmpty(stored)) return false;
+            if (string.IsNullOrEmpty(stored))
+                return false;
             string current = File.ReadAllText("/proc/sys/kernel/random/boot_id").Trim();
             return stored == current;
         }
         catch (IOException)
         {
-            // /proc/sys/kernel/random/boot_id not readable (container/chroot) — fail-open
+            // /proc/sys/kernel/random/boot_id not readable (container/chroot) - fail-open
             return false;
         }
     }
@@ -130,7 +131,7 @@ public class GpuModeController
         {
             string bootId = File.ReadAllText("/proc/sys/kernel/random/boot_id").Trim();
             AppConfig.Set("mux_zero_latched_boot_id", bootId);
-            Logger.WriteLine($"GpuModeController: MUX=0 latch persisted — boot_id={bootId}");
+            Logger.WriteLine($"GpuModeController: MUX=0 latch persisted - boot_id={bootId}");
         }
         catch (Exception ex)
         {
@@ -149,28 +150,27 @@ public class GpuModeController
     /// </summary>
     private bool WouldCreateImpossibleState(GpuMode target)
     {
-        if (target != GpuMode.Eco) return false;
+        if (target != GpuMode.Eco)
+            return false;
 
         // Check persistent flag first (survives app restart within same boot)
         if (IsMuxZeroLatchedThisBoot())
         {
-            Logger.WriteLine("GpuModeController: IMPOSSIBLE STATE PREVENTED — MUX=0 was written this boot session (persistent flag). Eco + MUX=0 = black screen.");
+            Logger.WriteLine("GpuModeController: IMPOSSIBLE STATE PREVENTED - MUX=0 was written this boot session (persistent flag). Eco + MUX=0 = black screen.");
             return true;
         }
 
-        // Also check in-memory latch (fast path, same session — defense in depth)
+        // Also check in-memory latch (fast path, same session - defense in depth)
         int effectiveMux = GetEffectiveMux();
         if (effectiveMux == 0)
         {
-            Logger.WriteLine("GpuModeController: IMPOSSIBLE STATE PREVENTED — cannot schedule Eco when MUX is latched to 0 (Ultimate). Eco + MUX=0 = black screen.");
+            Logger.WriteLine("GpuModeController: IMPOSSIBLE STATE PREVENTED - cannot schedule Eco when MUX is latched to 0 (Ultimate). Eco + MUX=0 = black screen.");
             return true;
         }
         return false;
     }
 
-    // ════════════════════════════════════════════════════════════════
-    //  Public API
-    // ════════════════════════════════════════════════════════════════
+    // Public API
 
     /// <summary>
     /// The single entry point for all GPU mode switches (buttons + tray menu).
@@ -184,7 +184,7 @@ public class GpuModeController
     {
         if (!_switchLock.Wait(0))
         {
-            // A hardware switch is blocking — can't start another.
+            // A hardware switch is blocking - can't start another.
             // But save the user's latest choice so it applies after reboot.
             // This ensures rapid clicks always result in the LAST choice winning.
             Logger.WriteLine($"GpuModeController: switch in progress, scheduling {target} for reboot");
@@ -224,26 +224,27 @@ public class GpuModeController
 
         try
         {
-            Logger.WriteLine("GpuModeController: TryReleaseAndSwitch — attempting driver release");
+            Logger.WriteLine("GpuModeController: TryReleaseAndSwitch - attempting driver release");
 
             bool released = TryReleaseGpuDriver();
             if (!released)
             {
-                Logger.WriteLine("GpuModeController: driver release failed — deferring to reboot");
+                Logger.WriteLine("GpuModeController: driver release failed - deferring to reboot");
                 SaveModeToConfig(GpuMode.Eco);
                 // If we're in Ultimate (MUX=0), latch MUX→1 first so next boot can apply Eco
                 int effectiveMux = GetEffectiveMux();
                 if (effectiveMux == 0)
                 {
-                    // gpu_mux_mode write fails when dgpu_disable=1 — enable dGPU first if needed
+                    // gpu_mux_mode write fails when dgpu_disable=1 - enable dGPU first if needed
                     bool ecoActive = _wmi.GetGpuEco();
                     if (ecoActive)
                     {
-                        Logger.WriteLine("GpuModeController: TryRelease — enabling dGPU before MUX latch");
-                        try { _wmi.SetGpuEco(false); RemoveDriverBlock(); }
+                        Logger.WriteLine("GpuModeController: TryRelease - enabling dGPU before MUX latch");
+                        try
+                        { _wmi.SetGpuEco(false); RemoveDriverBlock(); }
                         catch (Exception muxEx)
                         {
-                            Logger.WriteLine($"GpuModeController: TryRelease — exit Eco failed: {muxEx.Message}");
+                            Logger.WriteLine($"GpuModeController: TryRelease - exit Eco failed: {muxEx.Message}");
                         }
                     }
                     Logger.WriteLine("GpuModeController: MUX=0, latching MUX→1 for Eco boot");
@@ -254,15 +255,15 @@ public class GpuModeController
                     }
                     catch (Exception muxEx)
                     {
-                        Logger.WriteLine($"GpuModeController: TryRelease — MUX latch failed: {muxEx.Message}");
+                        Logger.WriteLine($"GpuModeController: TryRelease - MUX latch failed: {muxEx.Message}");
                     }
                 }
-                // pkexec auth is cached from rmmod attempt — write block without re-prompting
+                // pkexec auth is cached from rmmod attempt - write block without re-prompting
                 WriteDriverBlock(GpuMode.Eco);
                 return GpuSwitchResult.Deferred;
             }
 
-            // Driver released — now write dgpu_disable=1 (should be fast)
+            // Driver released - now write dgpu_disable=1 (should be fast)
             Logger.WriteLine("GpuModeController: driver released, writing dgpu_disable=1");
             _wmi.SetGpuEco(true);
 
@@ -270,7 +271,7 @@ public class GpuModeController
             if (_wmi.GetGpuEco())
             {
                 SaveModeToConfig(GpuMode.Eco);
-                // Eco applied live — remove block artifacts (dgpu_disable=1 is persistent)
+                // Eco applied live - remove block artifacts (dgpu_disable=1 is persistent)
                 RemoveDriverBlock();
                 Logger.WriteLine("GpuModeController: Eco mode applied after driver release");
                 return GpuSwitchResult.Applied;
@@ -309,7 +310,7 @@ public class GpuModeController
         // Refuse: keep config as-is, remove any stale Eco artifacts.
         if (WouldCreateImpossibleState(target))
         {
-            Logger.WriteLine("GpuModeController: ScheduleModeForReboot REFUSED — would create impossible post-reboot state (Eco + MUX=0)");
+            Logger.WriteLine("GpuModeController: ScheduleModeForReboot REFUSED - would create impossible post-reboot state (Eco + MUX=0)");
             Logger.WriteLine("GpuModeController: user must reboot into Ultimate first, THEN switch to Eco");
             RemoveDriverBlock();
             return GpuSwitchResult.EcoBlocked;
@@ -318,18 +319,18 @@ public class GpuModeController
         SaveModeToConfig(target);
 
         // If target needs MUX change, latch it now (instant, safe)
-        // Use GetEffectiveMux() — if we already latched a MUX change this session,
+        // Use GetEffectiveMux() - if we already latched a MUX change this session,
         // we need to know the LATCHED value, not the stale hardware readback.
         int effectiveMux = GetEffectiveMux();
         int targetMux = (target == GpuMode.Ultimate) ? 0 : 1;
 
         if (effectiveMux >= 0 && effectiveMux != targetMux)
         {
-            // gpu_mux_mode write fails when dgpu_disable=1 — enable dGPU first
+            // gpu_mux_mode write fails when dgpu_disable=1 - enable dGPU first
             bool ecoEnabled = _wmi.GetGpuEco();
             if (ecoEnabled)
             {
-                Logger.WriteLine("GpuModeController: ScheduleModeForReboot — enabling dGPU before MUX latch");
+                Logger.WriteLine("GpuModeController: ScheduleModeForReboot - enabling dGPU before MUX latch");
                 try
                 {
                     _wmi.SetGpuEco(false);
@@ -337,8 +338,8 @@ public class GpuModeController
                 }
                 catch (Exception ex)
                 {
-                    Logger.WriteLine($"GpuModeController: ScheduleModeForReboot — failed to exit Eco: {ex.Message}");
-                    // Can't latch MUX, but config is saved — ApplyPendingOnStartup will retry
+                    Logger.WriteLine($"GpuModeController: ScheduleModeForReboot - failed to exit Eco: {ex.Message}");
+                    // Can't latch MUX, but config is saved - ApplyPendingOnStartup will retry
                     WriteDriverBlock(target);
                     return GpuSwitchResult.RebootRequired;
                 }
@@ -354,8 +355,8 @@ public class GpuModeController
             }
             catch (Exception ex)
             {
-                Logger.WriteLine($"GpuModeController: ScheduleModeForReboot — MUX write failed: {ex.Message}");
-                // Config is saved — ApplyPendingOnStartup will retry
+                Logger.WriteLine($"GpuModeController: ScheduleModeForReboot - MUX write failed: {ex.Message}");
+                // Config is saved - ApplyPendingOnStartup will retry
             }
         }
 
@@ -373,15 +374,15 @@ public class GpuModeController
     /// </summary>
     public GpuSwitchResult ApplyPendingOnStartup()
     {
-        // ── Boot safety check (supergfxctl pattern) ──
+        // Boot safety check (supergfxctl pattern)
         // If MUX=0 (Ultimate/dGPU-direct) AND dgpu_disable=1, that's an impossible
         // state that causes boot hangs. Force dgpu_disable=0 to recover.
         // This shouldn't happen with the modprobe.d approach but could occur from
         // manual sysfs tinkering or stale tmpfiles from a previous version.
         BootSafetyCheck();
 
-        // ── Clear MUX=0 latch on reboot detection ──
-        // If the stored boot_id differs from current, a reboot happened — safe to clear.
+        // Clear MUX=0 latch on reboot detection
+        // If the stored boot_id differs from current, a reboot happened - safe to clear.
         try
         {
             string? storedBootId = AppConfig.GetString("mux_zero_latched_boot_id");
@@ -391,7 +392,7 @@ public class GpuModeController
                 if (storedBootId != currentBootId)
                 {
                     AppConfig.Set("mux_zero_latched_boot_id", "");
-                    Logger.WriteLine("GpuModeController: reboot detected — cleared MUX=0 latch flag");
+                    Logger.WriteLine("GpuModeController: reboot detected - cleared MUX=0 latch flag");
                 }
             }
         }
@@ -403,7 +404,7 @@ public class GpuModeController
         string? savedMode = AppConfig.GetString("gpu_mode");
         if (string.IsNullOrEmpty(savedMode))
         {
-            // No pending mode — clean up any stale block artifacts (crash, uninstall, etc.)
+            // No pending mode - clean up any stale block artifacts (crash, uninstall, etc.)
             RemoveDriverBlock();
             return GpuSwitchResult.AlreadySet;
         }
@@ -422,7 +423,7 @@ public class GpuModeController
         {
             if (mux == 0)
             {
-                // MUX=0 (Ultimate) — kernel refuses dgpu_disable=1 in this mode.
+                // MUX=0 (Ultimate) - kernel refuses dgpu_disable=1 in this mode.
                 // Latch MUX=1 first, then Eco will apply on the NEXT reboot.
                 needsMuxChange = true;
             }
@@ -438,9 +439,11 @@ public class GpuModeController
         else if (target == GpuMode.Optimized)
         {
             // Optimized needs MUX=1 first
-            if (mux == 0) needsMuxChange = true;
-            // Optimized with hardware in Eco — need to enable dGPU
-            else if (ecoEnabled) needsDgpuChange = true;
+            if (mux == 0)
+                needsMuxChange = true;
+            // Optimized with hardware in Eco - need to enable dGPU
+            else if (ecoEnabled)
+                needsDgpuChange = true;
         }
         else if ((target == GpuMode.Standard) && ecoEnabled)
         {
@@ -451,8 +454,8 @@ public class GpuModeController
 
         if (!needsDgpuChange && !needsMuxChange)
         {
-            Logger.WriteLine($"GpuModeController: startup — hardware matches saved mode '{savedMode}'");
-            // Hardware matches — clean up block artifacts if they exist (mode was applied)
+            Logger.WriteLine($"GpuModeController: startup - hardware matches saved mode '{savedMode}'");
+            // Hardware matches - clean up block artifacts if they exist (mode was applied)
             RemoveDriverBlock();
             return GpuSwitchResult.AlreadySet;
         }
@@ -463,7 +466,7 @@ public class GpuModeController
             // (firmware rejects gpu_mux_mode write when dgpu_disable=1)
             if (ecoEnabled)
             {
-                Logger.WriteLine("GpuModeController: startup — enabling dGPU before MUX change");
+                Logger.WriteLine("GpuModeController: startup - enabling dGPU before MUX change");
                 try
                 {
                     _wmi.SetGpuEco(false);
@@ -471,49 +474,49 @@ public class GpuModeController
                 }
                 catch (Exception ex)
                 {
-                    Logger.WriteLine($"GpuModeController: startup — failed to exit Eco: {ex.Message}");
+                    Logger.WriteLine($"GpuModeController: startup - failed to exit Eco: {ex.Message}");
                     return GpuSwitchResult.Failed;
                 }
             }
 
             int targetMux = (target == GpuMode.Ultimate) ? 0 : 1;
-            Logger.WriteLine($"GpuModeController: startup — latching MUX → {targetMux} for '{savedMode}'");
+            Logger.WriteLine($"GpuModeController: startup - latching MUX → {targetMux} for '{savedMode}'");
             try
             {
                 _wmi.SetGpuMuxMode(targetMux);
             }
             catch (Exception ex)
             {
-                Logger.WriteLine($"GpuModeController: startup — MUX write failed: {ex.Message}");
+                Logger.WriteLine($"GpuModeController: startup - MUX write failed: {ex.Message}");
                 return GpuSwitchResult.Failed;
             }
             return GpuSwitchResult.RebootRequired;
         }
 
-        // needsDgpuChange — two directions:
+        // needsDgpuChange - two directions:
         // (a) Target is Eco but hardware is not Eco → disable dGPU
         // (b) Target is Standard/Optimized but hardware is Eco → enable dGPU
         bool targetEco = (target == GpuMode.Eco);
 
         if (targetEco)
         {
-            // ── Direction (a): Apply pending Eco ──
-            Logger.WriteLine("GpuModeController: startup — applying pending Eco mode");
+            // Direction (a): Apply pending Eco
+            Logger.WriteLine("GpuModeController: startup - applying pending Eco mode");
 
             if (IsDgpuDriverActive())
             {
-                Logger.WriteLine("GpuModeController: startup — dGPU driver active, cannot apply Eco");
-                // MUX is correct (1) but dGPU driver is loaded — write block so NEXT boot
+                Logger.WriteLine("GpuModeController: startup - dGPU driver active, cannot apply Eco");
+                // MUX is correct (1) but dGPU driver is loaded - write block so NEXT boot
                 // driver won't load, then ghelper can write dgpu_disable=1 safely.
                 // This breaks the infinite loop: startup → driver active → can't apply → repeat.
                 WriteDriverBlock(GpuMode.Eco);
                 return GpuSwitchResult.DriverBlocking;
             }
 
-            // Driver not active — safe to write
+            // Driver not active - safe to write
             if (!_switchLock.Wait(0))
             {
-                Logger.WriteLine("GpuModeController: startup — switch lock contention, skipping");
+                Logger.WriteLine("GpuModeController: startup - switch lock contention, skipping");
                 return GpuSwitchResult.Failed;
             }
             try
@@ -522,14 +525,14 @@ public class GpuModeController
 
                 if (_wmi.GetGpuEco())
                 {
-                    Logger.WriteLine("GpuModeController: startup — Eco mode applied successfully");
-                    // Eco confirmed — remove block artifacts (dgpu_disable=1 is persistent)
+                    Logger.WriteLine("GpuModeController: startup - Eco mode applied successfully");
+                    // Eco confirmed - remove block artifacts (dgpu_disable=1 is persistent)
                     RemoveDriverBlock();
                     return GpuSwitchResult.Applied;
                 }
                 else
                 {
-                    Logger.WriteLine("GpuModeController: startup — dgpu_disable write failed readback");
+                    Logger.WriteLine("GpuModeController: startup - dgpu_disable write failed readback");
                     return GpuSwitchResult.Failed;
                 }
             }
@@ -545,21 +548,21 @@ public class GpuModeController
         }
         else
         {
-            // ── Direction (b): Enable dGPU for pending Standard/Optimized ──
+            // Direction (b): Enable dGPU for pending Standard/Optimized
             // Hardware is in Eco (dgpu_disable=1) but config says Standard/Optimized.
             // This happens when rapid clicks override a blocking Eco switch.
-            Logger.WriteLine($"GpuModeController: startup — enabling dGPU for pending {target} (hardware is Eco)");
+            Logger.WriteLine($"GpuModeController: startup - enabling dGPU for pending {target} (hardware is Eco)");
 
             if (!_switchLock.Wait(0))
             {
-                Logger.WriteLine("GpuModeController: startup — switch lock contention, skipping");
+                Logger.WriteLine("GpuModeController: startup - switch lock contention, skipping");
                 return GpuSwitchResult.Failed;
             }
             try
             {
-                _wmi.SetGpuEco(false); // Always safe — enables dGPU
+                _wmi.SetGpuEco(false); // Always safe - enables dGPU
                 RemoveDriverBlock();    // Clean up stale block artifacts
-                Logger.WriteLine($"GpuModeController: startup — dGPU enabled for {target}");
+                Logger.WriteLine($"GpuModeController: startup - dGPU enabled for {target}");
                 return GpuSwitchResult.Applied;
             }
             catch (Exception ex)
@@ -576,40 +579,42 @@ public class GpuModeController
 
     /// <summary>
     /// On shutdown (SIGTERM/SIGINT): best-effort dgpu_disable=1 if Eco is pending.
-    /// Still checks driver safety — SIGINT is not a system shutdown (Xorg is still running),
+    /// Still checks driver safety - SIGINT is not a system shutdown (Xorg is still running),
     /// and even during SIGTERM the display stack may not have released the GPU yet.
-    /// If driver is active, skip — ApplyPendingOnStartup() will try on next boot.
+    /// If driver is active, skip - ApplyPendingOnStartup() will try on next boot.
     /// </summary>
     public void ApplyPendingOnShutdown()
     {
         try
         {
             string? savedMode = AppConfig.GetString("gpu_mode");
-            if (savedMode != "eco") return;
+            if (savedMode != "eco")
+                return;
 
             bool ecoEnabled = _wmi.GetGpuEco();
-            if (ecoEnabled) return; // Already in Eco
+            if (ecoEnabled)
+                return; // Already in Eco
 
-            // MUX=0 guard — kernel refuses dgpu_disable=1 when in Ultimate mode
+            // MUX=0 guard - kernel refuses dgpu_disable=1 when in Ultimate mode
             int mux = _wmi.GetGpuMuxMode();
             if (mux == 0)
             {
-                Logger.WriteLine("GpuModeController: shutdown — MUX=0 (Ultimate), cannot write dgpu_disable");
-                Logger.WriteLine("GpuModeController: Eco mode requires MUX=1 first — will handle on next startup");
+                Logger.WriteLine("GpuModeController: shutdown - MUX=0 (Ultimate), cannot write dgpu_disable");
+                Logger.WriteLine("GpuModeController: Eco mode requires MUX=1 first - will handle on next startup");
                 return;
             }
 
-            // Safety check — same as everywhere else.
+            // Safety check - same as everywhere else.
             // Writing dgpu_disable=1 while the driver is active triggers ACPI PCI hot-removal
             // which causes a kernel panic (NULL deref in nvidia_modeset when Xorg still has the GPU).
             if (IsDgpuDriverActive())
             {
-                Logger.WriteLine("GpuModeController: shutdown — dGPU driver still active, skipping dgpu_disable write");
+                Logger.WriteLine("GpuModeController: shutdown - dGPU driver still active, skipping dgpu_disable write");
                 Logger.WriteLine("GpuModeController: Eco mode will be applied on next startup instead");
                 return;
             }
 
-            Logger.WriteLine("GpuModeController: shutdown — driver idle, writing dgpu_disable=1 for pending Eco");
+            Logger.WriteLine("GpuModeController: shutdown - driver idle, writing dgpu_disable=1 for pending Eco");
             _wmi.SetGpuEco(true);
         }
         catch (Exception ex)
@@ -620,7 +625,7 @@ public class GpuModeController
 
     /// <summary>
     /// Optimized mode auto Eco/Standard switch on power state change.
-    /// Same safety as RequestModeSwitch but never shows a dialog — returns
+    /// Same safety as RequestModeSwitch but never shows a dialog - returns
     /// DriverBlocking for caller to show a notification instead.
     ///
     /// NOTE: May block for 30-60 seconds. Call from background thread.
@@ -634,15 +639,15 @@ public class GpuModeController
         int mux = _wmi.GetGpuMuxMode();
         if (mux == 0)
         {
-            Logger.WriteLine("GpuModeController: AutoGpuSwitch — MUX=0 (Ultimate), skipping");
+            Logger.WriteLine("GpuModeController: AutoGpuSwitch - MUX=0 (Ultimate), skipping");
             return GpuSwitchResult.AlreadySet;
         }
 
         // Don't auto-switch to Eco if MUX=0 was latched this boot (persistent flag)
-        // Hardware may still read MUX=1, but firmware has MUX=0 pending — Eco would be impossible
+        // Hardware may still read MUX=1, but firmware has MUX=0 pending - Eco would be impossible
         if (IsMuxZeroLatchedThisBoot())
         {
-            Logger.WriteLine("GpuModeController: AutoGpuSwitch — MUX=0 latched this boot, Eco path blocked — staying in Standard");
+            Logger.WriteLine("GpuModeController: AutoGpuSwitch - MUX=0 latched this boot, Eco path blocked - staying in Standard");
             return GpuSwitchResult.AlreadySet;
         }
 
@@ -652,15 +657,16 @@ public class GpuModeController
         if (onAc && ecoEnabled)
         {
             // Plugged in → enable dGPU (always safe)
-            Logger.WriteLine("GpuModeController: AutoGpuSwitch — AC power, enabling dGPU");
-            if (!_switchLock.Wait(0)) return GpuSwitchResult.AlreadySet;
+            Logger.WriteLine("GpuModeController: AutoGpuSwitch - AC power, enabling dGPU");
+            if (!_switchLock.Wait(0))
+                return GpuSwitchResult.AlreadySet;
 
             try
             {
                 _wmi.SetGpuEco(false);
-                // Switching away from Eco — clean up block artifacts
+                // Switching away from Eco - clean up block artifacts
                 RemoveDriverBlock();
-                Logger.WriteLine("GpuModeController: AutoGpuSwitch — dGPU enabled");
+                Logger.WriteLine("GpuModeController: AutoGpuSwitch - dGPU enabled");
                 return GpuSwitchResult.Applied;
             }
             catch (Exception ex)
@@ -676,8 +682,9 @@ public class GpuModeController
         else if (!onAc && !ecoEnabled)
         {
             // On battery → disable dGPU (THE dangerous path)
-            Logger.WriteLine("GpuModeController: AutoGpuSwitch — battery, attempting Eco");
-            if (!_switchLock.Wait(0)) return GpuSwitchResult.AlreadySet;
+            Logger.WriteLine("GpuModeController: AutoGpuSwitch - battery, attempting Eco");
+            if (!_switchLock.Wait(0))
+                return GpuSwitchResult.AlreadySet;
 
             try
             {
@@ -706,9 +713,12 @@ public class GpuModeController
         bool ecoEnabled = _wmi.GetGpuEco();
         int mux = _wmi.GetGpuMuxMode();
 
-        if (mux == 0) return GpuMode.Ultimate;
-        if (gpuAuto) return GpuMode.Optimized;
-        if (ecoEnabled) return GpuMode.Eco;
+        if (mux == 0)
+            return GpuMode.Ultimate;
+        if (gpuAuto)
+            return GpuMode.Optimized;
+        if (ecoEnabled)
+            return GpuMode.Eco;
         return GpuMode.Standard;
     }
 
@@ -719,13 +729,15 @@ public class GpuModeController
     public bool IsPendingReboot()
     {
         string? saved = AppConfig.GetString("gpu_mode");
-        if (string.IsNullOrEmpty(saved)) return false;
+        if (string.IsNullOrEmpty(saved))
+            return false;
 
         GpuMode target = ParseGpuMode(saved);
         GpuMode current = GetCurrentMode();
 
         // Simple check: if they differ, something is pending
-        if (target == current) return false;
+        if (target == current)
+            return false;
 
         // More precise: check if the difference requires a reboot
         int mux = _wmi.GetGpuMuxMode();
@@ -741,18 +753,15 @@ public class GpuModeController
         };
     }
 
-    // ════════════════════════════════════════════════════════════════
-    //  Core logic
-    // ════════════════════════════════════════════════════════════════
+    // Core logic
 
     /// <summary>
     /// Core logic: read current hardware, compute delta, route to Execute* methods.
     /// </summary>
     private GpuSwitchResult ComputeAndExecute(GpuMode target)
     {
-        // ── 4×4 Transition Matrix ──
+        // 4×4 Transition Matrix
         // From\To     | Eco         | Standard    | Optimized   | Ultimate
-        // ------------|-------------|-------------|-------------|-------------
         // Eco         | AlreadySet  | Applied     | Applied*    | RebootReq
         // Standard    | DANGER†     | AlreadySet  | Applied*/†  | RebootReq
         // Optimized   | (delegates) | (delegates) | AlreadySet  | RebootReq‡
@@ -764,7 +773,7 @@ public class GpuModeController
         // § Ultimate→Eco: MUX latch + DriverBlocking or deferred Eco (2-boot path)
         //
         // Config is saved only on success paths (Applied, RebootRequired, AlreadySet,
-        // DriverBlocking). NEVER saved on Failed — prevents stale config from rejected writes.
+        // DriverBlocking). NEVER saved on Failed - prevents stale config from rejected writes.
 
         // Read current hardware state
         bool currentEco = _wmi.GetGpuEco();     // true if dgpu_disable=1
@@ -800,12 +809,12 @@ public class GpuModeController
                 return GpuSwitchResult.Failed;
         }
 
-        // gpu_auto is a software flag (no hardware write) — safe to set early
+        // gpu_auto is a software flag (no hardware write) - safe to set early
         AppConfig.Set("gpu_auto", targetAuto ? 1 : 0);
         // NOTE: SaveModeToConfig is called at each SUCCESS exit point below, not here.
         // If a hardware write fails, config must NOT say the new mode.
 
-        // ── Exit Eco first if MUX change is needed ──
+        // Exit Eco first if MUX change is needed
         // gpu_mux_mode write FAILS when dgpu_disable=1 (firmware rejects "No such device").
         // Must enable dGPU before any MUX change.
         if (currentEco && currentMux >= 0 && currentMux != targetMux)
@@ -816,13 +825,13 @@ public class GpuModeController
                 _wmi.SetGpuEco(false);
                 RemoveDriverBlock();
 
-                // Verify dGPU re-enablement — Windows G-Helper pattern: wait + readback.
+                // Verify dGPU re-enablement - Windows G-Helper pattern: wait + readback.
                 // SetGpuEco(false) includes 50ms settle + PCI rescan (Phase 1).
                 // Additional 200ms here for firmware to update dgpu_disable readback.
                 Thread.Sleep(200);
                 if (_wmi.GetGpuEco())
                 {
-                    Logger.WriteLine("GpuModeController: FAILED to exit Eco — dgpu_disable still reads 1 after 200ms, aborting MUX change");
+                    Logger.WriteLine("GpuModeController: FAILED to exit Eco - dgpu_disable still reads 1 after 200ms, aborting MUX change");
                     return GpuSwitchResult.Failed;
                 }
 
@@ -836,7 +845,7 @@ public class GpuModeController
             }
         }
 
-        // ── MUX change needed? ──
+        // MUX change needed?
         if (currentMux >= 0 && currentMux != targetMux)
         {
             Logger.WriteLine($"GpuModeController: MUX change {currentMux} → {targetMux}");
@@ -846,7 +855,7 @@ public class GpuModeController
             }
             catch (InvalidOperationException ex)
             {
-                // Safety guard violation (dgpu_disable=1) — shouldn't happen after Eco exit above
+                // Safety guard violation (dgpu_disable=1) - shouldn't happen after Eco exit above
                 Logger.WriteLine($"GpuModeController: MUX write safety violation: {ex.Message}");
                 return GpuSwitchResult.Failed;
             }
@@ -862,14 +871,14 @@ public class GpuModeController
 
             if (currentEco != targetEco && targetEco)
             {
-                // MUX change + Eco needed — BUT validate this isn't an impossible combo.
+                // MUX change + Eco needed - BUT validate this isn't an impossible combo.
                 // If MUX is latched to 0 (Ultimate), Eco block artifacts would cause black screen.
                 // WriteDriverBlock already refuses, but be explicit here too.
                 if (WouldCreateImpossibleState(target))
                 {
                     // MUX latched to 0 + Eco = impossible. This shouldn't happen from
                     // normal UI flow (Eco has targetMux=1), but defend against it.
-                    Logger.WriteLine("GpuModeController: MUX change + Eco creates impossible state — Eco blocked");
+                    Logger.WriteLine("GpuModeController: MUX change + Eco creates impossible state - Eco blocked");
                     RemoveDriverBlock();
                     return GpuSwitchResult.EcoBlocked;
                 }
@@ -886,11 +895,11 @@ public class GpuModeController
                     SaveModeToConfig(target);
                     return GpuSwitchResult.DriverBlocking;
                 }
-                Logger.WriteLine("GpuModeController: also need Eco — deferred to after MUX settles (next boot)");
+                Logger.WriteLine("GpuModeController: also need Eco - deferred to after MUX settles (next boot)");
             }
             else if (!targetEco)
             {
-                // Switching to Standard/Ultimate/Optimized — clean up stale block artifacts
+                // Switching to Standard/Ultimate/Optimized - clean up stale block artifacts
                 RemoveDriverBlock();
             }
 
@@ -898,19 +907,20 @@ public class GpuModeController
             return GpuSwitchResult.RebootRequired;
         }
 
-        // ── dgpu change needed? ──
+        // dgpu change needed?
         if (currentEco == targetEco)
         {
             Logger.WriteLine($"GpuModeController: hardware already in target state (eco={currentEco})");
             // Clean up stale block artifacts if target is not Eco
-            if (!targetEco) RemoveDriverBlock();
+            if (!targetEco)
+                RemoveDriverBlock();
             SaveModeToConfig(target);
             return GpuSwitchResult.AlreadySet;
         }
 
         if (!targetEco)
         {
-            // Enabling dGPU — always safe, always fast
+            // Enabling dGPU - always safe, always fast
             var result = ExecuteEnableDgpu();
             if (result == GpuSwitchResult.Applied)
                 SaveModeToConfig(target);
@@ -918,7 +928,7 @@ public class GpuModeController
         }
         else
         {
-            // Disabling dGPU — THE dangerous path
+            // Disabling dGPU - THE dangerous path
             var result = ExecuteDisableDgpu();
             if (result == GpuSwitchResult.Applied)
                 SaveModeToConfig(target);
@@ -929,18 +939,16 @@ public class GpuModeController
         }
     }
 
-    // ════════════════════════════════════════════════════════════════
-    //  Atomic operations
-    // ════════════════════════════════════════════════════════════════
+    // Atomic operations
 
     /// <summary>Always safe. Write dgpu_disable=0 (enable dGPU). Returns Applied.</summary>
     private GpuSwitchResult ExecuteEnableDgpu()
     {
-        Logger.WriteLine("GpuModeController: enabling dGPU (dgpu_disable=0) — always safe");
+        Logger.WriteLine("GpuModeController: enabling dGPU (dgpu_disable=0) - always safe");
         try
         {
             _wmi.SetGpuEco(false);
-            // Switching away from Eco — remove block artifacts (dGPU driver should be loadable)
+            // Switching away from Eco - remove block artifacts (dGPU driver should be loadable)
             RemoveDriverBlock();
             Logger.WriteLine("GpuModeController: dGPU enabled");
             return GpuSwitchResult.Applied;
@@ -959,13 +967,13 @@ public class GpuModeController
     /// </summary>
     private GpuSwitchResult ExecuteDisableDgpu()
     {
-        // Check if in Ultimate mode (MUX=0) — kernel refuses dgpu_disable=1
+        // Check if in Ultimate mode (MUX=0) - kernel refuses dgpu_disable=1
         int mux = GetEffectiveMux();
         if (mux == 0)
         {
-            Logger.WriteLine("GpuModeController: MUX=0 (Ultimate) — cannot disable dGPU directly");
-            // Latch MUX change — dgpu_disable must wait until MUX settles on next boot.
-            // Do NOT write block here — MUX needs to settle first. ApplyPendingOnStartup()
+            Logger.WriteLine("GpuModeController: MUX=0 (Ultimate) - cannot disable dGPU directly");
+            // Latch MUX change - dgpu_disable must wait until MUX settles on next boot.
+            // Do NOT write block here - MUX needs to settle first. ApplyPendingOnStartup()
             // will write the block after confirming MUX is correct.
             try
             {
@@ -974,7 +982,7 @@ public class GpuModeController
             }
             catch (Exception ex)
             {
-                Logger.WriteLine($"GpuModeController: ExecuteDisableDgpu — MUX latch failed: {ex.Message}");
+                Logger.WriteLine($"GpuModeController: ExecuteDisableDgpu - MUX latch failed: {ex.Message}");
                 return GpuSwitchResult.Failed;
             }
             return GpuSwitchResult.RebootRequired;
@@ -983,12 +991,12 @@ public class GpuModeController
         // Check driver safety
         if (IsDgpuDriverActive())
         {
-            Logger.WriteLine("GpuModeController: dGPU driver is ACTIVE — returning DriverBlocking");
+            Logger.WriteLine("GpuModeController: dGPU driver is ACTIVE - returning DriverBlocking");
             return GpuSwitchResult.DriverBlocking;
         }
 
         // Safe to write
-        Logger.WriteLine("GpuModeController: dGPU driver idle/absent — writing dgpu_disable=1");
+        Logger.WriteLine("GpuModeController: dGPU driver idle/absent - writing dgpu_disable=1");
         try
         {
             _wmi.SetGpuEco(true);
@@ -997,7 +1005,7 @@ public class GpuModeController
             if (_wmi.GetGpuEco())
             {
                 Logger.WriteLine("GpuModeController: dgpu_disable=1 confirmed");
-                // Eco applied live — remove block artifacts (dgpu_disable=1 is persistent)
+                // Eco applied live - remove block artifacts (dgpu_disable=1 is persistent)
                 RemoveDriverBlock();
                 return GpuSwitchResult.Applied;
             }
@@ -1014,9 +1022,7 @@ public class GpuModeController
         }
     }
 
-    // ════════════════════════════════════════════════════════════════
-    //  Driver detection
-    // ════════════════════════════════════════════════════════════════
+    // Driver detection
 
     /// <summary>
     /// Check if the dGPU driver is currently active (holding the hardware).
@@ -1031,8 +1037,8 @@ public class GpuModeController
         if (IsAmdDgpu())
             return IsAmdDriverActive();
 
-        // No known dGPU driver loaded — safe
-        Logger.WriteLine("GpuModeController: no dGPU driver detected — safe");
+        // No known dGPU driver loaded - safe
+        Logger.WriteLine("GpuModeController: no dGPU driver detected - safe");
         return false;
     }
 
@@ -1041,26 +1047,26 @@ public class GpuModeController
         // Check if nvidia_drm module is loaded
         if (!Directory.Exists("/sys/module/nvidia_drm"))
         {
-            Logger.WriteLine("GpuModeController: nvidia_drm module not loaded — safe");
+            Logger.WriteLine("GpuModeController: nvidia_drm module not loaded - safe");
             return false;
         }
 
-        // Read refcnt — if > 0, the display stack has the GPU open
+        // Read refcnt - if > 0, the display stack has the GPU open
         int refcnt = ReadNvidiaDrmRefcount();
         if (refcnt < 0)
         {
-            // Can't read refcnt — assume active for safety
-            Logger.WriteLine("GpuModeController: nvidia_drm loaded but can't read refcnt — assuming active");
+            // Can't read refcnt - assume active for safety
+            Logger.WriteLine("GpuModeController: nvidia_drm loaded but can't read refcnt - assuming active");
             return true;
         }
 
         if (refcnt == 0)
         {
-            Logger.WriteLine("GpuModeController: nvidia_drm refcnt=0 — driver idle, safe");
+            Logger.WriteLine("GpuModeController: nvidia_drm refcnt=0 - driver idle, safe");
             return false;
         }
 
-        Logger.WriteLine($"GpuModeController: nvidia_drm refcnt={refcnt} — driver ACTIVE");
+        Logger.WriteLine($"GpuModeController: nvidia_drm refcnt={refcnt} - driver ACTIVE");
         return true;
     }
 
@@ -1069,24 +1075,22 @@ public class GpuModeController
         string? pciAddr = FindDgpuPciAddress();
         if (pciAddr == null)
         {
-            Logger.WriteLine("GpuModeController: AMD dGPU PCI address not found — assuming safe");
+            Logger.WriteLine("GpuModeController: AMD dGPU PCI address not found - assuming safe");
             return false;
         }
 
         string status = ReadDgpuRuntimeStatus(pciAddr);
         if (status == "suspended")
         {
-            Logger.WriteLine($"GpuModeController: AMD dGPU {pciAddr} runtime_status=suspended — safe");
+            Logger.WriteLine($"GpuModeController: AMD dGPU {pciAddr} runtime_status=suspended - safe");
             return false;
         }
 
-        Logger.WriteLine($"GpuModeController: AMD dGPU {pciAddr} runtime_status={status} — ACTIVE");
+        Logger.WriteLine($"GpuModeController: AMD dGPU {pciAddr} runtime_status={status} - ACTIVE");
         return true;
     }
 
-    // ════════════════════════════════════════════════════════════════
-    //  Driver release
-    // ════════════════════════════════════════════════════════════════
+    // Driver release
 
     /// <summary>
     /// Attempt to release the dGPU driver so dgpu_disable=1 can proceed safely.
@@ -1121,7 +1125,7 @@ public class GpuModeController
             return true;
         }
 
-        // Some modules might have failed — check refcnt
+        // Some modules might have failed - check refcnt
         int refcnt = ReadNvidiaDrmRefcount();
         if (refcnt == 0)
         {
@@ -1136,7 +1140,7 @@ public class GpuModeController
             }
         }
 
-        Logger.WriteLine("GpuModeController: NVIDIA driver release failed — modules still loaded");
+        Logger.WriteLine("GpuModeController: NVIDIA driver release failed - modules still loaded");
         return false;
     }
 
@@ -1167,9 +1171,7 @@ public class GpuModeController
         return false;
     }
 
-    // ════════════════════════════════════════════════════════════════
-    //  Hardware detection helpers
-    // ════════════════════════════════════════════════════════════════
+    // Hardware detection helpers
 
     /// <summary>True if the NVIDIA kernel module is loaded.</summary>
     private static bool IsNvidiaGpu()
@@ -1203,29 +1205,36 @@ public class GpuModeController
     /// </summary>
     private string? FindDgpuPciAddress()
     {
-        if (_dgpuPciScanned) return _cachedDgpuPciAddress;
+        if (_dgpuPciScanned)
+            return _cachedDgpuPciAddress;
         _dgpuPciScanned = true;
 
         try
         {
             string pciDir = "/sys/bus/pci/devices";
-            if (!Directory.Exists(pciDir)) return null;
+            if (!Directory.Exists(pciDir))
+                return null;
 
             foreach (var deviceDir in Directory.GetDirectories(pciDir))
             {
                 string? vendor = SysfsHelper.ReadAttribute(Path.Combine(deviceDir, "vendor"));
-                if (vendor != "0x1002") continue; // Not AMD
+                if (vendor != "0x1002")
+                    continue; // Not AMD
 
                 string? cls = SysfsHelper.ReadAttribute(Path.Combine(deviceDir, "class"));
-                if (cls == null) continue;
+                if (cls == null)
+                    continue;
                 // VGA: 0x030000, 3D controller: 0x030200
-                if (!cls.StartsWith("0x0300") && !cls.StartsWith("0x0302")) continue;
+                if (!cls.StartsWith("0x0300") && !cls.StartsWith("0x0302"))
+                    continue;
 
                 string? bootVga = SysfsHelper.ReadAttribute(Path.Combine(deviceDir, "boot_vga"));
-                if (bootVga == "1") continue; // This is the iGPU, skip
+                if (bootVga == "1")
+                    continue; // This is the iGPU, skip
 
                 // Confirm it has a DRM subsystem
-                if (!Directory.Exists(Path.Combine(deviceDir, "drm"))) continue;
+                if (!Directory.Exists(Path.Combine(deviceDir, "drm")))
+                    continue;
 
                 _cachedDgpuPciAddress = Path.GetFileName(deviceDir);
                 Logger.WriteLine($"GpuModeController: found AMD dGPU at {_cachedDgpuPciAddress}");
@@ -1240,9 +1249,7 @@ public class GpuModeController
         return null;
     }
 
-    // ════════════════════════════════════════════════════════════════
-    //  Boot safety (supergfxctl pattern)
-    // ════════════════════════════════════════════════════════════════
+    // Boot safety (supergfxctl pattern)
 
     /// <summary>
     /// Detect and fix the impossible state: gpu_mux_mode=0 (Ultimate) + dgpu_disable=1.
@@ -1262,8 +1269,8 @@ public class GpuModeController
 
             if (mux == 0 && ecoEnabled)
             {
-                Logger.WriteLine("GpuModeController: BOOT SAFETY — MUX=0 + dgpu_disable=1 is impossible!");
-                Logger.WriteLine("GpuModeController: BOOT SAFETY — forcing dgpu_disable=0 to recover");
+                Logger.WriteLine("GpuModeController: BOOT SAFETY - MUX=0 + dgpu_disable=1 is impossible!");
+                Logger.WriteLine("GpuModeController: BOOT SAFETY - forcing dgpu_disable=0 to recover");
                 _wmi.SetGpuEco(false);
                 // Remove block artifacts to allow dGPU driver to load after recovery
                 RemoveDriverBlock();
@@ -1275,9 +1282,7 @@ public class GpuModeController
         }
     }
 
-    // ════════════════════════════════════════════════════════════════
-    //  Driver block — prevent dGPU driver loading + remove PCI devices for Eco boot
-    // ════════════════════════════════════════════════════════════════
+    // Driver block - prevent dGPU driver loading + remove PCI devices for Eco boot
 
     /// <summary>Path to modprobe.d file that blocks dGPU driver loading (NVIDIA + AMD).</summary>
     private const string ModprobeBlockPath = "/etc/modprobe.d/ghelper-gpu-block.conf";
@@ -1305,7 +1310,8 @@ public class GpuModeController
     /// </summary>
     private static string? FindHelperScript()
     {
-        if (_helperPathScanned) return _cachedHelperPath;
+        if (_helperPathScanned)
+            return _cachedHelperPath;
         _helperPathScanned = true;
 
         foreach (var path in HelperSearchPaths)
@@ -1318,15 +1324,15 @@ public class GpuModeController
             }
         }
 
-        Logger.WriteLine("GpuModeController: GPU block helper not found — will use pkexec fallback");
+        Logger.WriteLine("GpuModeController: GPU block helper not found - will use pkexec fallback");
         return null;
     }
 
     /// <summary>Content for the modprobe.d block file (vendor-aware: NVIDIA + AMD).</summary>
     private const string ModprobeBlockContent =
         "# ghelper: block dGPU driver modules so dGPU can be safely disabled on next boot\n" +
-        "# Auto-generated — will be removed after Eco mode is applied\n" +
-        "# Uses 'install /bin/false' (strongest block — prevents loading by ANY means)\n" +
+        "# Auto-generated - will be removed after Eco mode is applied\n" +
+        "# Uses 'install /bin/false' (strongest block - prevents loading by ANY means)\n" +
         "# NVIDIA modules\n" +
         "install nvidia /bin/false\n" +
         "install nvidia_drm /bin/false\n" +
@@ -1341,7 +1347,7 @@ public class GpuModeController
     /// <summary>Content for the udev rule that PCI-removes dGPU devices (NVIDIA + AMD) on add.</summary>
     private const string UdevRemoveContent =
         "# ghelper: remove dGPU PCI devices so no driver can bind\n" +
-        "# Auto-generated — will be removed after Eco mode is applied\n" +
+        "# Auto-generated - will be removed after Eco mode is applied\n" +
         "# Remove NVIDIA VGA controller\n" +
         "ACTION==\"add\", SUBSYSTEM==\"pci\", ATTR{vendor}==\"0x10de\", ATTR{class}==\"0x030000\", ATTR{power/control}=\"auto\", ATTR{remove}=\"1\"\n" +
         "# Remove NVIDIA 3D controller\n" +
@@ -1361,7 +1367,7 @@ public class GpuModeController
 
     /// <summary>
     /// True if any driver block artifacts (current or legacy) exist on disk.
-    /// Used to decide if cleanup is needed — avoids unnecessary pkexec prompts.
+    /// Used to decide if cleanup is needed - avoids unnecessary pkexec prompts.
     /// </summary>
     private static bool DriverBlockExists()
     {
@@ -1376,17 +1382,17 @@ public class GpuModeController
     ///
     /// The EnvyControl-proven approach (1.8k+ stars, no systemd service):
     ///
-    /// 1. modprobe.d `install /bin/false` — the STRONGEST modprobe block.
+    /// 1. modprobe.d `install /bin/false` - the STRONGEST modprobe block.
     ///    Unlike `blacklist` (which only prevents autoload and can be overridden
     ///    by dependencies), `install /bin/false` replaces `modprobe nvidia` with
     ///    a no-op. Blocks both NVIDIA and AMD dGPU modules.
     ///
-    /// 2. udev rule `ATTR{remove}="1"` — belt and suspenders.
+    /// 2. udev rule `ATTR{remove}="1"` - belt and suspenders.
     ///    Physically removes all dGPU PCI devices from the bus when they appear.
     ///    Even if the modprobe block somehow fails (e.g. nvidia in initramfs),
     ///    there's no PCI device for the driver to bind to.
     ///
-    /// 3. Trigger file `/etc/ghelper/pending-gpu-mode` — tells ghelper on
+    /// 3. Trigger file `/etc/ghelper/pending-gpu-mode` - tells ghelper on
     ///    startup to write dgpu_disable=1 and clean up.
     ///
     /// Prefers the sudo helper script (installed by install-local.sh) which needs
@@ -1401,17 +1407,17 @@ public class GpuModeController
         {
             if (target != GpuMode.Eco)
             {
-                // Non-Eco: dGPU driver should be available — remove block if it exists
+                // Non-Eco: dGPU driver should be available - remove block if it exists
                 RemoveDriverBlock();
                 return;
             }
 
             // SAFETY: Never write Eco block artifacts when MUX is latched to 0 (Ultimate).
-            // After reboot, MUX=0 means dGPU is the sole display — blocking dGPU driver and
+            // After reboot, MUX=0 means dGPU is the sole display - blocking dGPU driver and
             // writing dgpu_disable=1 would cause a black screen (impossible state).
             if (WouldCreateImpossibleState(target))
             {
-                Logger.WriteLine("GpuModeController: WriteDriverBlock REFUSED — Eco + MUX=0 is impossible state, removing any stale artifacts instead");
+                Logger.WriteLine("GpuModeController: WriteDriverBlock REFUSED - Eco + MUX=0 is impossible state, removing any stale artifacts instead");
                 RemoveDriverBlock();
                 return;
             }
@@ -1503,9 +1509,7 @@ public class GpuModeController
         }
     }
 
-    // ════════════════════════════════════════════════════════════════
-    //  Config helpers
-    // ════════════════════════════════════════════════════════════════
+    // Config helpers
 
     private static void SaveModeToConfig(GpuMode mode)
     {

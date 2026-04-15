@@ -1,13 +1,13 @@
 namespace GHelper.Linux.I18n.Languages;
 
 /// <summary>
-/// Chinese Traditional (zh-tw) — 繁體中文
+/// Chinese Traditional (zh-tw) - 繁體中文
 /// </summary>
 public static class ChineseTraditional
 {
     public static Dictionary<string, string> Translations => new()
     {
-        // ═══════════════════ COMMON ═══════════════════
+        // COMMON
         ["enabled"] = "已啟用",
         ["disabled"] = "已停用",
         ["muted"] = "已靜音",
@@ -28,7 +28,7 @@ public static class ChineseTraditional
         ["refresh"] = "重新整理",
         ["details"] = "詳情...",
 
-        // ═══════════════════ PERFORMANCE MODES ═══════════════════
+        // PERFORMANCE MODES
         ["mode_silent"] = "靜音",
         ["mode_balanced"] = "均衡",
         ["mode_turbo"] = "增強",
@@ -37,7 +37,7 @@ public static class ChineseTraditional
         ["mode_prefix"] = "模式：{0}",
         ["fans_power"] = "風扇 + 功率",
 
-        // ═══════════════════ GPU MODES ═══════════════════
+        // GPU MODES
         ["gpu_eco"] = "Eco",
         ["gpu_standard"] = "Standard",
         ["gpu_ultimate"] = "Ultimate",
@@ -45,19 +45,19 @@ public static class ChineseTraditional
         ["gpu_unknown"] = "未知",
         ["gpu_mode_prefix"] = "GPU 模式：{0}",
 
-        // ═══════════════════ SENSOR INFO ═══════════════════
+        // SENSOR INFO
         ["cpu_fan_info"] = "CPU：{0} 風扇：{1}",
         ["gpu_fan_full_info"] = "GPU：{0}{1}  風扇：{2}",
         ["gpu_fan_only"] = "GPU 風扇：{0}",
         ["mid_fan_info"] = "中間風扇：{0}",
 
-        // ═══════════════════ SCREEN ═══════════════════
+        // SCREEN
         ["screen_prefix"] = "筆電螢幕：{0}Hz",
         ["screen_prefix_auto"] = "筆電螢幕：{0}Hz（自動）",
         ["screen_auto"] = "自動",
         ["screen_miniled"] = "MiniLED",
 
-        // ═══════════════════ KEYBOARD ═══════════════════
+        // KEYBOARD
         ["keyboard_header"] = "筆電鍵盤",
         ["backlight"] = "背光",
         ["extra"] = "更多",
@@ -72,14 +72,14 @@ public static class ChineseTraditional
         ["pick_color"] = "選擇顏色",
         ["hex_label"] = "Hex：",
 
-        // ═══════════════════ BATTERY ═══════════════════
+        // BATTERY
         ["battery_limit_prefix"] = "電池充電限制：{0}%",
         ["discharging_watts"] = "放電中：{0}W",
         ["charging_watts"] = "充電中：{0}W",
         ["plugged_in"] = "已接上電源",
         ["charge_prefix"] = "電量：{0}%",
 
-        // ═══════════════════ FOOTER ═══════════════════
+        // FOOTER
         ["run_on_startup"] = "開機啟動",
         ["unknown_asus"] = "未知 ASUS",
         ["title_prefix"] = "G-Helper - {0}",
@@ -92,7 +92,7 @@ public static class ChineseTraditional
         ["features_prefix"] = "功能：{0}",
         ["no_features"] = "未偵測到 ASUS 專屬功能",
 
-        // ═══════════════════ FEATURE NAMES ═══════════════════
+        // FEATURE NAMES
         ["feature_perf_modes"] = "效能模式",
         ["feature_gpu_eco"] = "GPU Eco",
         ["feature_mux"] = "MUX 開關",
@@ -101,7 +101,7 @@ public static class ChineseTraditional
         ["feature_ppt"] = "PPT 限制",
         ["feature_nv_boost"] = "NVIDIA 動態加速",
 
-        // ═══════════════════ GPU TIPS & NOTIFICATIONS ═══════════════════
+        // GPU TIPS & NOTIFICATIONS
         ["gpu_pending_reboot"] = "{0} 待處理 - 重新開機以套用",
         ["gpu_pending_mode"] = "模式",
         ["gpu_tip_eco"] = "dGPU 已關閉 - 最大化電池續航",
@@ -154,7 +154,7 @@ public static class ChineseTraditional
         ["gpu_driver_after_reboot"] = "重新開機後",
         ["gpu_driver_footer"] = "「立即切換」將嘗試卸載 GPU 驅動程式（可能需要管理員\n密碼）。「重新開機後」將儲存至下次啟動時。",
 
-        // ═══════════════════ KEYBOARD NOTIFICATIONS ═══════════════════
+        // KEYBOARD NOTIFICATIONS
         ["kbd_off"] = "關  \u25cb\u25cb\u25cb",
         ["kbd_low"] = "低  \u25cf\u25cb\u25cb",
         ["kbd_medium"] = "中  \u25cf\u25cf\u25cb",
@@ -162,7 +162,7 @@ public static class ChineseTraditional
         ["kbd_level"] = "等級 {0}",
         ["keyboard"] = "鍵盤",
 
-        // ═══════════════════ OTHER NOTIFICATIONS ═══════════════════
+        // OTHER NOTIFICATIONS
         ["performance"] = "效能",
         ["aura"] = "Aura",
         ["microphone"] = "麥克風",
@@ -179,14 +179,14 @@ public static class ChineseTraditional
         ["setup_required"] = "需要設定",
         ["udev_not_installed"] = "udev 規則未安裝。請執行 install.sh 以獲得完整功能（電池限制、風扇控制等）",
 
-        // ═══════════════════ SYSTEM TRAY ═══════════════════
+        // SYSTEM TRAY
         ["tray_tooltip"] = "G-Helper - {0}",
         ["tray_gpu_eco"] = "GPU：Eco（僅 iGPU）",
         ["tray_gpu_standard"] = "GPU：Standard（dGPU）",
         ["tray_gpu_optimized"] = "GPU：最佳化（自動）",
         ["tray_gpu_ultimate"] = "GPU：Ultimate（MUX）",
 
-        // ═══════════════════ KEY ACTIONS ═══════════════════
+        // KEY ACTIONS
         ["action_none"] = "無",
         ["action_ghelper"] = "顯示/隱藏 G-Helper",
         ["action_performance"] = "切換效能模式",
@@ -202,12 +202,12 @@ public static class ChineseTraditional
         ["action_camera"] = "攝影機切換",
         ["action_touchpad"] = "觸控板切換",
 
-        // ═══════════════════ KEY NAMES ═══════════════════
+        // KEY NAMES
         ["key_m4"] = "ROG / M5 鍵",
         ["key_fnf4"] = "Fn+F4（Aura）",
         ["key_fnf5"] = "Fn+F5 / M4（效能）",
 
-        // ═══════════════════ EXTRA WINDOW ═══════════════════
+        // EXTRA WINDOW
         ["extra_title"] = "更多設定",
         ["kbd_backlight_header"] = "鍵盤背光",
         ["brightness"] = "亮度",
@@ -285,11 +285,11 @@ public static class ChineseTraditional
         ["log_stdout"] = "日誌輸出至 stdout - 從終端機執行以查看輸出",
         ["kernel_warning"] = "\u26A0 建議使用核心 6.2 以上版本以獲得完整功能支援",
 
-        // ═══════════════════ LANGUAGE ═══════════════════
+        // LANGUAGE
         ["language_header"] = "語言",
         ["language_auto"] = "自動（系統）",
 
-        // ═══════════════════ FANS WINDOW ═══════════════════
+        // FANS WINDOW
         ["fans_title"] = "風扇與功率",
         ["fan_curves"] = "風扇曲線",
         ["reset"] = "重設",
@@ -307,7 +307,7 @@ public static class ChineseTraditional
         ["firmware_control"] = "韌體控制",
         ["fan_sensor_format"] = "CPU：{0} / GPU：{1} 負載：{2}   中間：{3} RPM",
 
-        // ═══════════════════ BATTERY INFO WINDOW ═══════════════════
+        // BATTERY INFO WINDOW
         ["battery_info_title"] = "電池資訊",
         ["health_header"] = "健康狀況",
         ["health"] = "健康度",
@@ -329,7 +329,7 @@ public static class ChineseTraditional
         ["discharging"] = "放電中",
         ["charging"] = "充電中",
 
-        // ═══════════════════ UPDATES WINDOW ═══════════════════
+        // UPDATES WINDOW
         ["updates_title"] = "BIOS 與驅動程式更新",
         ["updates_header"] = "BIOS 與驅動程式更新",
         ["copy_diagnostics"] = "複製診斷資訊",
@@ -364,7 +364,7 @@ public static class ChineseTraditional
         ["updates_title_format"] = "BIOS 與驅動程式更新：{0}（{1} BIOS {2}）",
         ["app_version_format"] = "G-Helper Linux v{0} - {1}",
 
-        // ═══════════════════ ARCADE GAME ═══════════════════
+        // ARCADE GAME
         ["arcade_title"] = "ROG Fighter",
         ["arcade_game_title"] = "ROG FIGHTER",
         ["arcade_move"] = "\u2190 \u2192 \u2191 \u2193 / W A S D  移動",
@@ -384,7 +384,7 @@ public static class ChineseTraditional
         ["arcade_new_highscore"] = "新最高分！",
         ["arcade_retry"] = "按 ENTER 重試",
 
-        // ═══════════════════ AURA MODES ═══════════════════
+        // AURA MODES
         ["aura_static"] = "靜態",
         ["aura_breathe"] = "呼吸",
         ["aura_strobe"] = "頻閃",
@@ -399,12 +399,12 @@ public static class ChineseTraditional
         ["aura_flash"] = "閃爍",
         ["aura_no_modes"] = "無模式",
 
-        // ═══════════════════ AURA SPEEDS ═══════════════════
+        // AURA SPEEDS
         ["speed_slow"] = "慢",
         ["speed_normal"] = "正常",
         ["speed_fast"] = "快",
 
-        // ═══════════════════ MISC ═══════════════════
+        // MISC
         ["ghelper"] = "G-Helper",
         ["asus_laptop_control"] = "ASUS 筆電控制 (Linux)",
     };

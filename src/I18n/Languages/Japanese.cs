@@ -1,13 +1,13 @@
 namespace GHelper.Linux.I18n.Languages;
 
 /// <summary>
-/// Japanese (ja) — 日本語
+/// Japanese (ja) - 日本語
 /// </summary>
 public static class Japanese
 {
     public static Dictionary<string, string> Translations => new()
     {
-        // ═══════════════════ COMMON ═══════════════════
+        // COMMON
         ["enabled"] = "有効",
         ["disabled"] = "無効",
         ["muted"] = "ミュート",
@@ -28,7 +28,7 @@ public static class Japanese
         ["refresh"] = "更新",
         ["details"] = "詳細...",
 
-        // ═══════════════════ PERFORMANCE MODES ═══════════════════
+        // PERFORMANCE MODES
         ["mode_silent"] = "サイレント",
         ["mode_balanced"] = "バランス",
         ["mode_turbo"] = "ターボ",
@@ -37,7 +37,7 @@ public static class Japanese
         ["mode_prefix"] = "モード: {0}",
         ["fans_power"] = "ファン + 電力",
 
-        // ═══════════════════ GPU MODES ═══════════════════
+        // GPU MODES
         ["gpu_eco"] = "Eco",
         ["gpu_standard"] = "Standard",
         ["gpu_ultimate"] = "Ultimate",
@@ -45,19 +45,19 @@ public static class Japanese
         ["gpu_unknown"] = "不明",
         ["gpu_mode_prefix"] = "GPU モード: {0}",
 
-        // ═══════════════════ SENSOR INFO ═══════════════════
+        // SENSOR INFO
         ["cpu_fan_info"] = "CPU: {0} ファン: {1}",
         ["gpu_fan_full_info"] = "GPU: {0}{1}  ファン: {2}",
         ["gpu_fan_only"] = "GPU ファン: {0}",
         ["mid_fan_info"] = "中間ファン: {0}",
 
-        // ═══════════════════ SCREEN ═══════════════════
+        // SCREEN
         ["screen_prefix"] = "ノートPC画面: {0}Hz",
         ["screen_prefix_auto"] = "ノートPC画面: {0}Hz (自動)",
         ["screen_auto"] = "自動",
         ["screen_miniled"] = "MiniLED",
 
-        // ═══════════════════ KEYBOARD ═══════════════════
+        // KEYBOARD
         ["keyboard_header"] = "ノートPCキーボード",
         ["backlight"] = "バックライト",
         ["extra"] = "その他",
@@ -72,14 +72,14 @@ public static class Japanese
         ["pick_color"] = "色を選択",
         ["hex_label"] = "Hex:",
 
-        // ═══════════════════ BATTERY ═══════════════════
+        // BATTERY
         ["battery_limit_prefix"] = "バッテリー充電制限: {0}%",
         ["discharging_watts"] = "放電中: {0}W",
         ["charging_watts"] = "充電中: {0}W",
         ["plugged_in"] = "接続済み",
         ["charge_prefix"] = "充電: {0}%",
 
-        // ═══════════════════ FOOTER ═══════════════════
+        // FOOTER
         ["run_on_startup"] = "起動時に実行",
         ["unknown_asus"] = "不明な ASUS",
         ["title_prefix"] = "G-Helper - {0}",
@@ -92,7 +92,7 @@ public static class Japanese
         ["features_prefix"] = "機能: {0}",
         ["no_features"] = "ASUS固有の機能が検出されませんでした",
 
-        // ═══════════════════ FEATURE NAMES ═══════════════════
+        // FEATURE NAMES
         ["feature_perf_modes"] = "パフォーマンスモード",
         ["feature_gpu_eco"] = "GPU Eco",
         ["feature_mux"] = "MUX スイッチ",
@@ -101,7 +101,7 @@ public static class Japanese
         ["feature_ppt"] = "PPT リミット",
         ["feature_nv_boost"] = "NVIDIA ダイナミックブースト",
 
-        // ═══════════════════ GPU TIPS & NOTIFICATIONS ═══════════════════
+        // GPU TIPS & NOTIFICATIONS
         ["gpu_pending_reboot"] = "{0} 保留中 - 再起動して適用",
         ["gpu_pending_mode"] = "モード",
         ["gpu_tip_eco"] = "dGPU オフ - バッテリー寿命最大化",
@@ -154,7 +154,7 @@ public static class Japanese
         ["gpu_driver_after_reboot"] = "再起動後に",
         ["gpu_driver_footer"] = "「今すぐ切り替え」は GPU ドライバーのアンロードを試みます（管理者\nパスワードが必要な場合があります）。「再起動後に」は次回起動時に保存されます。",
 
-        // ═══════════════════ KEYBOARD NOTIFICATIONS ═══════════════════
+        // KEYBOARD NOTIFICATIONS
         ["kbd_off"] = "オフ  \u25cb\u25cb\u25cb",
         ["kbd_low"] = "低  \u25cf\u25cb\u25cb",
         ["kbd_medium"] = "中  \u25cf\u25cf\u25cb",
@@ -162,7 +162,7 @@ public static class Japanese
         ["kbd_level"] = "レベル {0}",
         ["keyboard"] = "キーボード",
 
-        // ═══════════════════ OTHER NOTIFICATIONS ═══════════════════
+        // OTHER NOTIFICATIONS
         ["performance"] = "パフォーマンス",
         ["aura"] = "Aura",
         ["microphone"] = "マイク",
@@ -179,14 +179,14 @@ public static class Japanese
         ["setup_required"] = "セットアップが必要",
         ["udev_not_installed"] = "udev ルールがインストールされていません。完全な機能（バッテリー制限、ファン制御など）を利用するには install.sh を実行してください",
 
-        // ═══════════════════ SYSTEM TRAY ═══════════════════
+        // SYSTEM TRAY
         ["tray_tooltip"] = "G-Helper - {0}",
         ["tray_gpu_eco"] = "GPU: Eco (iGPU のみ)",
         ["tray_gpu_standard"] = "GPU: Standard (dGPU)",
         ["tray_gpu_optimized"] = "GPU: 最適化 (自動)",
         ["tray_gpu_ultimate"] = "GPU: Ultimate (MUX)",
 
-        // ═══════════════════ KEY ACTIONS ═══════════════════
+        // KEY ACTIONS
         ["action_none"] = "なし",
         ["action_ghelper"] = "G-Helper 表示切替",
         ["action_performance"] = "パフォーマンスモード切替",
@@ -202,12 +202,12 @@ public static class Japanese
         ["action_camera"] = "カメラ切替",
         ["action_touchpad"] = "タッチパッド切替",
 
-        // ═══════════════════ KEY NAMES ═══════════════════
+        // KEY NAMES
         ["key_m4"] = "ROG / M5 キー",
         ["key_fnf4"] = "Fn+F4 (Aura)",
         ["key_fnf5"] = "Fn+F5 / M4 (パフォーマンス)",
 
-        // ═══════════════════ EXTRA WINDOW ═══════════════════
+        // EXTRA WINDOW
         ["extra_title"] = "詳細設定",
         ["kbd_backlight_header"] = "キーボードバックライト",
         ["brightness"] = "輝度",
@@ -269,7 +269,7 @@ public static class Japanese
         ["battery_health_unknown"] = "バッテリー健康状態: --%",
         ["power_draw_discharge"] = "消費電力: {0} mW (放電中)",
         ["power_draw_charge"] = "消費電力: {0} mW (充電中)",
-        ["power_draw_unknown"] = "消費電力: -- mW",
+        ["power_draw_unknown"] = "消費電力: - mW",
 
         ["system_info_header"] = "システム情報",
 
@@ -285,11 +285,11 @@ public static class Japanese
         ["log_stdout"] = "ログは stdout に出力されます - ターミナルから実行して出力を確認してください",
         ["kernel_warning"] = "\u26A0 完全な機能サポートにはカーネル 6.2 以上を推奨",
 
-        // ═══════════════════ LANGUAGE ═══════════════════
+        // LANGUAGE
         ["language_header"] = "言語",
         ["language_auto"] = "自動（システム設定）",
 
-        // ═══════════════════ FANS WINDOW ═══════════════════
+        // FANS WINDOW
         ["fans_title"] = "ファン & 電力",
         ["fan_curves"] = "ファンカーブ",
         ["reset"] = "リセット",
@@ -307,7 +307,7 @@ public static class Japanese
         ["firmware_control"] = "ファームウェア制御",
         ["fan_sensor_format"] = "CPU: {0} / GPU: {1} 負荷: {2}   中間: {3} RPM",
 
-        // ═══════════════════ BATTERY INFO WINDOW ═══════════════════
+        // BATTERY INFO WINDOW
         ["battery_info_title"] = "バッテリー情報",
         ["health_header"] = "健康状態",
         ["health"] = "健康状態",
@@ -329,7 +329,7 @@ public static class Japanese
         ["discharging"] = "放電中",
         ["charging"] = "充電中",
 
-        // ═══════════════════ UPDATES WINDOW ═══════════════════
+        // UPDATES WINDOW
         ["updates_title"] = "BIOS & ドライバー更新",
         ["updates_header"] = "BIOS & ドライバー更新",
         ["copy_diagnostics"] = "診断情報をコピー",
@@ -364,7 +364,7 @@ public static class Japanese
         ["updates_title_format"] = "BIOS & ドライバー更新: {0} ({1} BIOS {2})",
         ["app_version_format"] = "G-Helper Linux v{0} - {1}",
 
-        // ═══════════════════ ARCADE GAME ═══════════════════
+        // ARCADE GAME
         ["arcade_title"] = "ROG Fighter",
         ["arcade_game_title"] = "ROG FIGHTER",
         ["arcade_move"] = "\u2190 \u2192 \u2191 \u2193 / W A S D  移動",
@@ -384,7 +384,7 @@ public static class Japanese
         ["arcade_new_highscore"] = "新ハイスコア！",
         ["arcade_retry"] = "ENTER でリトライ",
 
-        // ═══════════════════ AURA MODES ═══════════════════
+        // AURA MODES
         ["aura_static"] = "スタティック",
         ["aura_breathe"] = "ブリージング",
         ["aura_strobe"] = "ストロボ",
@@ -399,12 +399,12 @@ public static class Japanese
         ["aura_flash"] = "フラッシュ",
         ["aura_no_modes"] = "モードなし",
 
-        // ═══════════════════ AURA SPEEDS ═══════════════════
+        // AURA SPEEDS
         ["speed_slow"] = "遅い",
         ["speed_normal"] = "普通",
         ["speed_fast"] = "速い",
 
-        // ═══════════════════ MISC ═══════════════════
+        // MISC
         ["ghelper"] = "G-Helper",
         ["asus_laptop_control"] = "ASUS ノートPC管理 (Linux)",
     };

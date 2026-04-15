@@ -20,7 +20,8 @@ public static class CoinSound
     /// <summary>Generate the coin WAV and detect audio player. Call once at startup.</summary>
     public static void EnsureReady()
     {
-        if (_ready) return;
+        if (_ready)
+            return;
         _ready = true;
 
         _player = DetectPlayer();

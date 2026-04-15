@@ -8,7 +8,7 @@ using GHelper.Linux.USB;
 namespace GHelper.Linux.UI.Views;
 
 /// <summary>
-/// Extra settings window — keyboard backlight power zones,
+/// Extra settings window - keyboard backlight power zones,
 /// display, power management, system info, advanced options.
 /// Linux port of G-Helper's Extra form.
 /// </summary>
@@ -51,7 +51,7 @@ public partial class ExtraWindow : Window
         Closed += (_, _) => _brightnessTimer?.Stop();
     }
 
-    // ═══════════════════ LANGUAGE ═══════════════════
+    // LANGUAGE
 
     private void InitLanguage()
     {
@@ -78,8 +78,10 @@ public partial class ExtraWindow : Window
 
     private void ComboLanguage_Changed(object? sender, SelectionChangedEventArgs e)
     {
-        if (_suppressEvents) return;
-        if (comboLanguage.SelectedItem is not ComboBoxItem item) return;
+        if (_suppressEvents)
+            return;
+        if (comboLanguage.SelectedItem is not ComboBoxItem item)
+            return;
 
         string code = item.Tag as string ?? "";
 
@@ -181,7 +183,8 @@ public partial class ExtraWindow : Window
         foreach (var kv in Aura.GetSpeeds())
         {
             comboKbdSpeed.Items.Add(new ComboBoxItem { Content = kv.Value, Tag = (int)kv.Key });
-            if ((int)kv.Key == savedSpeed) selectedIdx = idx;
+            if ((int)kv.Key == savedSpeed)
+                selectedIdx = idx;
             idx++;
         }
         comboKbdSpeed.SelectedIndex = selectedIdx;
@@ -201,7 +204,7 @@ public partial class ExtraWindow : Window
             first.Content = Labels.Get("language_auto");
     }
 
-    // ═══════════════════ KEYBOARD BACKLIGHT ═══════════════════
+    // KEYBOARD BACKLIGHT
 
     private void InitKeyboardBacklight()
     {
@@ -218,7 +221,8 @@ public partial class ExtraWindow : Window
         foreach (var kv in speeds)
         {
             comboKbdSpeed.Items.Add(new ComboBoxItem { Content = kv.Value, Tag = (int)kv.Key });
-            if (kv.Key == Aura.Speed) selectedSpeedIdx = idx;
+            if (kv.Key == Aura.Speed)
+                selectedSpeedIdx = idx;
             idx++;
         }
         comboKbdSpeed.SelectedIndex = selectedSpeedIdx;
@@ -280,7 +284,8 @@ public partial class ExtraWindow : Window
     public void RefreshKeyboardBrightness()
     {
         int brightness = App.Wmi?.GetKeyboardBrightness() ?? -1;
-        if (brightness < 0) return;
+        if (brightness < 0)
+            return;
 
         _suppressEvents = true;
         sliderKbdBrightness.Value = brightness;
@@ -324,7 +329,8 @@ public partial class ExtraWindow : Window
     private void SliderKbdBrightness_ValueChanged(object? sender,
         Avalonia.Controls.Primitives.RangeBaseValueChangedEventArgs e)
     {
-        if (_suppressEvents) return;
+        if (_suppressEvents)
+            return;
         int level = (int)e.NewValue;
         labelKbdBrightness.Text = level.ToString();
         Helpers.AppConfig.Set("keyboard_brightness", level);
@@ -334,7 +340,8 @@ public partial class ExtraWindow : Window
 
     private void ComboKbdSpeed_Changed(object? sender, SelectionChangedEventArgs e)
     {
-        if (_suppressEvents) return;
+        if (_suppressEvents)
+            return;
         if (comboKbdSpeed.SelectedItem is ComboBoxItem item && item.Tag is int speedVal)
         {
             Helpers.AppConfig.Set("aura_speed", speedVal);
@@ -345,7 +352,8 @@ public partial class ExtraWindow : Window
 
     private void CheckPower_Changed(object? sender, RoutedEventArgs e)
     {
-        if (_suppressEvents) return;
+        if (_suppressEvents)
+            return;
 
         // Save all power zone states
         Helpers.AppConfig.Set("keyboard_awake", (checkAwake.IsChecked ?? false) ? 1 : 0);
@@ -381,7 +389,7 @@ public partial class ExtraWindow : Window
         Task.Run(() => Aura.ApplyPower());
     }
 
-    // ═══════════════════ KEY BINDINGS ═══════════════════
+    // KEY BINDINGS
 
     /// <summary>Maps combo box controls to their config key names.</summary>
     private readonly Dictionary<ComboBox, string> _keyBindingCombos = new();
@@ -409,7 +417,8 @@ public partial class ExtraWindow : Window
         foreach (var (actionId, _) in App.AvailableKeyActions)
         {
             combo.Items.Add(new ComboBoxItem { Content = App.GetKeyActionDisplayName(actionId), Tag = actionId });
-            if (actionId == currentAction) selectedIdx = idx;
+            if (actionId == currentAction)
+                selectedIdx = idx;
             idx++;
         }
 
@@ -418,16 +427,20 @@ public partial class ExtraWindow : Window
 
     private void ComboKeyBinding_Changed(object? sender, SelectionChangedEventArgs e)
     {
-        if (_suppressEvents) return;
-        if (sender is not ComboBox combo) return;
-        if (!_keyBindingCombos.TryGetValue(combo, out string? bindingName)) return;
-        if (combo.SelectedItem is not ComboBoxItem item || item.Tag is not string actionId) return;
+        if (_suppressEvents)
+            return;
+        if (sender is not ComboBox combo)
+            return;
+        if (!_keyBindingCombos.TryGetValue(combo, out string? bindingName))
+            return;
+        if (combo.SelectedItem is not ComboBoxItem item || item.Tag is not string actionId)
+            return;
 
         Helpers.AppConfig.Set(bindingName, actionId);
         Helpers.Logger.WriteLine($"Key binding: {bindingName} → {actionId}");
     }
 
-    // ═══════════════════ DISPLAY ═══════════════════
+    // DISPLAY
 
     /// <summary>Module name stored when the enable-backlight button is shown.</summary>
     private string? _pendingBacklightModule;
@@ -435,7 +448,8 @@ public partial class ExtraWindow : Window
     private void RefreshDisplay()
     {
         var display = App.Display as LinuxDisplayControl;
-        if (display == null) return;
+        if (display == null)
+            return;
 
         // Populate backlight controller dropdown
         var backlights = LinuxDisplayControl.GetAvailableBacklights();
@@ -456,7 +470,7 @@ public partial class ExtraWindow : Window
 
         if (display.HasBacklight)
         {
-            // Backlight available — show slider
+            // Backlight available - show slider
             rowBrightnessSlider.IsVisible = true;
             labelBacklightHint.IsVisible = false;
 
@@ -482,7 +496,7 @@ public partial class ExtraWindow : Window
         }
         else
         {
-            // No backlight — hide slider, check if we can offer a fix
+            // No backlight - hide slider, check if we can offer a fix
             rowBrightnessSlider.IsVisible = false;
 
             _pendingBacklightModule = LinuxDisplayControl.GetMissingBacklightModule();
@@ -513,7 +527,8 @@ public partial class ExtraWindow : Window
 
     private void ButtonEnableBacklight_Click(object? sender, RoutedEventArgs e)
     {
-        if (_pendingBacklightModule == null) return;
+        if (_pendingBacklightModule == null)
+            return;
 
         string module = _pendingBacklightModule;
         buttonEnableBacklight.Content = Labels.Get("loading");
@@ -544,12 +559,15 @@ public partial class ExtraWindow : Window
     private void ComboBacklight_SelectionChanged(object? sender,
         Avalonia.Controls.SelectionChangedEventArgs e)
     {
-        if (_suppressEvents) return;
+        if (_suppressEvents)
+            return;
         var display = App.Display as LinuxDisplayControl;
-        if (display == null) return;
+        if (display == null)
+            return;
 
         var selected = comboBacklight.SelectedItem as string;
-        if (selected == null || selected == display.ActiveBacklightName) return;
+        if (selected == null || selected == display.ActiveBacklightName)
+            return;
 
         display.SetActiveBacklight(selected);
 
@@ -567,7 +585,8 @@ public partial class ExtraWindow : Window
     private void SliderBrightness_ValueChanged(object? sender,
         Avalonia.Controls.Primitives.RangeBaseValueChangedEventArgs e)
     {
-        if (_suppressEvents) return;
+        if (_suppressEvents)
+            return;
         int percent = (int)e.NewValue;
         labelBrightness.Text = $"{percent}%";
         App.Display?.SetBrightness(percent);
@@ -575,7 +594,8 @@ public partial class ExtraWindow : Window
 
     private void CheckOverdrive_Changed(object? sender, RoutedEventArgs e)
     {
-        if (_suppressEvents) return;
+        if (_suppressEvents)
+            return;
         bool enabled = checkOverdrive.IsChecked ?? false;
         App.Wmi?.SetPanelOverdrive(enabled);
     }
@@ -583,13 +603,14 @@ public partial class ExtraWindow : Window
     private void SliderGamma_ValueChanged(object? sender,
         Avalonia.Controls.Primitives.RangeBaseValueChangedEventArgs e)
     {
-        if (_suppressEvents) return;
+        if (_suppressEvents)
+            return;
         float gamma = (float)(e.NewValue / 100.0);
         labelGamma.Text = $"{gamma:F2}";
         App.Display?.SetGamma(gamma, gamma, gamma);
     }
 
-    // ═══════════════════ OTHER ═══════════════════
+    // OTHER
 
     private void RefreshOther()
     {
@@ -645,7 +666,8 @@ public partial class ExtraWindow : Window
 
     private void CheckBootSound_Changed(object? sender, RoutedEventArgs e)
     {
-        if (_suppressEvents) return;
+        if (_suppressEvents)
+            return;
         int val = (checkBootSound.IsChecked ?? false) ? 1 : 0;
         Helpers.AppConfig.Set("boot_sound", val);
 
@@ -666,7 +688,8 @@ public partial class ExtraWindow : Window
 
     private void CheckPerKeyRGB_Changed(object? sender, RoutedEventArgs e)
     {
-        if (_suppressEvents) return;
+        if (_suppressEvents)
+            return;
         Helpers.AppConfig.Set("per_key_rgb", (checkPerKeyRGB.IsChecked ?? false) ? 1 : 0);
         Helpers.Logger.WriteLine($"Per-key RGB → {checkPerKeyRGB.IsChecked}");
         // Re-apply aura so the mode change takes effect immediately
@@ -675,7 +698,8 @@ public partial class ExtraWindow : Window
 
     private void CheckTopmost_Changed(object? sender, RoutedEventArgs e)
     {
-        if (_suppressEvents) return;
+        if (_suppressEvents)
+            return;
         bool on = checkTopmost.IsChecked ?? false;
         Helpers.AppConfig.Set("topmost", on ? 1 : 0);
 
@@ -685,7 +709,8 @@ public partial class ExtraWindow : Window
 
     private void CheckBWIcon_Changed(object? sender, RoutedEventArgs e)
     {
-        if (_suppressEvents) return;
+        if (_suppressEvents)
+            return;
         Helpers.AppConfig.Set("bw_icon", (checkBWIcon.IsChecked ?? false) ? 1 : 0);
         Helpers.Logger.WriteLine($"B&W tray icon → {checkBWIcon.IsChecked}");
         // Update the tray icon immediately
@@ -694,7 +719,8 @@ public partial class ExtraWindow : Window
 
     private void CheckClamshell_Changed(object? sender, RoutedEventArgs e)
     {
-        if (_suppressEvents) return;
+        if (_suppressEvents)
+            return;
         bool on = checkClamshell.IsChecked ?? false;
         Helpers.AppConfig.Set("toggle_clamshell_mode", on ? 1 : 0);
 
@@ -718,7 +744,8 @@ public partial class ExtraWindow : Window
 
     private void CheckSilentStart_Changed(object? sender, RoutedEventArgs e)
     {
-        if (_suppressEvents) return;
+        if (_suppressEvents)
+            return;
         Helpers.AppConfig.Set("silent_start", (checkSilentStart.IsChecked ?? false) ? 1 : 0);
     }
 
@@ -775,7 +802,8 @@ public partial class ExtraWindow : Window
 
     private void CheckCamera_Changed(object? sender, RoutedEventArgs e)
     {
-        if (_suppressEvents) return;
+        if (_suppressEvents)
+            return;
         bool enabled = checkCamera.IsChecked ?? true;
         LinuxSystemIntegration.SetCameraEnabled(enabled);
         App.System?.ShowNotification(Labels.Get("camera"),
@@ -785,7 +813,8 @@ public partial class ExtraWindow : Window
 
     private void CheckTouchpad_Changed(object? sender, RoutedEventArgs e)
     {
-        if (_suppressEvents) return;
+        if (_suppressEvents)
+            return;
         bool enabled = checkTouchpad.IsChecked ?? true;
         LinuxSystemIntegration.SetTouchpadEnabled(enabled);
         App.System?.ShowNotification(Labels.Get("touchpad"),
@@ -795,7 +824,8 @@ public partial class ExtraWindow : Window
 
     private void CheckTouchscreen_Changed(object? sender, RoutedEventArgs e)
     {
-        if (_suppressEvents) return;
+        if (_suppressEvents)
+            return;
         bool enabled = checkTouchscreen.IsChecked ?? true;
         LinuxSystemIntegration.SetTouchscreenEnabled(enabled);
         App.System?.ShowNotification(Labels.Get("touchscreen"),
@@ -837,13 +867,15 @@ public partial class ExtraWindow : Window
     private void SliderGpuPowerLimit_ValueChanged(object? sender,
         Avalonia.Controls.Primitives.RangeBaseValueChangedEventArgs e)
     {
-        if (_suppressEvents) return;
+        if (_suppressEvents)
+            return;
         labelGpuPowerLimit.Text = $"{(int)e.NewValue}W";
     }
 
     private void CheckGpuClockLock_Changed(object? sender, RoutedEventArgs e)
     {
-        if (_suppressEvents) return;
+        if (_suppressEvents)
+            return;
         bool enabled = checkGpuClockLock.IsChecked ?? false;
         sliderGpuClockLock.IsEnabled = enabled;
         labelGpuClockLock.Text = enabled ? $"{(int)sliderGpuClockLock.Value} MHz" : Labels.Get("off");
@@ -852,13 +884,15 @@ public partial class ExtraWindow : Window
     private void SliderGpuClockLock_ValueChanged(object? sender,
         Avalonia.Controls.Primitives.RangeBaseValueChangedEventArgs e)
     {
-        if (_suppressEvents) return;
+        if (_suppressEvents)
+            return;
         labelGpuClockLock.Text = $"{(int)e.NewValue} MHz";
     }
 
     private void ButtonGpuApply_Click(object? sender, RoutedEventArgs e)
     {
-        if (_nvidiaGpu == null) return;
+        if (_nvidiaGpu == null)
+            return;
 
         buttonGpuApply.IsEnabled = false;
         buttonGpuApply.Content = Labels.Get("applying");
@@ -882,12 +916,13 @@ public partial class ExtraWindow : Window
         });
     }
 
-    // ═══════════════════ POWER MANAGEMENT ═══════════════════
+    // POWER MANAGEMENT
 
     private void RefreshPower()
     {
         var power = App.Power;
-        if (power == null) return;
+        if (power == null)
+            return;
 
         // Platform profile
         string profile = power.GetPlatformProfile();
@@ -931,7 +966,8 @@ public partial class ExtraWindow : Window
 
     private void ComboPlatformProfile_Changed(object? sender, SelectionChangedEventArgs e)
     {
-        if (_suppressEvents) return;
+        if (_suppressEvents)
+            return;
         if (comboPlatformProfile.SelectedItem is ComboBoxItem item && item.Content is string profile)
         {
             App.Power?.SetPlatformProfile(profile);
@@ -942,7 +978,8 @@ public partial class ExtraWindow : Window
 
     private void ComboAspm_Changed(object? sender, SelectionChangedEventArgs e)
     {
-        if (_suppressEvents) return;
+        if (_suppressEvents)
+            return;
         if (comboAspm.SelectedItem is ComboBoxItem item && item.Content is string policy)
         {
             App.Power?.SetAspmPolicy(policy);
@@ -957,7 +994,8 @@ public partial class ExtraWindow : Window
         if (_batteryInfoWindow == null || !_batteryInfoWindow.IsVisible)
         {
             _batteryInfoWindow = new BatteryInfoWindow();
-            if (Helpers.AppConfig.Is("topmost")) _batteryInfoWindow.Topmost = true;
+            if (Helpers.AppConfig.Is("topmost"))
+                _batteryInfoWindow.Topmost = true;
             _batteryInfoWindow.Show();
         }
         else
@@ -966,12 +1004,13 @@ public partial class ExtraWindow : Window
         }
     }
 
-    // ═══════════════════ SYSTEM INFO ═══════════════════
+    // SYSTEM INFO
 
     private void RefreshSystemInfo()
     {
         var sys = App.System;
-        if (sys == null) return;
+        if (sys == null)
+            return;
 
         labelModel.Text = Labels.Format("model_prefix", sys.GetModelName());
         labelBios.Text = Labels.Format("bios_prefix", sys.GetBiosVersion());
@@ -985,13 +1024,20 @@ public partial class ExtraWindow : Window
         var wmi = App.Wmi;
         if (wmi != null)
         {
-            if (wmi.IsFeatureSupported(AsusAttributes.ThrottleThermalPolicy)) features.Add(Labels.Get("feature_perf_modes"));
-            if (wmi.IsFeatureSupported(AsusAttributes.DgpuDisable)) features.Add(Labels.Get("feature_gpu_eco"));
-            if (wmi.IsFeatureSupported(AsusAttributes.GpuMuxMode)) features.Add(Labels.Get("feature_mux"));
-            if (wmi.IsFeatureSupported(AsusAttributes.PanelOd)) features.Add(Labels.Get("feature_overdrive"));
-            if (wmi.IsFeatureSupported(AsusAttributes.MiniLedMode)) features.Add(Labels.Get("feature_miniled"));
-            if (wmi.IsFeatureSupported(AsusAttributes.PptPl1Spl)) features.Add(Labels.Get("feature_ppt"));
-            if (wmi.IsFeatureSupported(AsusAttributes.NvDynamicBoost)) features.Add(Labels.Get("feature_nv_boost"));
+            if (wmi.IsFeatureSupported(AsusAttributes.ThrottleThermalPolicy))
+                features.Add(Labels.Get("feature_perf_modes"));
+            if (wmi.IsFeatureSupported(AsusAttributes.DgpuDisable))
+                features.Add(Labels.Get("feature_gpu_eco"));
+            if (wmi.IsFeatureSupported(AsusAttributes.GpuMuxMode))
+                features.Add(Labels.Get("feature_mux"));
+            if (wmi.IsFeatureSupported(AsusAttributes.PanelOd))
+                features.Add(Labels.Get("feature_overdrive"));
+            if (wmi.IsFeatureSupported(AsusAttributes.MiniLedMode))
+                features.Add(Labels.Get("feature_miniled"));
+            if (wmi.IsFeatureSupported(AsusAttributes.PptPl1Spl))
+                features.Add(Labels.Get("feature_ppt"));
+            if (wmi.IsFeatureSupported(AsusAttributes.NvDynamicBoost))
+                features.Add(Labels.Get("feature_nv_boost"));
         }
 
         labelFeatures.Text = features.Count > 0
@@ -1006,7 +1052,7 @@ public partial class ExtraWindow : Window
         }
     }
 
-    // ═══════════════════ ADVANCED ═══════════════════
+    // ADVANCED
 
     private void RefreshAdvanced()
     {
@@ -1034,24 +1080,28 @@ public partial class ExtraWindow : Window
 
     private void CheckAutoApplyPower_Changed(object? sender, RoutedEventArgs e)
     {
-        if (_suppressEvents) return;
+        if (_suppressEvents)
+            return;
         bool enabled = checkAutoApplyPower.IsChecked ?? false;
         Helpers.AppConfig.SetMode("auto_apply_power", enabled ? 1 : 0);
     }
 
     private void CheckScreenAuto_Changed(object? sender, RoutedEventArgs e)
     {
-        if (_suppressEvents) return;
+        if (_suppressEvents)
+            return;
         bool enabled = checkScreenAuto.IsChecked ?? false;
         Helpers.AppConfig.Set("screen_auto", enabled ? 1 : 0);
         Helpers.Logger.WriteLine($"Screen auto refresh → {enabled}");
-        if (enabled) (App.Current as App)?.AutoScreen();
+        if (enabled)
+            (App.Current as App)?.AutoScreen();
         App.MainWindowInstance?.RefreshScreenPublic();
     }
 
     private void CheckRawWmi_Changed(object? sender, RoutedEventArgs e)
     {
-        if (_suppressEvents) return;
+        if (_suppressEvents)
+            return;
         bool enabled = checkRawWmi.IsChecked ?? false;
 
         Helpers.AppConfig.Set("raw_wmi", enabled ? 1 : 0);
@@ -1070,7 +1120,8 @@ public partial class ExtraWindow : Window
     private void SliderCpuCores_ValueChanged(object? sender,
         Avalonia.Controls.Primitives.RangeBaseValueChangedEventArgs e)
     {
-        if (_suppressEvents) return;
+        if (_suppressEvents)
+            return;
         int target = (int)e.NewValue;
         int total = LinuxSystemIntegration.GetCpuCount();
         labelCpuCores.Text = Labels.Format("cpu_cores_format", target, total);
@@ -1100,7 +1151,7 @@ public partial class ExtraWindow : Window
             }
             else
             {
-                Helpers.Logger.WriteLine("Logs are written to stdout — run the app from a terminal to see output");
+                Helpers.Logger.WriteLine("Logs are written to stdout - run the app from a terminal to see output");
                 App.System?.ShowNotification(Labels.Get("ghelper"), Labels.Get("log_stdout"), "dialog-information");
             }
         }

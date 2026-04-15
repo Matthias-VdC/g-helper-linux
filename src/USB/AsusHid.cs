@@ -7,7 +7,7 @@ namespace GHelper.Linux.USB;
 /// Linux port of G-Helper's AsusHid.cs.
 /// Handles HID device discovery and communication for ASUS AURA keyboards.
 ///
-/// On Linux, HidSharpCore talks to /dev/hidraw* devices — but ONLY those
+/// On Linux, HidSharpCore talks to /dev/hidraw* devices - but ONLY those
 /// with a USB parent device. I2C-HID devices (like the FA608PP keyboard)
 /// are invisible to HidSharp. When no USB device is found, we fall back
 /// to HidrawHelper which scans /dev/hidraw* via native ioctl regardless
@@ -46,7 +46,9 @@ public static class AsusHid
             {
                 // Trigger evaluation: check if HidSharp sees any USB AURA device
                 bool hasUsb = false;
-                try { hasUsb = FindDevices(AURA_ID).Any(); } catch { }
+                try
+                { hasUsb = FindDevices(AURA_ID).Any(); }
+                catch { }
                 _usingI2cFallback = !hasUsb && HidrawHelper.HasAsusAuraDevice();
             }
             return _usingI2cFallback.Value;
@@ -111,7 +113,8 @@ public static class AsusHid
         try
         {
             var devices = FindDevices(reportId);
-            if (devices == null) return null;
+            if (devices == null)
+                return null;
 
             foreach (var device in devices)
                 Helpers.Logger.WriteLine($"HID available: {device.DevicePath} {device.ProductID:X} len={device.GetMaxFeatureReportLength()}");
@@ -250,7 +253,8 @@ public static class AsusHid
             Helpers.Logger.WriteLine($"Error writing to Aura HID: {ex.Message} {BitConverter.ToString(data)}");
             _auraStream.Dispose();
             _auraStream = null;
-            if (retry) WriteAura(data, false);
+            if (retry)
+                WriteAura(data, false);
         }
     }
 

@@ -7,7 +7,7 @@ namespace GHelper.Linux.Platform;
 /// </summary>
 public interface IAsusWmi : IDisposable
 {
-    // ── Core ACPI methods (equivalent to DSTS/DEVS) ──
+    // Core ACPI methods (equivalent to DSTS/DEVS)
 
     /// <summary>Read a device value. Returns -1 if unsupported.</summary>
     int DeviceGet(int deviceId);
@@ -18,7 +18,7 @@ public interface IAsusWmi : IDisposable
     /// <summary>Read a buffer response (e.g., fan curves).</summary>
     byte[]? DeviceGetBuffer(int deviceId, int args = 0);
 
-    // ── Performance mode ──
+    // Performance mode
 
     /// <summary>Get current thermal policy. 0=Balanced, 1=Turbo, 2=Silent</summary>
     int GetThrottleThermalPolicy();
@@ -26,7 +26,7 @@ public interface IAsusWmi : IDisposable
     /// <summary>Set thermal policy.</summary>
     void SetThrottleThermalPolicy(int mode);
 
-    // ── Fan control ──
+    // Fan control
 
     /// <summary>Get fan speed in RPM. fanIndex: 0=CPU, 1=GPU, 2=Mid</summary>
     int GetFanRpm(int fanIndex);
@@ -49,7 +49,7 @@ public interface IAsusWmi : IDisposable
     /// firmware is in control (pwm_enable==2 or 3) or if unsupported.</summary>
     bool IsFanCurveEnabled(int fanIndex);
 
-    // ── Battery ──
+    // Battery
 
     /// <summary>Get charge limit (40-100).</summary>
     int GetBatteryChargeLimit();
@@ -57,7 +57,7 @@ public interface IAsusWmi : IDisposable
     /// <summary>Set charge limit (40-100). Returns true if write succeeded.</summary>
     bool SetBatteryChargeLimit(int percent);
 
-    // ── GPU ──
+    // GPU
 
     /// <summary>Get GPU Eco mode state. true = dGPU disabled.</summary>
     bool GetGpuEco();
@@ -65,8 +65,8 @@ public interface IAsusWmi : IDisposable
     /// <summary>Set GPU Eco mode (dgpu_disable sysfs).
     /// Prefer GpuModeController.RequestModeSwitch() for full orchestration.
     /// SAFETY: When enabled=true, throws InvalidOperationException if:
-    /// - NVIDIA driver is active (refcnt > 0) — would cause kernel panic
-    /// - gpu_mux_mode=0 (Ultimate) — would create impossible boot state (no display)
+    /// - NVIDIA driver is active (refcnt > 0) - would cause kernel panic
+    /// - gpu_mux_mode=0 (Ultimate) - would create impossible boot state (no display)
     /// When enabled=false: always safe, triggers PCI bus rescan after write.</summary>
     /// <exception cref="InvalidOperationException">Thrown when the write would violate a hardware safety invariant.</exception>
     void SetGpuEco(bool enabled);
@@ -83,7 +83,7 @@ public interface IAsusWmi : IDisposable
     /// <exception cref="IOException">Thrown when sysfs write fails.</exception>
     void SetGpuMuxMode(int mode);
 
-    // ── Display ──
+    // Display
 
     /// <summary>Get panel overdrive state.</summary>
     bool GetPanelOverdrive();
@@ -97,7 +97,7 @@ public interface IAsusWmi : IDisposable
     /// <summary>Set MiniLED mode.</summary>
     void SetMiniLedMode(int mode);
 
-    // ── PPT / Power limits ──
+    // PPT / Power limits
 
     /// <summary>Set PPT limit by sysfs attribute name and value in watts.</summary>
     void SetPptLimit(string attribute, int watts);
@@ -105,7 +105,7 @@ public interface IAsusWmi : IDisposable
     /// <summary>Read PPT limit by sysfs attribute name. Returns watts or -1.</summary>
     int GetPptLimit(string attribute);
 
-    // ── Keyboard ──
+    // Keyboard
 
     /// <summary>Get keyboard backlight brightness (0-3).</summary>
     int GetKeyboardBrightness();
@@ -116,7 +116,7 @@ public interface IAsusWmi : IDisposable
     /// <summary>Set TUF keyboard RGB color.</summary>
     void SetKeyboardRgb(byte r, byte g, byte b);
 
-    // ── Events ──
+    // Events
 
     /// <summary>Fired when an ASUS WMI hotkey event occurs (Fn keys, lid, etc.).</summary>
     event Action<int>? WmiEvent;
@@ -127,7 +127,7 @@ public interface IAsusWmi : IDisposable
     /// <summary>Start listening for WMI/evdev events.</summary>
     void SubscribeEvents();
 
-    // ── Feature detection ──
+    // Feature detection
 
     /// <summary>Number of controllable fans (2 = CPU+GPU, 3 = CPU+GPU+Mid).</summary>
     int FanCount { get; }
@@ -136,7 +136,7 @@ public interface IAsusWmi : IDisposable
     bool IsFeatureSupported(string feature);
 
     /// <summary>
-    /// True if GPU Eco mode switching is available — via sysfs (dgpu_disable)
+    /// True if GPU Eco mode switching is available - via sysfs (dgpu_disable)
     /// or raw WMI debugfs (when raw_wmi opt-in is enabled and firmware supports it).
     /// </summary>
     bool IsGpuEcoAvailable();

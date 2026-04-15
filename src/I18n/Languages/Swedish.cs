@@ -1,13 +1,13 @@
 namespace GHelper.Linux.I18n.Languages;
 
 /// <summary>
-/// Swedish (sv) — Svenska
+/// Swedish (sv) - Svenska
 /// </summary>
 public static class Swedish
 {
     public static Dictionary<string, string> Translations => new()
     {
-        // ═══════════════════ COMMON ═══════════════════
+        // COMMON
         ["enabled"] = "Aktiverad",
         ["disabled"] = "Inaktiverad",
         ["muted"] = "Tystad",
@@ -28,7 +28,7 @@ public static class Swedish
         ["refresh"] = "Uppdatera",
         ["details"] = "Detaljer...",
 
-        // ═══════════════════ PERFORMANCE MODES ═══════════════════
+        // PERFORMANCE MODES
         ["mode_silent"] = "Tyst",
         ["mode_balanced"] = "Balanserad",
         ["mode_turbo"] = "Turbo",
@@ -37,7 +37,7 @@ public static class Swedish
         ["mode_prefix"] = "Läge: {0}",
         ["fans_power"] = "Fläktar + Kraft",
 
-        // ═══════════════════ GPU MODES ═══════════════════
+        // GPU MODES
         ["gpu_eco"] = "Eco",
         ["gpu_standard"] = "Standard",
         ["gpu_ultimate"] = "Ultimate",
@@ -45,19 +45,19 @@ public static class Swedish
         ["gpu_unknown"] = "Okänt",
         ["gpu_mode_prefix"] = "GPU-läge: {0}",
 
-        // ═══════════════════ SENSOR INFO ═══════════════════
+        // SENSOR INFO
         ["cpu_fan_info"] = "CPU: {0} Fläkt: {1}",
         ["gpu_fan_full_info"] = "GPU: {0}{1}  Fläkt: {2}",
         ["gpu_fan_only"] = "GPU-fläkt: {0}",
         ["mid_fan_info"] = "Mittfläkt: {0}",
 
-        // ═══════════════════ SCREEN ═══════════════════
+        // SCREEN
         ["screen_prefix"] = "Bärbar skärm: {0}Hz",
         ["screen_prefix_auto"] = "Bärbar skärm: {0}Hz (Auto)",
         ["screen_auto"] = "Auto",
         ["screen_miniled"] = "MiniLED",
 
-        // ═══════════════════ KEYBOARD ═══════════════════
+        // KEYBOARD
         ["keyboard_header"] = "Bärbart tangentbord",
         ["backlight"] = "Bakgrundsbelysning",
         ["extra"] = "Extra",
@@ -72,14 +72,14 @@ public static class Swedish
         ["pick_color"] = "Välj färg",
         ["hex_label"] = "Hex:",
 
-        // ═══════════════════ BATTERY ═══════════════════
+        // BATTERY
         ["battery_limit_prefix"] = "Laddningsgräns: {0}%",
         ["discharging_watts"] = "Urladdning: {0}W",
         ["charging_watts"] = "Laddning: {0}W",
         ["plugged_in"] = "Inkopplad",
         ["charge_prefix"] = "Laddning: {0}%",
 
-        // ═══════════════════ FOOTER ═══════════════════
+        // FOOTER
         ["run_on_startup"] = "Starta vid uppstart",
         ["unknown_asus"] = "Okänd ASUS",
         ["title_prefix"] = "G-Helper - {0}",
@@ -92,7 +92,7 @@ public static class Swedish
         ["features_prefix"] = "Funktioner: {0}",
         ["no_features"] = "Inga ASUS-specifika funktioner upptäckta",
 
-        // ═══════════════════ FEATURE NAMES ═══════════════════
+        // FEATURE NAMES
         ["feature_perf_modes"] = "Prestandalägen",
         ["feature_gpu_eco"] = "GPU Eco",
         ["feature_mux"] = "MUX-switch",
@@ -101,7 +101,7 @@ public static class Swedish
         ["feature_ppt"] = "PPT-gränser",
         ["feature_nv_boost"] = "NVIDIA Dynamic Boost",
 
-        // ═══════════════════ GPU TIPS & NOTIFICATIONS ═══════════════════
+        // GPU TIPS & NOTIFICATIONS
         ["gpu_pending_reboot"] = "{0} väntar - starta om för att tillämpa",
         ["gpu_pending_mode"] = "Läge",
         ["gpu_tip_eco"] = "dGPU är av - maximal batteritid",
@@ -154,7 +154,7 @@ public static class Swedish
         ["gpu_driver_after_reboot"] = "Efter omstart",
         ["gpu_driver_footer"] = "Byt nu försöker avlasta GPU-drivrutinen (administratörslösenord\nkan krävas). Efter omstart sparas till nästa uppstart.",
 
-        // ═══════════════════ KEYBOARD NOTIFICATIONS ═══════════════════
+        // KEYBOARD NOTIFICATIONS
         ["kbd_off"] = "Av  \u25cb\u25cb\u25cb",
         ["kbd_low"] = "Låg  \u25cf\u25cb\u25cb",
         ["kbd_medium"] = "Medel  \u25cf\u25cf\u25cb",
@@ -162,7 +162,7 @@ public static class Swedish
         ["kbd_level"] = "Nivå {0}",
         ["keyboard"] = "Tangentbord",
 
-        // ═══════════════════ OTHER NOTIFICATIONS ═══════════════════
+        // OTHER NOTIFICATIONS
         ["performance"] = "Prestanda",
         ["aura"] = "Aura",
         ["microphone"] = "Mikrofon",
@@ -179,14 +179,14 @@ public static class Swedish
         ["setup_required"] = "Konfiguration krävs",
         ["udev_not_installed"] = "udev-regler ej installerade. Kör install.sh för full funktionalitet (batterigräns, fläktstyrning, etc.)",
 
-        // ═══════════════════ SYSTEM TRAY ═══════════════════
+        // SYSTEM TRAY
         ["tray_tooltip"] = "G-Helper - {0}",
         ["tray_gpu_eco"] = "GPU: Eco (enbart iGPU)",
         ["tray_gpu_standard"] = "GPU: Standard (dGPU)",
         ["tray_gpu_optimized"] = "GPU: Optimerad (auto)",
         ["tray_gpu_ultimate"] = "GPU: Ultimate (MUX)",
 
-        // ═══════════════════ KEY ACTIONS ═══════════════════
+        // KEY ACTIONS
         ["action_none"] = "Ingen",
         ["action_ghelper"] = "Växla G-Helper",
         ["action_performance"] = "Växla prestandaläge",
@@ -202,12 +202,12 @@ public static class Swedish
         ["action_camera"] = "Växla kamera",
         ["action_touchpad"] = "Växla pekplatta",
 
-        // ═══════════════════ KEY NAMES ═══════════════════
+        // KEY NAMES
         ["key_m4"] = "ROG / M5-tangent",
         ["key_fnf4"] = "Fn+F4 (Aura)",
         ["key_fnf5"] = "Fn+F5 / M4 (Prestanda)",
 
-        // ═══════════════════ EXTRA WINDOW ═══════════════════
+        // EXTRA WINDOW
         ["extra_title"] = "Extra inställningar",
         ["kbd_backlight_header"] = "Tangentbordsbelysning",
         ["brightness"] = "Ljusstyrka",
@@ -269,7 +269,7 @@ public static class Swedish
         ["battery_health_unknown"] = "Batterihälsa: --%",
         ["power_draw_discharge"] = "Strömförbrukning: {0} mW (urladdning)",
         ["power_draw_charge"] = "Strömförbrukning: {0} mW (laddning)",
-        ["power_draw_unknown"] = "Strömförbrukning: -- mW",
+        ["power_draw_unknown"] = "Strömförbrukning: - mW",
 
         ["system_info_header"] = "Systeminformation",
 
@@ -285,11 +285,11 @@ public static class Swedish
         ["log_stdout"] = "Loggar skrivs till stdout - kör från terminal för att se utdata",
         ["kernel_warning"] = "\u26A0 Kernel 6.2+ rekommenderas för fullt funktionsstöd",
 
-        // ═══════════════════ LANGUAGE ═══════════════════
+        // LANGUAGE
         ["language_header"] = "Språk",
         ["language_auto"] = "Auto (system)",
 
-        // ═══════════════════ FANS WINDOW ═══════════════════
+        // FANS WINDOW
         ["fans_title"] = "Fläktar & Kraft",
         ["fan_curves"] = "Fläktkurvor",
         ["reset"] = "Återställ",
@@ -307,7 +307,7 @@ public static class Swedish
         ["firmware_control"] = "Firmware-styrning",
         ["fan_sensor_format"] = "CPU: {0} / GPU: {1} Last: {2}   Mitt: {3} RPM",
 
-        // ═══════════════════ BATTERY INFO WINDOW ═══════════════════
+        // BATTERY INFO WINDOW
         ["battery_info_title"] = "Batteriinformation",
         ["health_header"] = "Hälsa",
         ["health"] = "Hälsa",
@@ -329,7 +329,7 @@ public static class Swedish
         ["discharging"] = "urladdning",
         ["charging"] = "laddning",
 
-        // ═══════════════════ UPDATES WINDOW ═══════════════════
+        // UPDATES WINDOW
         ["updates_title"] = "BIOS- och drivrutinsuppdateringar",
         ["updates_header"] = "BIOS- och drivrutinsuppdateringar",
         ["copy_diagnostics"] = "Kopiera diagnostik",
@@ -364,7 +364,7 @@ public static class Swedish
         ["updates_title_format"] = "BIOS- och drivrutinsuppdateringar: {0} ({1} BIOS {2})",
         ["app_version_format"] = "G-Helper Linux v{0} - {1}",
 
-        // ═══════════════════ ARCADE GAME ═══════════════════
+        // ARCADE GAME
         ["arcade_title"] = "ROG Fighter",
         ["arcade_game_title"] = "ROG FIGHTER",
         ["arcade_move"] = "\u2190 \u2192 \u2191 \u2193 / W A S D  flytta",
@@ -384,7 +384,7 @@ public static class Swedish
         ["arcade_new_highscore"] = "NYTT REKORD!",
         ["arcade_retry"] = "ENTER för att försöka igen",
 
-        // ═══════════════════ AURA MODES ═══════════════════
+        // AURA MODES
         ["aura_static"] = "Statisk",
         ["aura_breathe"] = "Andning",
         ["aura_strobe"] = "Strobo",
@@ -399,12 +399,12 @@ public static class Swedish
         ["aura_flash"] = "Blixt",
         ["aura_no_modes"] = "Inga lägen",
 
-        // ═══════════════════ AURA SPEEDS ═══════════════════
+        // AURA SPEEDS
         ["speed_slow"] = "Långsam",
         ["speed_normal"] = "Normal",
         ["speed_fast"] = "Snabb",
 
-        // ═══════════════════ MISC ═══════════════════
+        // MISC
         ["ghelper"] = "G-Helper",
         ["asus_laptop_control"] = "ASUS Bärbar dator-styrning (Linux)",
     };

@@ -4,7 +4,7 @@ public static class Ukrainian
 {
     public static Dictionary<string, string> Translations => new()
     {
-        // ═══════════════════ COMMON ═══════════════════
+        // COMMON
         ["enabled"] = "Увімкнено",
         ["disabled"] = "Вимкнено",
         ["muted"] = "Вимкнено звук",
@@ -25,7 +25,7 @@ public static class Ukrainian
         ["refresh"] = "Оновити",
         ["details"] = "Деталі...",
 
-        // ═══════════════════ PERFORMANCE MODES ═══════════════════
+        // PERFORMANCE MODES
         ["mode_silent"] = "Тихий",
         ["mode_balanced"] = "Збалансований",
         ["mode_turbo"] = "Turbo",
@@ -34,7 +34,7 @@ public static class Ukrainian
         ["mode_prefix"] = "Режим: {0}",
         ["fans_power"] = "Вентилятори + Живлення",
 
-        // ═══════════════════ GPU MODES ═══════════════════
+        // GPU MODES
         ["gpu_eco"] = "Eco",
         ["gpu_standard"] = "Standard",
         ["gpu_ultimate"] = "Ultimate",
@@ -42,19 +42,19 @@ public static class Ukrainian
         ["gpu_unknown"] = "Невідомий",
         ["gpu_mode_prefix"] = "Режим GPU: {0}",
 
-        // ═══════════════════ SENSOR INFO ═══════════════════
+        // SENSOR INFO
         ["cpu_fan_info"] = "CPU: {0} Вент.: {1}",
         ["gpu_fan_full_info"] = "GPU: {0}{1}  Вент.: {2}",
         ["gpu_fan_only"] = "Вент. GPU: {0}",
         ["mid_fan_info"] = "Серед. вент.: {0}",
 
-        // ═══════════════════ SCREEN ═══════════════════
+        // SCREEN
         ["screen_prefix"] = "Екран ноутбука: {0}Hz",
         ["screen_prefix_auto"] = "Екран ноутбука: {0}Hz (Авто)",
         ["screen_auto"] = "Авто",
         ["screen_miniled"] = "MiniLED",
 
-        // ═══════════════════ KEYBOARD ═══════════════════
+        // KEYBOARD
         ["keyboard_header"] = "Клавіатура ноутбука",
         ["backlight"] = "Підсвічування",
         ["extra"] = "Додаткове",
@@ -69,14 +69,14 @@ public static class Ukrainian
         ["pick_color"] = "Обрати колір",
         ["hex_label"] = "Hex:",
 
-        // ═══════════════════ BATTERY ═══════════════════
+        // BATTERY
         ["battery_limit_prefix"] = "Ліміт заряду батареї: {0}%",
         ["discharging_watts"] = "Розрядка: {0}W",
         ["charging_watts"] = "Зарядка: {0}W",
         ["plugged_in"] = "Підключено до мережі",
         ["charge_prefix"] = "Заряд: {0}%",
 
-        // ═══════════════════ FOOTER ═══════════════════
+        // FOOTER
         ["run_on_startup"] = "Запускати при старті",
         ["unknown_asus"] = "Невідомий ASUS",
         ["title_prefix"] = "G-Helper - {0}",
@@ -89,7 +89,7 @@ public static class Ukrainian
         ["features_prefix"] = "Функції: {0}",
         ["no_features"] = "Не виявлено специфічних функцій ASUS",
 
-        // ═══════════════════ FEATURE NAMES ═══════════════════
+        // FEATURE NAMES
         ["feature_perf_modes"] = "Режими продуктивності",
         ["feature_gpu_eco"] = "GPU Eco",
         ["feature_mux"] = "Перемикач MUX",
@@ -98,7 +98,7 @@ public static class Ukrainian
         ["feature_ppt"] = "Ліміти PPT",
         ["feature_nv_boost"] = "NVIDIA Dynamic Boost",
 
-        // ═══════════════════ GPU TIPS & NOTIFICATIONS ═══════════════════
+        // GPU TIPS & NOTIFICATIONS
         ["gpu_pending_reboot"] = "{0} очікує - перезавантажте для застосування",
         ["gpu_pending_mode"] = "Режим",
         ["gpu_tip_eco"] = "dGPU вимкнено - максимальний час роботи від батареї",
@@ -151,7 +151,7 @@ public static class Ukrainian
         ["gpu_driver_after_reboot"] = "Після перезавантаження",
         ["gpu_driver_footer"] = "Перемкнути зараз спробує вивантажити драйвер GPU (може\nзнадобитися пароль адміністратора). Після перезавантаження збереже на наступний запуск.",
 
-        // ═══════════════════ KEYBOARD NOTIFICATIONS ═══════════════════
+        // KEYBOARD NOTIFICATIONS
         ["kbd_off"] = "Вимк.  \u25cb\u25cb\u25cb",
         ["kbd_low"] = "Низьке  \u25cf\u25cb\u25cb",
         ["kbd_medium"] = "Середнє  \u25cf\u25cf\u25cb",
@@ -159,7 +159,7 @@ public static class Ukrainian
         ["kbd_level"] = "Рівень {0}",
         ["keyboard"] = "Клавіатура",
 
-        // ═══════════════════ OTHER NOTIFICATIONS ═══════════════════
+        // OTHER NOTIFICATIONS
         ["performance"] = "Продуктивність",
         ["aura"] = "Aura",
         ["microphone"] = "Мікрофон",
@@ -176,14 +176,14 @@ public static class Ukrainian
         ["setup_required"] = "Потрібне налаштування",
         ["udev_not_installed"] = "Правила udev не встановлені. Запустіть install.sh для повної функціональності (ліміт батареї, контроль вентиляторів тощо)",
 
-        // ═══════════════════ SYSTEM TRAY ═══════════════════
+        // SYSTEM TRAY
         ["tray_tooltip"] = "G-Helper - {0}",
         ["tray_gpu_eco"] = "GPU: Eco (лише iGPU)",
         ["tray_gpu_standard"] = "GPU: Standard (dGPU)",
         ["tray_gpu_optimized"] = "GPU: Оптимізований (авто)",
         ["tray_gpu_ultimate"] = "GPU: Ultimate (MUX)",
 
-        // ═══════════════════ KEY ACTIONS ═══════════════════
+        // KEY ACTIONS
         ["action_none"] = "Немає",
         ["action_ghelper"] = "Перемкнути G-Helper",
         ["action_performance"] = "Змінити режим продуктивності",
@@ -199,12 +199,12 @@ public static class Ukrainian
         ["action_camera"] = "Перемкнути камеру",
         ["action_touchpad"] = "Перемкнути тачпад",
 
-        // ═══════════════════ KEY NAMES ═══════════════════
+        // KEY NAMES
         ["key_m4"] = "Клавіша ROG / M5",
         ["key_fnf4"] = "Fn+F4 (Aura)",
         ["key_fnf5"] = "Fn+F5 / M4 (Продуктивність)",
 
-        // ═══════════════════ EXTRA WINDOW ═══════════════════
+        // EXTRA WINDOW
         ["extra_title"] = "Додаткові налаштування",
         ["kbd_backlight_header"] = "Підсвічування клавіатури",
         ["brightness"] = "Яскравість",
@@ -266,7 +266,7 @@ public static class Ukrainian
         ["battery_health_unknown"] = "Здоров'я батареї: --%",
         ["power_draw_discharge"] = "Споживання: {0} мВт (розрядка)",
         ["power_draw_charge"] = "Споживання: {0} мВт (зарядка)",
-        ["power_draw_unknown"] = "Споживання: -- мВт",
+        ["power_draw_unknown"] = "Споживання: - мВт",
 
         ["system_info_header"] = "Інформація про систему",
 
@@ -282,11 +282,11 @@ public static class Ukrainian
         ["log_stdout"] = "Логи виводяться у stdout - запустіть з термінала для перегляду",
         ["kernel_warning"] = "\u26A0 Рекомендовано ядро 6.2+ для повної підтримки функцій",
 
-        // ═══════════════════ LANGUAGE ═══════════════════
+        // LANGUAGE
         ["language_header"] = "Мова",
         ["language_auto"] = "Авто (системна)",
 
-        // ═══════════════════ FANS WINDOW ═══════════════════
+        // FANS WINDOW
         ["fans_title"] = "Вентилятори та живлення",
         ["fan_curves"] = "Криві вентиляторів",
         ["reset"] = "Скинути",
@@ -304,7 +304,7 @@ public static class Ukrainian
         ["firmware_control"] = "Контроль прошивки",
         ["fan_sensor_format"] = "CPU: {0} / GPU: {1} Навант.: {2}   Серед.: {3} RPM",
 
-        // ═══════════════════ BATTERY INFO WINDOW ═══════════════════
+        // BATTERY INFO WINDOW
         ["battery_info_title"] = "Інформація про батарею",
         ["health_header"] = "Здоров'я",
         ["health"] = "Здоров'я",
@@ -326,7 +326,7 @@ public static class Ukrainian
         ["discharging"] = "розрядка",
         ["charging"] = "зарядка",
 
-        // ═══════════════════ UPDATES WINDOW ═══════════════════
+        // UPDATES WINDOW
         ["updates_title"] = "Оновлення BIOS та драйверів",
         ["updates_header"] = "Оновлення BIOS та драйверів",
         ["copy_diagnostics"] = "Копіювати діагностику",
@@ -361,7 +361,7 @@ public static class Ukrainian
         ["updates_title_format"] = "Оновлення BIOS та драйверів: {0} ({1} BIOS {2})",
         ["app_version_format"] = "G-Helper Linux v{0} - {1}",
 
-        // ═══════════════════ ARCADE GAME ═══════════════════
+        // ARCADE GAME
         ["arcade_title"] = "ROG Fighter",
         ["arcade_game_title"] = "ROG FIGHTER",
         ["arcade_move"] = "\u2190 \u2192 \u2191 \u2193 / W A S D  рух",
@@ -381,7 +381,7 @@ public static class Ukrainian
         ["arcade_new_highscore"] = "НОВИЙ НАЙВИЩИЙ РАХУНОК!",
         ["arcade_retry"] = "ENTER щоб спробувати знову",
 
-        // ═══════════════════ AURA MODES ═══════════════════
+        // AURA MODES
         ["aura_static"] = "Статичний",
         ["aura_breathe"] = "Дихання",
         ["aura_strobe"] = "Стробоскоп",
@@ -396,12 +396,12 @@ public static class Ukrainian
         ["aura_flash"] = "Спалах",
         ["aura_no_modes"] = "Немає режимів",
 
-        // ═══════════════════ AURA SPEEDS ═══════════════════
+        // AURA SPEEDS
         ["speed_slow"] = "Повільно",
         ["speed_normal"] = "Нормально",
         ["speed_fast"] = "Швидко",
 
-        // ═══════════════════ MISC ═══════════════════
+        // MISC
         ["ghelper"] = "G-Helper",
         ["asus_laptop_control"] = "Керування ноутбуком ASUS (Linux)",
     };

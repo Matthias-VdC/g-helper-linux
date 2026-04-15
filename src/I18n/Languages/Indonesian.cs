@@ -1,13 +1,13 @@
 namespace GHelper.Linux.I18n.Languages;
 
 /// <summary>
-/// Indonesian (id) — Bahasa Indonesia
+/// Indonesian (id) - Bahasa Indonesia
 /// </summary>
 public static class Indonesian
 {
     public static Dictionary<string, string> Translations => new()
     {
-        // ═══════════════════ COMMON ═══════════════════
+        // COMMON
         ["enabled"] = "Diaktifkan",
         ["disabled"] = "Dinonaktifkan",
         ["muted"] = "Dibisukan",
@@ -28,7 +28,7 @@ public static class Indonesian
         ["refresh"] = "Segarkan",
         ["details"] = "Detail...",
 
-        // ═══════════════════ PERFORMANCE MODES ═══════════════════
+        // PERFORMANCE MODES
         ["mode_silent"] = "Senyap",
         ["mode_balanced"] = "Seimbang",
         ["mode_turbo"] = "Turbo",
@@ -37,7 +37,7 @@ public static class Indonesian
         ["mode_prefix"] = "Mode: {0}",
         ["fans_power"] = "Kipas + Daya",
 
-        // ═══════════════════ GPU MODES ═══════════════════
+        // GPU MODES
         ["gpu_eco"] = "Eco",
         ["gpu_standard"] = "Standard",
         ["gpu_ultimate"] = "Ultimate",
@@ -45,19 +45,19 @@ public static class Indonesian
         ["gpu_unknown"] = "Tidak diketahui",
         ["gpu_mode_prefix"] = "Mode GPU: {0}",
 
-        // ═══════════════════ SENSOR INFO ═══════════════════
+        // SENSOR INFO
         ["cpu_fan_info"] = "CPU: {0} Kipas: {1}",
         ["gpu_fan_full_info"] = "GPU: {0}{1}  Kipas: {2}",
         ["gpu_fan_only"] = "Kipas GPU: {0}",
         ["mid_fan_info"] = "Kipas Tengah: {0}",
 
-        // ═══════════════════ SCREEN ═══════════════════
+        // SCREEN
         ["screen_prefix"] = "Layar Laptop: {0}Hz",
         ["screen_prefix_auto"] = "Layar Laptop: {0}Hz (Otomatis)",
         ["screen_auto"] = "Otomatis",
         ["screen_miniled"] = "MiniLED",
 
-        // ═══════════════════ KEYBOARD ═══════════════════
+        // KEYBOARD
         ["keyboard_header"] = "Keyboard Laptop",
         ["backlight"] = "Lampu Latar",
         ["extra"] = "Ekstra",
@@ -72,14 +72,14 @@ public static class Indonesian
         ["pick_color"] = "Pilih Warna",
         ["hex_label"] = "Hex:",
 
-        // ═══════════════════ BATTERY ═══════════════════
+        // BATTERY
         ["battery_limit_prefix"] = "Batas Pengisian Baterai: {0}%",
         ["discharging_watts"] = "Mengosongkan: {0}W",
         ["charging_watts"] = "Mengisi: {0}W",
         ["plugged_in"] = "Terhubung ke listrik",
         ["charge_prefix"] = "Daya: {0}%",
 
-        // ═══════════════════ FOOTER ═══════════════════
+        // FOOTER
         ["run_on_startup"] = "Jalankan saat Startup",
         ["unknown_asus"] = "ASUS tidak dikenal",
         ["title_prefix"] = "G-Helper - {0}",
@@ -92,7 +92,7 @@ public static class Indonesian
         ["features_prefix"] = "Fitur: {0}",
         ["no_features"] = "Tidak ada fitur khusus ASUS yang terdeteksi",
 
-        // ═══════════════════ FEATURE NAMES ═══════════════════
+        // FEATURE NAMES
         ["feature_perf_modes"] = "Mode Performa",
         ["feature_gpu_eco"] = "GPU Eco",
         ["feature_mux"] = "Sakelar MUX",
@@ -101,7 +101,7 @@ public static class Indonesian
         ["feature_ppt"] = "Batas PPT",
         ["feature_nv_boost"] = "NVIDIA Dynamic Boost",
 
-        // ═══════════════════ GPU TIPS & NOTIFICATIONS ═══════════════════
+        // GPU TIPS & NOTIFICATIONS
         ["gpu_pending_reboot"] = "{0} tertunda - mulai ulang untuk menerapkan",
         ["gpu_pending_mode"] = "Mode",
         ["gpu_tip_eco"] = "dGPU mati - masa pakai baterai maksimal",
@@ -154,7 +154,7 @@ public static class Indonesian
         ["gpu_driver_after_reboot"] = "Setelah Mulai Ulang",
         ["gpu_driver_footer"] = "\"Beralih Sekarang\" mencoba membongkar driver GPU (kata sandi\nadmin mungkin diperlukan). \"Setelah Mulai Ulang\" menyimpan untuk startup berikutnya.",
 
-        // ═══════════════════ KEYBOARD NOTIFICATIONS ═══════════════════
+        // KEYBOARD NOTIFICATIONS
         ["kbd_off"] = "Mati  \u25cb\u25cb\u25cb",
         ["kbd_low"] = "Rendah  \u25cf\u25cb\u25cb",
         ["kbd_medium"] = "Sedang  \u25cf\u25cf\u25cb",
@@ -162,7 +162,7 @@ public static class Indonesian
         ["kbd_level"] = "Level {0}",
         ["keyboard"] = "Keyboard",
 
-        // ═══════════════════ OTHER NOTIFICATIONS ═══════════════════
+        // OTHER NOTIFICATIONS
         ["performance"] = "Performa",
         ["aura"] = "Aura",
         ["microphone"] = "Mikrofon",
@@ -179,14 +179,14 @@ public static class Indonesian
         ["setup_required"] = "Pengaturan Diperlukan",
         ["udev_not_installed"] = "Aturan udev belum dipasang. Jalankan install.sh untuk fungsionalitas penuh (batas baterai, kontrol kipas, dll.)",
 
-        // ═══════════════════ SYSTEM TRAY ═══════════════════
+        // SYSTEM TRAY
         ["tray_tooltip"] = "G-Helper - {0}",
         ["tray_gpu_eco"] = "GPU: Eco (hanya iGPU)",
         ["tray_gpu_standard"] = "GPU: Standard (dGPU)",
         ["tray_gpu_optimized"] = "GPU: Dioptimalkan (otomatis)",
         ["tray_gpu_ultimate"] = "GPU: Ultimate (MUX)",
 
-        // ═══════════════════ KEY ACTIONS ═══════════════════
+        // KEY ACTIONS
         ["action_none"] = "Tidak ada",
         ["action_ghelper"] = "Alihkan G-Helper",
         ["action_performance"] = "Ganti Mode Performa",
@@ -202,12 +202,12 @@ public static class Indonesian
         ["action_camera"] = "Alihkan Kamera",
         ["action_touchpad"] = "Alihkan Touchpad",
 
-        // ═══════════════════ KEY NAMES ═══════════════════
+        // KEY NAMES
         ["key_m4"] = "Tombol ROG / M5",
         ["key_fnf4"] = "Fn+F4 (Aura)",
         ["key_fnf5"] = "Fn+F5 / M4 (Performa)",
 
-        // ═══════════════════ EXTRA WINDOW ═══════════════════
+        // EXTRA WINDOW
         ["extra_title"] = "Pengaturan Tambahan",
         ["kbd_backlight_header"] = "Lampu Latar Keyboard",
         ["brightness"] = "Kecerahan",
@@ -269,7 +269,7 @@ public static class Indonesian
         ["battery_health_unknown"] = "Kesehatan baterai: --%",
         ["power_draw_discharge"] = "Konsumsi daya: {0} mW (mengosongkan)",
         ["power_draw_charge"] = "Konsumsi daya: {0} mW (mengisi)",
-        ["power_draw_unknown"] = "Konsumsi daya: -- mW",
+        ["power_draw_unknown"] = "Konsumsi daya: - mW",
 
         ["system_info_header"] = "Info Sistem",
 
@@ -285,11 +285,11 @@ public static class Indonesian
         ["log_stdout"] = "Log ditulis ke stdout - jalankan dari terminal untuk melihat output",
         ["kernel_warning"] = "\u26A0 Kernel 6.2+ direkomendasikan untuk dukungan fitur penuh",
 
-        // ═══════════════════ LANGUAGE ═══════════════════
+        // LANGUAGE
         ["language_header"] = "Bahasa",
         ["language_auto"] = "Otomatis (sistem)",
 
-        // ═══════════════════ FANS WINDOW ═══════════════════
+        // FANS WINDOW
         ["fans_title"] = "Kipas & Daya",
         ["fan_curves"] = "Kurva Kipas",
         ["reset"] = "Reset",
@@ -307,7 +307,7 @@ public static class Indonesian
         ["firmware_control"] = "Kontrol firmware",
         ["fan_sensor_format"] = "CPU: {0} / GPU: {1} Beban: {2}   Tengah: {3} RPM",
 
-        // ═══════════════════ BATTERY INFO WINDOW ═══════════════════
+        // BATTERY INFO WINDOW
         ["battery_info_title"] = "Informasi Baterai",
         ["health_header"] = "Kesehatan",
         ["health"] = "Kesehatan",
@@ -329,7 +329,7 @@ public static class Indonesian
         ["discharging"] = "mengosongkan",
         ["charging"] = "mengisi",
 
-        // ═══════════════════ UPDATES WINDOW ═══════════════════
+        // UPDATES WINDOW
         ["updates_title"] = "Pembaruan BIOS & Driver",
         ["updates_header"] = "Pembaruan BIOS & Driver",
         ["copy_diagnostics"] = "Salin Diagnostik",
@@ -364,7 +364,7 @@ public static class Indonesian
         ["updates_title_format"] = "Pembaruan BIOS & Driver: {0} ({1} BIOS {2})",
         ["app_version_format"] = "G-Helper Linux v{0} - {1}",
 
-        // ═══════════════════ ARCADE GAME ═══════════════════
+        // ARCADE GAME
         ["arcade_title"] = "ROG Fighter",
         ["arcade_game_title"] = "ROG FIGHTER",
         ["arcade_move"] = "\u2190 \u2192 \u2191 \u2193 / W A S D  gerak",
@@ -384,7 +384,7 @@ public static class Indonesian
         ["arcade_new_highscore"] = "SKOR TERTINGGI BARU!",
         ["arcade_retry"] = "ENTER untuk coba lagi",
 
-        // ═══════════════════ AURA MODES ═══════════════════
+        // AURA MODES
         ["aura_static"] = "Statis",
         ["aura_breathe"] = "Napas",
         ["aura_strobe"] = "Strobo",
@@ -399,12 +399,12 @@ public static class Indonesian
         ["aura_flash"] = "Kilat",
         ["aura_no_modes"] = "Tidak ada mode",
 
-        // ═══════════════════ AURA SPEEDS ═══════════════════
+        // AURA SPEEDS
         ["speed_slow"] = "Lambat",
         ["speed_normal"] = "Normal",
         ["speed_fast"] = "Cepat",
 
-        // ═══════════════════ MISC ═══════════════════
+        // MISC
         ["ghelper"] = "G-Helper",
         ["asus_laptop_control"] = "Kontrol Laptop ASUS (Linux)",
     };

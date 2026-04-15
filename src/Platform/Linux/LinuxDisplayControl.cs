@@ -10,7 +10,7 @@ namespace GHelper.Linux.Platform.Linux;
 /// </summary>
 public class LinuxDisplayControl : IDisplayControl
 {
-    /// <summary>Minimum brightness percentage — prevents screen from going fully black.</summary>
+    /// <summary>Minimum brightness percentage - prevents screen from going fully black.</summary>
     public const int MinBrightnessPercent = 4;
 
     private string? _backlightDir;
@@ -32,24 +32,25 @@ public class LinuxDisplayControl : IDisplayControl
     /// <summary>The active display backend (for logging/diagnostics). Null if no backend available.</summary>
     public IDisplayBackend? Backend => _backend;
 
-    // ═══════════════════════════════════════════════════════════════════
-    //  Backlight — sysfs (works on both X11 and Wayland)
-    // ═══════════════════════════════════════════════════════════════════
+    // Backlight - sysfs (works on both X11 and Wayland)
 
     public int GetBrightness()
     {
-        if (_backlightDir == null || _maxBrightness <= 0) return -1;
+        if (_backlightDir == null || _maxBrightness <= 0)
+            return -1;
 
         int current = SysfsHelper.ReadInt(
             Path.Combine(_backlightDir, "brightness"), -1);
-        if (current < 0) return -1;
+        if (current < 0)
+            return -1;
 
         return (int)Math.Round(current * 100.0 / _maxBrightness);
     }
 
     public void SetBrightness(int percent)
     {
-        if (_backlightDir == null || _maxBrightness <= 0) return;
+        if (_backlightDir == null || _maxBrightness <= 0)
+            return;
 
         percent = Math.Clamp(percent, MinBrightnessPercent, 100);
         int rawValue = (int)Math.Round(percent * _maxBrightness / 100.0);
@@ -58,9 +59,7 @@ public class LinuxDisplayControl : IDisplayControl
             Path.Combine(_backlightDir, "brightness"), rawValue);
     }
 
-    // ═══════════════════════════════════════════════════════════════════
-    //  Display operations — delegated to IDisplayBackend
-    // ═══════════════════════════════════════════════════════════════════
+    // Display operations - delegated to IDisplayBackend
 
     public int GetRefreshRate()
         => _backend?.GetRefreshRate() ?? -1;
@@ -81,7 +80,8 @@ public class LinuxDisplayControl : IDisplayControl
 
     public void SetGamma(float r, float g, float b)
     {
-        if (_backend == null) return;
+        if (_backend == null)
+            return;
 
         if (!_backend.SupportsGamma)
         {
@@ -95,9 +95,7 @@ public class LinuxDisplayControl : IDisplayControl
     public string? GetDisplayName()
         => _backend?.GetDisplayName();
 
-    // ═══════════════════════════════════════════════════════════════════
-    //  Backlight module detection & loading
-    // ═══════════════════════════════════════════════════════════════════
+    // Backlight module detection & loading
 
     /// <summary>
     /// When nvidia is active but no nvidia backlight exists, returns the module name to load.
@@ -170,9 +168,7 @@ public class LinuxDisplayControl : IDisplayControl
         return false;
     }
 
-    // ═══════════════════════════════════════════════════════════════════
-    //  Backlight device enumeration & switching
-    // ═══════════════════════════════════════════════════════════════════
+    // Backlight device enumeration & switching
 
     /// <summary>
     /// Returns all available backlight device names (e.g. ["nvidia_0", "intel_backlight"]).
@@ -180,7 +176,8 @@ public class LinuxDisplayControl : IDisplayControl
     public static List<string> GetAvailableBacklights()
     {
         var result = new List<string>();
-        if (!Directory.Exists(SysfsHelper.Backlight)) return result;
+        if (!Directory.Exists(SysfsHelper.Backlight))
+            return result;
 
         try
         {
@@ -199,7 +196,8 @@ public class LinuxDisplayControl : IDisplayControl
     public bool SetActiveBacklight(string name)
     {
         var path = Path.Combine(SysfsHelper.Backlight, name);
-        if (!Directory.Exists(path)) return false;
+        if (!Directory.Exists(path))
+            return false;
 
         _backlightDir = path;
         _maxBrightness = SysfsHelper.ReadInt(
@@ -208,9 +206,7 @@ public class LinuxDisplayControl : IDisplayControl
         return true;
     }
 
-    // ═══════════════════════════════════════════════════════════════════
-    //  Private helpers
-    // ═══════════════════════════════════════════════════════════════════
+    // Private helpers
 
     private void InitBacklight()
     {
@@ -234,7 +230,8 @@ public class LinuxDisplayControl : IDisplayControl
     /// </summary>
     private static string? FindBestBacklight()
     {
-        if (!Directory.Exists(SysfsHelper.Backlight)) return null;
+        if (!Directory.Exists(SysfsHelper.Backlight))
+            return null;
 
         string? bestDir = null;
         int bestPriority = -1;

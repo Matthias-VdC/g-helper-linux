@@ -10,7 +10,7 @@ public static class Labels
     private static Dictionary<string, string> _current = new();
     private static Dictionary<string, string> _english = new();
 
-    /// <summary>Fired after language changes — all windows should re-apply labels.</summary>
+    /// <summary>Fired after language changes - all windows should re-apply labels.</summary>
     public static event Action? LanguageChanged;
 
     /// <summary>Current language code (e.g. "en", "ru", "zh-cn").</summary>
@@ -119,8 +119,10 @@ public static class Labels
     /// </summary>
     public static string Get(string key)
     {
-        if (_current.TryGetValue(key, out var val)) return val;
-        if (_english.TryGetValue(key, out var en)) return en;
+        if (_current.TryGetValue(key, out var val))
+            return val;
+        if (_english.TryGetValue(key, out var en))
+            return en;
         return key;
     }
 
@@ -179,21 +181,25 @@ public static class Labels
                     ?? Environment.GetEnvironmentVariable("LC_ALL")
                     ?? Environment.GetEnvironmentVariable("LC_MESSAGES");
 
-        if (string.IsNullOrEmpty(lang)) return "en";
+        if (string.IsNullOrEmpty(lang))
+            return "en";
 
         // Remove encoding: "en_US.UTF-8" → "en_US"
         string code = lang.Split('.')[0];
 
         // Try full match with country: "zh_CN" → "zh-cn", "pt_BR" → "pt-br"
         string full = code.Replace('_', '-').ToLowerInvariant();
-        if (LanguageLoaders.ContainsKey(full)) return full;
+        if (LanguageLoaders.ContainsKey(full))
+            return full;
 
         // Try language only: "en_US" → "en"
         string langOnly = code.Split('_')[0].ToLowerInvariant();
-        if (LanguageLoaders.ContainsKey(langOnly)) return langOnly;
+        if (LanguageLoaders.ContainsKey(langOnly))
+            return langOnly;
 
         // Special cases: "no" → "nb" (Norwegian Bokmål)
-        if (langOnly == "no" && LanguageLoaders.ContainsKey("nb")) return "nb";
+        if (langOnly == "no" && LanguageLoaders.ContainsKey("nb"))
+            return "nb";
 
         return "en";
     }

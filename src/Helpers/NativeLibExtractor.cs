@@ -49,7 +49,9 @@ public static class NativeLibExtractor
                 var cached = Path.Combine(CacheDir, lib);
                 if (File.Exists(cached))
                 {
-                    try { handle = NativeLibrary.Load(cached); } catch { }
+                    try
+                    { handle = NativeLibrary.Load(cached); }
+                    catch { }
                 }
             }
 
@@ -59,14 +61,18 @@ public static class NativeLibExtractor
                 var extracted = ExtractFromResources(lib);
                 if (extracted != null)
                 {
-                    try { handle = NativeLibrary.Load(extracted); } catch { }
+                    try
+                    { handle = NativeLibrary.Load(extracted); }
+                    catch { }
                 }
             }
 
             // Strategy 4: Let the system find it (LD_LIBRARY_PATH, /usr/lib, etc.)
             if (handle == IntPtr.Zero)
             {
-                try { handle = NativeLibrary.Load(lib); } catch { }
+                try
+                { handle = NativeLibrary.Load(lib); }
+                catch { }
             }
 
             if (handle != IntPtr.Zero)
@@ -154,7 +160,8 @@ public static class NativeLibExtractor
             using var stream = typeof(NativeLibExtractor).Assembly
                 .GetManifestResourceStream(resourceName);
 
-            if (stream == null) return null;
+            if (stream == null)
+                return null;
 
             Directory.CreateDirectory(CacheDir);
             var targetPath = Path.Combine(CacheDir, resourceName);

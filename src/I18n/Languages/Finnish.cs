@@ -1,13 +1,13 @@
 namespace GHelper.Linux.I18n.Languages;
 
 /// <summary>
-/// Finnish (fi) — Suomi
+/// Finnish (fi) - Suomi
 /// </summary>
 public static class Finnish
 {
     public static Dictionary<string, string> Translations => new()
     {
-        // ═══════════════════ COMMON ═══════════════════
+        // COMMON
         ["enabled"] = "Käytössä",
         ["disabled"] = "Pois käytöstä",
         ["muted"] = "Mykistetty",
@@ -28,7 +28,7 @@ public static class Finnish
         ["refresh"] = "Päivitä",
         ["details"] = "Tiedot...",
 
-        // ═══════════════════ PERFORMANCE MODES ═══════════════════
+        // PERFORMANCE MODES
         ["mode_silent"] = "Hiljainen",
         ["mode_balanced"] = "Tasapainotettu",
         ["mode_turbo"] = "Turbo",
@@ -37,7 +37,7 @@ public static class Finnish
         ["mode_prefix"] = "Tila: {0}",
         ["fans_power"] = "Tuulettimet + Teho",
 
-        // ═══════════════════ GPU MODES ═══════════════════
+        // GPU MODES
         ["gpu_eco"] = "Eco",
         ["gpu_standard"] = "Standardi",
         ["gpu_ultimate"] = "Ultimate",
@@ -45,19 +45,19 @@ public static class Finnish
         ["gpu_unknown"] = "Tuntematon",
         ["gpu_mode_prefix"] = "GPU-tila: {0}",
 
-        // ═══════════════════ SENSOR INFO ═══════════════════
+        // SENSOR INFO
         ["cpu_fan_info"] = "CPU: {0} Tuuletin: {1}",
         ["gpu_fan_full_info"] = "GPU: {0}{1}  Tuuletin: {2}",
         ["gpu_fan_only"] = "GPU-tuuletin: {0}",
         ["mid_fan_info"] = "Keskituuletin: {0}",
 
-        // ═══════════════════ SCREEN ═══════════════════
+        // SCREEN
         ["screen_prefix"] = "Kannettavan näyttö: {0}Hz",
         ["screen_prefix_auto"] = "Kannettavan näyttö: {0}Hz (Auto)",
         ["screen_auto"] = "Auto",
         ["screen_miniled"] = "MiniLED",
 
-        // ═══════════════════ KEYBOARD ═══════════════════
+        // KEYBOARD
         ["keyboard_header"] = "Kannettavan näppäimistö",
         ["backlight"] = "Taustavalo",
         ["extra"] = "Lisä",
@@ -72,14 +72,14 @@ public static class Finnish
         ["pick_color"] = "Valitse väri",
         ["hex_label"] = "Hex:",
 
-        // ═══════════════════ BATTERY ═══════════════════
+        // BATTERY
         ["battery_limit_prefix"] = "Akun latausraja: {0}%",
         ["discharging_watts"] = "Purkaa: {0}W",
         ["charging_watts"] = "Lataa: {0}W",
         ["plugged_in"] = "Verkkovirta",
         ["charge_prefix"] = "Varaus: {0}%",
 
-        // ═══════════════════ FOOTER ═══════════════════
+        // FOOTER
         ["run_on_startup"] = "Käynnistä automaattisesti",
         ["unknown_asus"] = "Tuntematon ASUS",
         ["title_prefix"] = "G-Helper - {0}",
@@ -92,7 +92,7 @@ public static class Finnish
         ["features_prefix"] = "Ominaisuudet: {0}",
         ["no_features"] = "ASUS-kohtaisia ominaisuuksia ei havaittu",
 
-        // ═══════════════════ FEATURE NAMES ═══════════════════
+        // FEATURE NAMES
         ["feature_perf_modes"] = "Suorituskykytilat",
         ["feature_gpu_eco"] = "GPU Eco",
         ["feature_mux"] = "MUX-kytkin",
@@ -101,7 +101,7 @@ public static class Finnish
         ["feature_ppt"] = "PPT-rajat",
         ["feature_nv_boost"] = "NVIDIA Dynamic Boost",
 
-        // ═══════════════════ GPU TIPS & NOTIFICATIONS ═══════════════════
+        // GPU TIPS & NOTIFICATIONS
         ["gpu_pending_reboot"] = "{0} odottaa - käynnistä uudelleen",
         ["gpu_pending_mode"] = "Tila",
         ["gpu_tip_eco"] = "dGPU on pois - paras akunkesto",
@@ -154,7 +154,7 @@ public static class Finnish
         ["gpu_driver_after_reboot"] = "Uudelleenkäynnistyksen jälkeen",
         ["gpu_driver_footer"] = "Vaihda nyt yrittää vapauttaa GPU-ajurin (järjestelmänvalvojan salasana\nvoidaan tarvita). Uudelleenkäynnistyksen jälkeen tallennetaan seuraavaan käynnistykseen.",
 
-        // ═══════════════════ KEYBOARD NOTIFICATIONS ═══════════════════
+        // KEYBOARD NOTIFICATIONS
         ["kbd_off"] = "Pois  \u25cb\u25cb\u25cb",
         ["kbd_low"] = "Matala  \u25cf\u25cb\u25cb",
         ["kbd_medium"] = "Keskitaso  \u25cf\u25cf\u25cb",
@@ -162,7 +162,7 @@ public static class Finnish
         ["kbd_level"] = "Taso {0}",
         ["keyboard"] = "Näppäimistö",
 
-        // ═══════════════════ OTHER NOTIFICATIONS ═══════════════════
+        // OTHER NOTIFICATIONS
         ["performance"] = "Suorituskyky",
         ["aura"] = "Aura",
         ["microphone"] = "Mikrofoni",
@@ -179,14 +179,14 @@ public static class Finnish
         ["setup_required"] = "Asennus vaaditaan",
         ["udev_not_installed"] = "udev-sääntöjä ei ole asennettu. Suorita install.sh täyden toiminnallisuuden saamiseksi (akun raja, tuuletinhallinta jne.)",
 
-        // ═══════════════════ SYSTEM TRAY ═══════════════════
+        // SYSTEM TRAY
         ["tray_tooltip"] = "G-Helper - {0}",
         ["tray_gpu_eco"] = "GPU: Eco (vain iGPU)",
         ["tray_gpu_standard"] = "GPU: Standard (dGPU)",
         ["tray_gpu_optimized"] = "GPU: Optimoitu (auto)",
         ["tray_gpu_ultimate"] = "GPU: Ultimate (MUX)",
 
-        // ═══════════════════ KEY ACTIONS ═══════════════════
+        // KEY ACTIONS
         ["action_none"] = "Ei mitään",
         ["action_ghelper"] = "Vaihda G-Helper",
         ["action_performance"] = "Vaihda suorituskykytilaa",
@@ -202,12 +202,12 @@ public static class Finnish
         ["action_camera"] = "Vaihda kamera",
         ["action_touchpad"] = "Vaihda kosketuslevy",
 
-        // ═══════════════════ KEY NAMES ═══════════════════
+        // KEY NAMES
         ["key_m4"] = "ROG / M5 -näppäin",
         ["key_fnf4"] = "Fn+F4 (Aura)",
         ["key_fnf5"] = "Fn+F5 / M4 (Suorituskyky)",
 
-        // ═══════════════════ EXTRA WINDOW ═══════════════════
+        // EXTRA WINDOW
         ["extra_title"] = "Lisäasetukset",
         ["kbd_backlight_header"] = "Näppäimistön taustavalo",
         ["brightness"] = "Kirkkaus",
@@ -269,7 +269,7 @@ public static class Finnish
         ["battery_health_unknown"] = "Akun kunto: --%",
         ["power_draw_discharge"] = "Virrankulutus: {0} mW (purkaa)",
         ["power_draw_charge"] = "Virrankulutus: {0} mW (lataa)",
-        ["power_draw_unknown"] = "Virrankulutus: -- mW",
+        ["power_draw_unknown"] = "Virrankulutus: - mW",
 
         ["system_info_header"] = "Järjestelmätiedot",
 
@@ -285,11 +285,11 @@ public static class Finnish
         ["log_stdout"] = "Lokit kirjoitetaan stdout-virtaan - suorita terminaalista nähdäksesi tuloste",
         ["kernel_warning"] = "\u26A0 Kernel 6.2+ suositellaan täyden ominaisuustuen saamiseksi",
 
-        // ═══════════════════ LANGUAGE ═══════════════════
+        // LANGUAGE
         ["language_header"] = "Kieli",
         ["language_auto"] = "Auto (järjestelmä)",
 
-        // ═══════════════════ FANS WINDOW ═══════════════════
+        // FANS WINDOW
         ["fans_title"] = "Tuulettimet ja teho",
         ["fan_curves"] = "Tuuletinkäyrät",
         ["reset"] = "Nollaa",
@@ -307,7 +307,7 @@ public static class Finnish
         ["firmware_control"] = "Firmware-ohjaus",
         ["fan_sensor_format"] = "CPU: {0} / GPU: {1} Kuorma: {2}   Keski: {3} RPM",
 
-        // ═══════════════════ BATTERY INFO WINDOW ═══════════════════
+        // BATTERY INFO WINDOW
         ["battery_info_title"] = "Akkutiedot",
         ["health_header"] = "Kunto",
         ["health"] = "Kunto",
@@ -329,7 +329,7 @@ public static class Finnish
         ["discharging"] = "purkaa",
         ["charging"] = "lataa",
 
-        // ═══════════════════ UPDATES WINDOW ═══════════════════
+        // UPDATES WINDOW
         ["updates_title"] = "BIOS- ja ajuripäivitykset",
         ["updates_header"] = "BIOS- ja ajuripäivitykset",
         ["copy_diagnostics"] = "Kopioi diagnostiikka",
@@ -364,7 +364,7 @@ public static class Finnish
         ["updates_title_format"] = "BIOS- ja ajuripäivitykset: {0} ({1} BIOS {2})",
         ["app_version_format"] = "G-Helper Linux v{0} - {1}",
 
-        // ═══════════════════ ARCADE GAME ═══════════════════
+        // ARCADE GAME
         ["arcade_title"] = "ROG Fighter",
         ["arcade_game_title"] = "ROG FIGHTER",
         ["arcade_move"] = "\u2190 \u2192 \u2191 \u2193 / W A S D  liiku",
@@ -384,7 +384,7 @@ public static class Finnish
         ["arcade_new_highscore"] = "UUSI ENNÄTYS!",
         ["arcade_retry"] = "ENTER yrittääksesi uudelleen",
 
-        // ═══════════════════ AURA MODES ═══════════════════
+        // AURA MODES
         ["aura_static"] = "Staattinen",
         ["aura_breathe"] = "Hengitys",
         ["aura_strobe"] = "Välke",
@@ -399,12 +399,12 @@ public static class Finnish
         ["aura_flash"] = "Välähdys",
         ["aura_no_modes"] = "Ei tiloja",
 
-        // ═══════════════════ AURA SPEEDS ═══════════════════
+        // AURA SPEEDS
         ["speed_slow"] = "Hidas",
         ["speed_normal"] = "Normaali",
         ["speed_fast"] = "Nopea",
 
-        // ═══════════════════ MISC ═══════════════════
+        // MISC
         ["ghelper"] = "G-Helper",
         ["asus_laptop_control"] = "ASUS-kannettavan hallinta (Linux)",
     };

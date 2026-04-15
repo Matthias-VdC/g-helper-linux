@@ -25,7 +25,8 @@ public class KScreenBackend : IDisplayBackend
         try
         {
             var info = FetchInfo();
-            if (info == null) return -1;
+            if (info == null)
+                return -1;
 
             var output = FindLaptopOutput(info);
             if (output == null)
@@ -78,10 +79,12 @@ public class KScreenBackend : IDisplayBackend
         try
         {
             var info = FetchInfo();
-            if (info == null) return rates;
+            if (info == null)
+                return rates;
 
             var output = FindLaptopOutput(info);
-            if (output == null) return rates;
+            if (output == null)
+                return rates;
 
             // Find current resolution first
             string? currentRes = null;
@@ -120,7 +123,8 @@ public class KScreenBackend : IDisplayBackend
                     foreach (Match m in matches)
                     {
                         string res = m.Groups[1].Value;
-                        if (currentRes != null && res != currentRes) continue;
+                        if (currentRes != null && res != currentRes)
+                            continue;
 
                         if (int.TryParse(m.Groups[2].Value, out int hz) && hz > 0 && !rates.Contains(hz))
                             rates.Add(hz);
@@ -190,7 +194,8 @@ public class KScreenBackend : IDisplayBackend
                     foreach (Match m in matches)
                     {
                         string res = m.Groups[2].Value;
-                        if (currentRes != null && res != currentRes) continue;
+                        if (currentRes != null && res != currentRes)
+                            continue;
 
                         if (int.TryParse(m.Groups[3].Value, out int rate) && rate == hz)
                         {
@@ -218,7 +223,7 @@ public class KScreenBackend : IDisplayBackend
 
             SysfsHelper.RunCommand("kscreen-doctor", cmd);
 
-            Helpers.Logger.WriteLine($"KScreen.SetRefreshRate: success — {cmd} ({hz}Hz)");
+            Helpers.Logger.WriteLine($"KScreen.SetRefreshRate: success - {cmd} ({hz}Hz)");
         }
         catch (Exception ex)
         {
@@ -237,7 +242,7 @@ public class KScreenBackend : IDisplayBackend
         return info != null ? FindLaptopOutput(info) : null;
     }
 
-    // ── Probing ──
+    // Probing
 
     /// <summary>
     /// Test if kscreen-doctor is available and returns output info.
@@ -248,7 +253,7 @@ public class KScreenBackend : IDisplayBackend
         return output != null && output.Contains("Output:");
     }
 
-    // ── Internal helpers ──
+    // Internal helpers
 
     /// <summary>Run kscreen-doctor -o and strip ANSI codes. Returns null on failure.</summary>
     private static string? FetchInfo()
@@ -265,10 +270,12 @@ public class KScreenBackend : IDisplayBackend
         string? first = null;
         foreach (var line in info.Split('\n'))
         {
-            if (!line.TrimStart().StartsWith("Output:")) continue;
+            if (!line.TrimStart().StartsWith("Output:"))
+                continue;
 
             var parts = line.Trim().Split(' ', StringSplitOptions.RemoveEmptyEntries);
-            if (parts.Length < 3) continue;
+            if (parts.Length < 3)
+                continue;
 
             string name = parts[2];
 

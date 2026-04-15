@@ -2,7 +2,7 @@ using Avalonia;
 using GHelper.Linux;
 using GHelper.Linux.Helpers;
 
-// G-Helper for Linux — single binary ASUS laptop control
+// G-Helper for Linux - single binary ASUS laptop control
 // Port of https://github.com/seerge/g-helper
 
 class Program

@@ -4,7 +4,7 @@ public static class German
 {
     public static Dictionary<string, string> Translations => new()
     {
-        // ═══════════════════ COMMON ═══════════════════
+        // COMMON
         ["enabled"] = "Aktiviert",
         ["disabled"] = "Deaktiviert",
         ["muted"] = "Stummgeschaltet",
@@ -25,7 +25,7 @@ public static class German
         ["refresh"] = "Aktualisieren",
         ["details"] = "Details...",
 
-        // ═══════════════════ PERFORMANCE MODES ═══════════════════
+        // PERFORMANCE MODES
         ["mode_silent"] = "Leise",
         ["mode_balanced"] = "Ausgeglichen",
         ["mode_turbo"] = "Turbo",
@@ -34,7 +34,7 @@ public static class German
         ["mode_prefix"] = "Modus: {0}",
         ["fans_power"] = "Lüfter + Leistung",
 
-        // ═══════════════════ GPU MODES ═══════════════════
+        // GPU MODES
         ["gpu_eco"] = "Eco",
         ["gpu_standard"] = "Standard",
         ["gpu_ultimate"] = "Ultimate",
@@ -42,19 +42,19 @@ public static class German
         ["gpu_unknown"] = "Unbekannt",
         ["gpu_mode_prefix"] = "GPU-Modus: {0}",
 
-        // ═══════════════════ SENSOR INFO ═══════════════════
+        // SENSOR INFO
         ["cpu_fan_info"] = "CPU: {0} Lüfter: {1}",
         ["gpu_fan_full_info"] = "GPU: {0}{1}  Lüfter: {2}",
         ["gpu_fan_only"] = "GPU-Lüfter: {0}",
         ["mid_fan_info"] = "Mittlerer Lüfter: {0}",
 
-        // ═══════════════════ SCREEN ═══════════════════
+        // SCREEN
         ["screen_prefix"] = "Laptop-Bildschirm: {0}Hz",
         ["screen_prefix_auto"] = "Laptop-Bildschirm: {0}Hz (Auto)",
         ["screen_auto"] = "Auto",
         ["screen_miniled"] = "MiniLED",
 
-        // ═══════════════════ KEYBOARD ═══════════════════
+        // KEYBOARD
         ["keyboard_header"] = "Laptop-Tastatur",
         ["backlight"] = "Beleuchtung",
         ["extra"] = "Extras",
@@ -69,14 +69,14 @@ public static class German
         ["pick_color"] = "Farbe wählen",
         ["hex_label"] = "Hex:",
 
-        // ═══════════════════ BATTERY ═══════════════════
+        // BATTERY
         ["battery_limit_prefix"] = "Akku-Ladelimit: {0}%",
         ["discharging_watts"] = "Entladung: {0}W",
         ["charging_watts"] = "Laden: {0}W",
         ["plugged_in"] = "Angeschlossen",
         ["charge_prefix"] = "Ladung: {0}%",
 
-        // ═══════════════════ FOOTER ═══════════════════
+        // FOOTER
         ["run_on_startup"] = "Beim Start ausführen",
         ["unknown_asus"] = "Unbekannter ASUS",
         ["title_prefix"] = "G-Helper - {0}",
@@ -89,7 +89,7 @@ public static class German
         ["features_prefix"] = "Funktionen: {0}",
         ["no_features"] = "Keine ASUS-spezifischen Funktionen erkannt",
 
-        // ═══════════════════ FEATURE NAMES ═══════════════════
+        // FEATURE NAMES
         ["feature_perf_modes"] = "Leistungsmodi",
         ["feature_gpu_eco"] = "GPU Eco",
         ["feature_mux"] = "MUX-Schalter",
@@ -98,7 +98,7 @@ public static class German
         ["feature_ppt"] = "PPT-Limits",
         ["feature_nv_boost"] = "NVIDIA Dynamic Boost",
 
-        // ═══════════════════ GPU TIPS & NOTIFICATIONS ═══════════════════
+        // GPU TIPS & NOTIFICATIONS
         ["gpu_pending_reboot"] = "{0} ausstehend - Neustart erforderlich",
         ["gpu_pending_mode"] = "Modus",
         ["gpu_tip_eco"] = "dGPU ist aus - maximale Akkulaufzeit",
@@ -151,7 +151,7 @@ public static class German
         ["gpu_driver_after_reboot"] = "Nach Neustart",
         ["gpu_driver_footer"] = "\"Jetzt wechseln\" versucht den GPU-Treiber zu entladen (Admin-Passwort\nggf. erforderlich). \"Nach Neustart\" speichert die Einstellung.",
 
-        // ═══════════════════ KEYBOARD NOTIFICATIONS ═══════════════════
+        // KEYBOARD NOTIFICATIONS
         ["kbd_off"] = "Aus  \u25cb\u25cb\u25cb",
         ["kbd_low"] = "Niedrig  \u25cf\u25cb\u25cb",
         ["kbd_medium"] = "Mittel  \u25cf\u25cf\u25cb",
@@ -159,7 +159,7 @@ public static class German
         ["kbd_level"] = "Stufe {0}",
         ["keyboard"] = "Tastatur",
 
-        // ═══════════════════ OTHER NOTIFICATIONS ═══════════════════
+        // OTHER NOTIFICATIONS
         ["performance"] = "Leistung",
         ["aura"] = "Aura",
         ["microphone"] = "Mikrofon",
@@ -176,14 +176,14 @@ public static class German
         ["setup_required"] = "Einrichtung erforderlich",
         ["udev_not_installed"] = "udev-Regeln nicht installiert. Führen Sie install.sh aus für volle Funktionalität (Akkulimit, Lüftersteuerung usw.)",
 
-        // ═══════════════════ SYSTEM TRAY ═══════════════════
+        // SYSTEM TRAY
         ["tray_tooltip"] = "G-Helper - {0}",
         ["tray_gpu_eco"] = "GPU: Eco (nur iGPU)",
         ["tray_gpu_standard"] = "GPU: Standard (dGPU)",
         ["tray_gpu_optimized"] = "GPU: Optimiert (Auto)",
         ["tray_gpu_ultimate"] = "GPU: Ultimate (MUX)",
 
-        // ═══════════════════ KEY ACTIONS ═══════════════════
+        // KEY ACTIONS
         ["action_none"] = "Keine",
         ["action_ghelper"] = "G-Helper ein-/ausblenden",
         ["action_performance"] = "Leistungsmodus wechseln",
@@ -199,12 +199,12 @@ public static class German
         ["action_camera"] = "Kamera umschalten",
         ["action_touchpad"] = "Touchpad umschalten",
 
-        // ═══════════════════ KEY NAMES ═══════════════════
+        // KEY NAMES
         ["key_m4"] = "ROG / M5 Taste",
         ["key_fnf4"] = "Fn+F4 (Aura)",
         ["key_fnf5"] = "Fn+F5 / M4 (Leistung)",
 
-        // ═══════════════════ EXTRA WINDOW ═══════════════════
+        // EXTRA WINDOW
         ["extra_title"] = "Erweiterte Einstellungen",
         ["kbd_backlight_header"] = "Tastaturbeleuchtung",
         ["brightness"] = "Helligkeit",
@@ -266,7 +266,7 @@ public static class German
         ["battery_health_unknown"] = "Akkuzustand: --%",
         ["power_draw_discharge"] = "Leistungsaufnahme: {0} mW (Entladung)",
         ["power_draw_charge"] = "Leistungsaufnahme: {0} mW (Laden)",
-        ["power_draw_unknown"] = "Leistungsaufnahme: -- mW",
+        ["power_draw_unknown"] = "Leistungsaufnahme: - mW",
 
         ["system_info_header"] = "Systeminformationen",
 
@@ -282,11 +282,11 @@ public static class German
         ["log_stdout"] = "Logs werden auf stdout ausgegeben - im Terminal starten, um die Ausgabe zu sehen",
         ["kernel_warning"] = "\u26A0 Kernel 6.2+ empfohlen für volle Funktionsunterstützung",
 
-        // ═══════════════════ LANGUAGE ═══════════════════
+        // LANGUAGE
         ["language_header"] = "Sprache",
         ["language_auto"] = "Auto (System)",
 
-        // ═══════════════════ FANS WINDOW ═══════════════════
+        // FANS WINDOW
         ["fans_title"] = "Lüfter & Leistung",
         ["fan_curves"] = "Lüfterkurven",
         ["reset"] = "Zurücksetzen",
@@ -304,7 +304,7 @@ public static class German
         ["firmware_control"] = "Firmware-Steuerung",
         ["fan_sensor_format"] = "CPU: {0} / GPU: {1} Last: {2}   Mittel: {3} RPM",
 
-        // ═══════════════════ BATTERY INFO WINDOW ═══════════════════
+        // BATTERY INFO WINDOW
         ["battery_info_title"] = "Akku-Informationen",
         ["health_header"] = "Zustand",
         ["health"] = "Zustand",
@@ -326,7 +326,7 @@ public static class German
         ["discharging"] = "Entladung",
         ["charging"] = "Laden",
 
-        // ═══════════════════ UPDATES WINDOW ═══════════════════
+        // UPDATES WINDOW
         ["updates_title"] = "BIOS- & Treiber-Updates",
         ["updates_header"] = "BIOS- & Treiber-Updates",
         ["copy_diagnostics"] = "Diagnose kopieren",
@@ -361,7 +361,7 @@ public static class German
         ["updates_title_format"] = "BIOS- & Treiber-Updates: {0} ({1} BIOS {2})",
         ["app_version_format"] = "G-Helper Linux v{0} - {1}",
 
-        // ═══════════════════ ARCADE GAME ═══════════════════
+        // ARCADE GAME
         ["arcade_title"] = "ROG Fighter",
         ["arcade_game_title"] = "ROG FIGHTER",
         ["arcade_move"] = "\u2190 \u2192 \u2191 \u2193 / W A S D  bewegen",
@@ -381,7 +381,7 @@ public static class German
         ["arcade_new_highscore"] = "NEUER HIGHSCORE!",
         ["arcade_retry"] = "ENTER zum Neustarten",
 
-        // ═══════════════════ AURA MODES ═══════════════════
+        // AURA MODES
         ["aura_static"] = "Statisch",
         ["aura_breathe"] = "Atmen",
         ["aura_strobe"] = "Stroboskop",
@@ -396,12 +396,12 @@ public static class German
         ["aura_flash"] = "Blitz",
         ["aura_no_modes"] = "Keine Modi",
 
-        // ═══════════════════ AURA SPEEDS ═══════════════════
+        // AURA SPEEDS
         ["speed_slow"] = "Langsam",
         ["speed_normal"] = "Normal",
         ["speed_fast"] = "Schnell",
 
-        // ═══════════════════ MISC ═══════════════════
+        // MISC
         ["ghelper"] = "G-Helper",
         ["asus_laptop_control"] = "ASUS-Laptop-Steuerung (Linux)",
     };

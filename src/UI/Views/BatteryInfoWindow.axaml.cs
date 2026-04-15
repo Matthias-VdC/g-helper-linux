@@ -6,7 +6,7 @@ using GHelper.Linux.Platform.Linux;
 namespace GHelper.Linux.UI.Views;
 
 /// <summary>
-/// Battery information window — shows detailed battery health, energy, and hardware data
+/// Battery information window - shows detailed battery health, energy, and hardware data
 /// from /sys/class/power_supply/BAT*.
 /// </summary>
 public partial class BatteryInfoWindow : Window
@@ -90,7 +90,8 @@ public partial class BatteryInfoWindow : Window
     /// <summary>Read values that change in real-time.</summary>
     private void RefreshLive()
     {
-        if (_batteryDir == null) return;
+        if (_batteryDir == null)
+            return;
 
         // Health
         int energyFull = ReadInt("energy_full");
@@ -141,17 +142,19 @@ public partial class BatteryInfoWindow : Window
             : "--";
     }
 
-    // ── Helpers ──
+    // Helpers
 
     private string? ReadAttr(string name)
     {
-        if (_batteryDir == null) return null;
+        if (_batteryDir == null)
+            return null;
         return SysfsHelper.ReadAttribute(Path.Combine(_batteryDir, name))?.Trim();
     }
 
     private int ReadInt(string name)
     {
-        if (_batteryDir == null) return -1;
+        if (_batteryDir == null)
+            return -1;
         return SysfsHelper.ReadInt(Path.Combine(_batteryDir, name), -1);
     }
 }
