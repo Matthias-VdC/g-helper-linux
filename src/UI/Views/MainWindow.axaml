@@ -43,28 +43,28 @@
                         <Button x:Name="buttonSilent" Classes="ghelper-tall"
                                 Margin="0,0,3,0" Click="ButtonSilent_Click">
                             <StackPanel HorizontalAlignment="Center" Spacing="4">
-                                <TextBlock Text="🍃" HorizontalAlignment="Center" FontSize="22" />
+                                <TextBlock Text="🍃" HorizontalAlignment="Center" TextAlignment="Center" Width="30" FontSize="22" />
                                 <TextBlock Text="Silent" HorizontalAlignment="Center" FontSize="11" />
                             </StackPanel>
                         </Button>
                         <Button x:Name="buttonBalanced" Classes="ghelper-tall"
                                 Margin="3,0" Click="ButtonBalanced_Click">
                             <StackPanel HorizontalAlignment="Center" Spacing="4">
-                                <TextBlock Text="⚖️" HorizontalAlignment="Center" FontSize="22" />
+                                <TextBlock Text="⚖️" HorizontalAlignment="Center" TextAlignment="Center" Width="30" FontSize="22" />
                                 <TextBlock Text="Balanced" HorizontalAlignment="Center" FontSize="11" />
                             </StackPanel>
                         </Button>
                         <Button x:Name="buttonTurbo" Classes="ghelper-tall"
                                 Margin="3,0" Click="ButtonTurbo_Click">
                             <StackPanel HorizontalAlignment="Center" Spacing="4">
-                                <TextBlock Text="🚀" HorizontalAlignment="Center" FontSize="22" />
+                                <TextBlock Text="🚀" HorizontalAlignment="Center" TextAlignment="Center" Width="30" FontSize="22" />
                                 <TextBlock Text="Turbo" HorizontalAlignment="Center" FontSize="11" />
                             </StackPanel>
                         </Button>
                         <Button x:Name="buttonFans" Classes="ghelper-tall"
                                 Margin="3,0,0,0" Click="ButtonFans_Click">
                             <StackPanel HorizontalAlignment="Center" Spacing="4">
-                                <TextBlock Text="🌀" HorizontalAlignment="Center" FontSize="22" />
+                                <TextBlock Text="🌀️" HorizontalAlignment="Center" TextAlignment="Center" Width="30" FontSize="22" />
                                 <TextBlock Text="Fans + Power" HorizontalAlignment="Center" FontSize="11" />
                             </StackPanel>
                         </Button>
@@ -89,28 +89,28 @@
                         <Button x:Name="buttonEco" Classes="ghelper-tall"
                                 Margin="0,0,3,0" Click="ButtonEco_Click">
                             <StackPanel HorizontalAlignment="Center" Spacing="4">
-                                <TextBlock Text="🌿" HorizontalAlignment="Center" FontSize="22" />
+                                <TextBlock Text="🌿" HorizontalAlignment="Center" TextAlignment="Center" Width="30" FontSize="22" />
                                 <TextBlock Text="Eco" HorizontalAlignment="Center" FontSize="11" />
                             </StackPanel>
                         </Button>
                         <Button x:Name="buttonStandard" Classes="ghelper-tall"
                                 Margin="3,0" Click="ButtonStandard_Click">
                             <StackPanel HorizontalAlignment="Center" Spacing="4">
-                                <TextBlock Text="🖥️" HorizontalAlignment="Center" FontSize="22" />
+                                <TextBlock Text="🖥️" HorizontalAlignment="Center" TextAlignment="Center" Width="30" FontSize="22" />
                                 <TextBlock Text="Standard" HorizontalAlignment="Center" FontSize="11" />
                             </StackPanel>
                         </Button>
                         <Button x:Name="buttonUltimate" Classes="ghelper-tall"
                                 Margin="3,0" Click="ButtonUltimate_Click">
                             <StackPanel HorizontalAlignment="Center" Spacing="4">
-                                <TextBlock Text="🎮" HorizontalAlignment="Center" FontSize="22" />
+                                <TextBlock Text="🎮" HorizontalAlignment="Center" TextAlignment="Center" Width="30" FontSize="22" />
                                 <TextBlock Text="Ultimate" HorizontalAlignment="Center" FontSize="11" />
                             </StackPanel>
                         </Button>
                         <Button x:Name="buttonOptimized" Classes="ghelper-tall"
                                 Margin="3,0,0,0" Click="ButtonOptimized_Click">
                             <StackPanel HorizontalAlignment="Center" Spacing="4">
-                                <TextBlock Text="💡" HorizontalAlignment="Center" FontSize="22" />
+                                <TextBlock Text="💡️" HorizontalAlignment="Center" TextAlignment="Center" Width="30" FontSize="22" />
                                 <TextBlock Text="Optimized" HorizontalAlignment="Center" FontSize="11" />
                             </StackPanel>
                         </Button>
