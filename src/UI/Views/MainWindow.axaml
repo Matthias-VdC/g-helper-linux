@@ -30,8 +30,9 @@
                 <StackPanel>
                     <!-- Title row: icon + label left, sensor info right -->
                     <Grid ColumnDefinitions="Auto,*,Auto" Margin="2,0,2,8">
-                        <TextBlock Grid.Column="0" Text="⚡" FontSize="16"
-                                   VerticalAlignment="Center" Margin="0,0,8,0" />
+                        <Image Grid.Column="0" Source="avares://ghelper/UI/Assets/Icons/bolt.png"
+                               Width="18" Height="18" RenderOptions.BitmapInterpolationMode="HighQuality"
+                               VerticalAlignment="Center" Margin="0,0,8,0" />
                         <TextBlock Grid.Column="1" x:Name="labelPerf" Classes="header"
                                    Text="Mode: Balanced" VerticalAlignment="Center" />
                         <TextBlock Grid.Column="2" x:Name="labelCPUFan" Classes="label-dim"
@@ -43,28 +44,28 @@
                         <Button x:Name="buttonSilent" Classes="ghelper-tall"
                                 Margin="0,0,3,0" Click="ButtonSilent_Click">
                             <StackPanel HorizontalAlignment="Center" Spacing="4">
-                                <TextBlock Text="🍃" HorizontalAlignment="Center" TextAlignment="Center" Width="30" FontSize="22" />
+                                <Image Source="avares://ghelper/UI/Assets/Icons/leaf.png" Width="24" Height="24" RenderOptions.BitmapInterpolationMode="HighQuality" HorizontalAlignment="Center" />
                                 <TextBlock Text="Silent" HorizontalAlignment="Center" FontSize="11" />
                             </StackPanel>
                         </Button>
                         <Button x:Name="buttonBalanced" Classes="ghelper-tall"
                                 Margin="3,0" Click="ButtonBalanced_Click">
                             <StackPanel HorizontalAlignment="Center" Spacing="4">
-                                <TextBlock Text="⚖️" HorizontalAlignment="Center" TextAlignment="Center" Width="30" FontSize="22" />
+                                <Image Source="avares://ghelper/UI/Assets/Icons/balance.png" Width="24" Height="24" RenderOptions.BitmapInterpolationMode="HighQuality" HorizontalAlignment="Center" />
                                 <TextBlock Text="Balanced" HorizontalAlignment="Center" FontSize="11" />
                             </StackPanel>
                         </Button>
                         <Button x:Name="buttonTurbo" Classes="ghelper-tall"
                                 Margin="3,0" Click="ButtonTurbo_Click">
                             <StackPanel HorizontalAlignment="Center" Spacing="4">
-                                <TextBlock Text="🚀" HorizontalAlignment="Center" TextAlignment="Center" Width="30" FontSize="22" />
+                                <Image Source="avares://ghelper/UI/Assets/Icons/rocket.png" Width="24" Height="24" RenderOptions.BitmapInterpolationMode="HighQuality" HorizontalAlignment="Center" />
                                 <TextBlock Text="Turbo" HorizontalAlignment="Center" FontSize="11" />
                             </StackPanel>
                         </Button>
                         <Button x:Name="buttonFans" Classes="ghelper-tall"
                                 Margin="3,0,0,0" Click="ButtonFans_Click">
                             <StackPanel HorizontalAlignment="Center" Spacing="4">
-                                <TextBlock Text="🌀️" HorizontalAlignment="Center" TextAlignment="Center" Width="30" FontSize="22" />
+                                <Image Source="avares://ghelper/UI/Assets/Icons/cyclone.png" Width="24" Height="24" RenderOptions.BitmapInterpolationMode="HighQuality" HorizontalAlignment="Center" />
                                 <TextBlock Text="Fans + Power" HorizontalAlignment="Center" FontSize="11" />
                             </StackPanel>
                         </Button>
@@ -76,8 +77,9 @@
             <Border x:Name="panelGPU" Classes="panel">
                 <StackPanel>
                     <Grid ColumnDefinitions="Auto,*,Auto" Margin="2,0,2,8">
-                        <TextBlock Grid.Column="0" Text="🎮" FontSize="16"
-                                   VerticalAlignment="Center" Margin="0,0,8,0" />
+                        <Image Grid.Column="0" Source="avares://ghelper/UI/Assets/Icons/gamepad.png"
+                               Width="18" Height="18" RenderOptions.BitmapInterpolationMode="HighQuality"
+                               VerticalAlignment="Center" Margin="0,0,8,0" />
                         <TextBlock Grid.Column="1" x:Name="labelGPU" Classes="header"
                                    Text="GPU Mode: Standard" VerticalAlignment="Center" />
                         <TextBlock Grid.Column="2" x:Name="labelGPUFan" Classes="label-dim"
@@ -89,28 +91,28 @@
                         <Button x:Name="buttonEco" Classes="ghelper-tall"
                                 Margin="0,0,3,0" Click="ButtonEco_Click">
                             <StackPanel HorizontalAlignment="Center" Spacing="4">
-                                <TextBlock Text="🌿" HorizontalAlignment="Center" TextAlignment="Center" Width="30" FontSize="22" />
+                                <Image Source="avares://ghelper/UI/Assets/Icons/herb.png" Width="24" Height="24" RenderOptions.BitmapInterpolationMode="HighQuality" HorizontalAlignment="Center" />
                                 <TextBlock Text="Eco" HorizontalAlignment="Center" FontSize="11" />
                             </StackPanel>
                         </Button>
                         <Button x:Name="buttonStandard" Classes="ghelper-tall"
                                 Margin="3,0" Click="ButtonStandard_Click">
                             <StackPanel HorizontalAlignment="Center" Spacing="4">
-                                <TextBlock Text="🖥️" HorizontalAlignment="Center" TextAlignment="Center" Width="30" FontSize="22" />
+                                <Image Source="avares://ghelper/UI/Assets/Icons/desktop.png" Width="24" Height="24" RenderOptions.BitmapInterpolationMode="HighQuality" HorizontalAlignment="Center" />
                                 <TextBlock Text="Standard" HorizontalAlignment="Center" FontSize="11" />
                             </StackPanel>
                         </Button>
                         <Button x:Name="buttonUltimate" Classes="ghelper-tall"
                                 Margin="3,0" Click="ButtonUltimate_Click">
                             <StackPanel HorizontalAlignment="Center" Spacing="4">
-                                <TextBlock Text="🎮" HorizontalAlignment="Center" TextAlignment="Center" Width="30" FontSize="22" />
+                                <Image Source="avares://ghelper/UI/Assets/Icons/gamepad.png" Width="24" Height="24" RenderOptions.BitmapInterpolationMode="HighQuality" HorizontalAlignment="Center" />
                                 <TextBlock Text="Ultimate" HorizontalAlignment="Center" FontSize="11" />
                             </StackPanel>
                         </Button>
                         <Button x:Name="buttonOptimized" Classes="ghelper-tall"
                                 Margin="3,0,0,0" Click="ButtonOptimized_Click">
                             <StackPanel HorizontalAlignment="Center" Spacing="4">
-                                <TextBlock Text="💡️" HorizontalAlignment="Center" TextAlignment="Center" Width="30" FontSize="22" />
+                                <Image Source="avares://ghelper/UI/Assets/Icons/bulb.png" Width="24" Height="24" RenderOptions.BitmapInterpolationMode="HighQuality" HorizontalAlignment="Center" />
                                 <TextBlock Text="Optimized" HorizontalAlignment="Center" FontSize="11" />
                             </StackPanel>
                         </Button>
@@ -125,8 +127,9 @@
             <Border Classes="panel">
                 <StackPanel>
                     <Grid ColumnDefinitions="Auto,*,Auto" Margin="2,0,2,8">
-                        <TextBlock Grid.Column="0" Text="🖥" FontSize="16"
-                                   VerticalAlignment="Center" Margin="0,0,8,0" />
+                        <Image Grid.Column="0" Source="avares://ghelper/UI/Assets/Icons/desktop.png"
+                               Width="18" Height="18" RenderOptions.BitmapInterpolationMode="HighQuality"
+                               VerticalAlignment="Center" Margin="0,0,8,0" />
                         <TextBlock Grid.Column="1" x:Name="labelScreen" Classes="header"
                                    Text="Laptop Screen: 60Hz" VerticalAlignment="Center" />
                         <TextBlock Grid.Column="2" x:Name="labelMidFan" Classes="label-dim"
@@ -165,8 +168,9 @@
             <Border Classes="panel">
                 <StackPanel>
                     <Grid ColumnDefinitions="Auto,*,Auto" Margin="2,0,2,8">
-                        <TextBlock Grid.Column="0" Text="⌨️" FontSize="16"
-                                   VerticalAlignment="Center" Margin="0,0,8,0" />
+                        <Image Grid.Column="0" Source="avares://ghelper/UI/Assets/Icons/keyboard.png"
+                               Width="18" Height="18" RenderOptions.BitmapInterpolationMode="HighQuality"
+                               VerticalAlignment="Center" Margin="0,0,8,0" />
                         <TextBlock Grid.Column="1" x:Name="labelKeyboard" Classes="header"
                                    Text="Laptop Keyboard" VerticalAlignment="Center" />
                         <TextBlock Grid.Column="2" x:Name="labelBacklight" Classes="label-dim"
@@ -184,7 +188,7 @@
                                 Margin="3,0,0,0" Click="ButtonExtra_Click"
                                 Height="36">
                             <StackPanel Orientation="Horizontal" Spacing="4" HorizontalAlignment="Center">
-                                <TextBlock Text="⚙" FontSize="13" VerticalAlignment="Center" />
+                                <Image Source="avares://ghelper/UI/Assets/Icons/gear.png" Width="14" Height="14" RenderOptions.BitmapInterpolationMode="HighQuality" VerticalAlignment="Center" />
                                 <TextBlock Text="Extra" FontSize="11" VerticalAlignment="Center" />
                             </StackPanel>
                         </Button>
@@ -223,8 +227,9 @@
             <Border Classes="panel">
                 <StackPanel>
                     <Grid ColumnDefinitions="Auto,*,Auto" Margin="2,0,2,4">
-                        <TextBlock Grid.Column="0" Text="🔋" FontSize="16"
-                                   VerticalAlignment="Center" Margin="0,0,8,0" />
+                        <Image Grid.Column="0" Source="avares://ghelper/UI/Assets/Icons/battery.png"
+                               Width="18" Height="18" RenderOptions.BitmapInterpolationMode="HighQuality"
+                               VerticalAlignment="Center" Margin="0,0,8,0" />
                         <TextBlock Grid.Column="1" x:Name="labelBattery" Classes="header"
                                    Text="Battery Charge Limit: 100%"
                                    VerticalAlignment="Center" />
@@ -331,7 +336,7 @@
                                 Margin="0,0,4,0" Height="32"
                                 Click="ButtonUpdates_Click">
                             <StackPanel Orientation="Horizontal" Spacing="4">
-                                <TextBlock Text="&#x1F4E6;" FontSize="12" VerticalAlignment="Center" />
+                                <Image Source="avares://ghelper/UI/Assets/Icons/package.png" Width="14" Height="14" RenderOptions.BitmapInterpolationMode="HighQuality" VerticalAlignment="Center" />
                                 <TextBlock Text="Updates" FontSize="11" VerticalAlignment="Center" />
                             </StackPanel>
                         </Button>
