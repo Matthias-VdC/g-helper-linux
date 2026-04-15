@@ -66,10 +66,10 @@ jobs:
           echo "Updated udev rules version to: ${VERSION}"
           grep "# Version:" install/90-ghelper.rules
 
-      - name: Setup .NET 8
+      - name: Setup .NET 10
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.0'
+          dotnet-version: '10.0'
 
       - name: Install Native AOT dependencies
         run: sudo apt-get update && sudo apt-get install -y clang zlib1g-dev libwayland-dev
@@ -98,15 +98,15 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ghelper
-          path: src/bin/Release/net8.0/linux-x64/publish/ghelper
+          path: src/bin/Release/net10.0/linux-x64/publish/ghelper
 
       - name: Upload native libs artifact
         uses: actions/upload-artifact@v4
         with:
           name: native-libs
           path: |
-            src/bin/Release/net8.0/linux-x64/publish/libSkiaSharp.so
-            src/bin/Release/net8.0/linux-x64/publish/libHarfBuzzSharp.so
+            src/bin/Release/net10.0/linux-x64/publish/libSkiaSharp.so
+            src/bin/Release/net10.0/linux-x64/publish/libHarfBuzzSharp.so
 
       - name: Upload udev rules artifact
         uses: actions/upload-artifact@v4

@@ -33,8 +33,7 @@
                 <CheckBox Grid.Column="4" x:Name="checkApplyFans"
                           Content="Auto-apply" Margin="8,0,0,0"
                           VerticalAlignment="Center"
-                          Checked="CheckApplyFans_Changed"
-                          Unchecked="CheckApplyFans_Changed" />
+                          IsCheckedChanged="CheckApplyFans_Changed" />
             </Grid>
         </Border>
 
@@ -122,8 +121,7 @@
                 <!-- Auto-apply power -->
                 <CheckBox x:Name="checkApplyPower"
                           Content="Auto-apply power limits on mode change" Margin="0,8,0,0"
-                          Checked="CheckApplyPower_Changed"
-                          Unchecked="CheckApplyPower_Changed" />
+                          IsCheckedChanged="CheckApplyPower_Changed" />
 
                 <!-- Sensor readings -->
                 <TextBlock x:Name="labelSensors" Classes="label-dim"

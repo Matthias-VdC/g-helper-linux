@@ -513,7 +513,7 @@ public partial class MainWindow : Window
             Height = 310,
             WindowStartupLocation = WindowStartupLocation.CenterOwner,
             CanResize = false,
-            SystemDecorations = SystemDecorations.Full,
+            WindowDecorations = WindowDecorations.Full,
         };
 
         // ── Content card — matches main window panel style (#262626) ──
@@ -995,7 +995,7 @@ public partial class MainWindow : Window
             WindowStartupLocation = WindowStartupLocation.CenterOwner,
             Background = new SolidColorBrush(Color.Parse("#1C1C1C")),
             CanResize = false,
-            SystemDecorations = SystemDecorations.Full,
+            WindowDecorations = WindowDecorations.Full,
         };
 
         var preview = new Border

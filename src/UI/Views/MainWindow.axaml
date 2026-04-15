@@ -8,8 +8,7 @@
         MinHeight="500"
         WindowStartupLocation="CenterScreen"
         CanResize="True"
-        ExtendClientAreaToDecorationsHint="False"
-        SystemDecorations="Full"
+        WindowDecorations="Full"
         Background="#1C1C1C"
         Icon="avares://ghelper/UI/Assets/favicon.ico">
 
@@ -274,8 +273,7 @@
                     <!-- Run on Startup + Charge info -->
                     <Grid ColumnDefinitions="*,Auto">
                         <CheckBox Grid.Column="0" x:Name="checkStartup" Content="Run on Startup"
-                                  Checked="CheckStartup_Changed"
-                                  Unchecked="CheckStartup_Changed" />
+                                  IsCheckedChanged="CheckStartup_Changed" />
                         <TextBlock Grid.Column="1" x:Name="labelChargeFooter" Classes="label-dim"
                                    Text="" VerticalAlignment="Center" />
                     </Grid>

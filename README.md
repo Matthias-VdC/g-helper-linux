@@ -231,10 +231,10 @@ chmod +x GHelper-x86_64.AppImage
 
 ```bash
 # Ubuntu/Debian
-sudo apt install dotnet-sdk-8.0 clang zlib1g-dev
+sudo apt install dotnet-sdk-10.0 clang zlib1g-dev
 
 # Fedora
-sudo dnf install dotnet-sdk-8.0 clang zlib-devel
+sudo dnf install dotnet-sdk-10.0 clang zlib-devel
 
 # Arch
 sudo pacman -S dotnet-sdk clang
@@ -254,7 +254,7 @@ cd src && dotnet restore && dotnet run
 
 # Production (Native AOT)
 cd src && dotnet publish -c Release
-# → src/bin/Release/net8.0/linux-x64/publish/ghelper
+# → src/bin/Release/net10.0/linux-x64/publish/ghelper
 ```
 
 </details>

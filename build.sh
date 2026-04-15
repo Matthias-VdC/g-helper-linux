@@ -7,7 +7,7 @@ set -uo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SRC_DIR="$SCRIPT_DIR/src"
 DIST_DIR="$SCRIPT_DIR/dist"
-PUBLISH_DIR="$SRC_DIR/bin/Release/net8.0/linux-x64/publish"
+PUBLISH_DIR="$SRC_DIR/bin/Release/net10.0/linux-x64/publish"
 
 echo "=== G-Helper Linux Build ==="
 echo ""
@@ -16,8 +16,8 @@ echo ""
 if ! command -v dotnet &>/dev/null; then
     echo "ERROR: .NET SDK not found."
     echo "Install it with:"
-    echo "  Ubuntu/Debian:  sudo apt install dotnet-sdk-8.0"
-    echo "  Fedora:         sudo dnf install dotnet-sdk-8.0"
+    echo "  Ubuntu/Debian:  sudo apt install dotnet-sdk-10.0"
+    echo "  Fedora:         sudo dnf install dotnet-sdk-10.0"
     echo "  Arch:           sudo pacman -S dotnet-sdk"
     exit 1
 fi
