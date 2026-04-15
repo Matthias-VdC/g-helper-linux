@@ -312,7 +312,7 @@
                                         <TextBlock Text="$" FontWeight="Black" FontSize="15"
                                                    Foreground="#FFD700" FontFamily="monospace"
                                                    HorizontalAlignment="Center" VerticalAlignment="Center"
-                                                   Margin="1,0,0,0" />
+                                                   Margin="1,0,0,2" />
                                     </Border>
                                     <TextBlock x:Name="labelDonateText" Text="Donate" FontSize="12" FontWeight="Bold"
                                                Foreground="#4A3800" VerticalAlignment="Center" />
@@ -344,7 +344,7 @@
                                 Height="32"
                                 Click="ButtonQuit_Click">
                             <StackPanel Orientation="Horizontal" Spacing="4">
-                                <TextBlock Text="&#x23FB;" FontSize="12" VerticalAlignment="Center" />
+                                <Image Source="avares://ghelper/UI/Assets/Icons/power.png" Width="14" Height="14" RenderOptions.BitmapInterpolationMode="HighQuality" VerticalAlignment="Center" />
                                 <TextBlock Text="Quit" FontSize="11" VerticalAlignment="Center" />
                             </StackPanel>
                         </Button>
