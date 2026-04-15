@@ -22,6 +22,7 @@ public partial class MainWindow : Window
 {
     private readonly DispatcherTimer _refreshTimer;
     private int _batteryRefreshCounter;
+    private int _lastKbdBrightness = -1;
     private int _currentPerfMode = -1;
     private int _currentGpuMode = -1;  // 0=Eco, 1=Standard, 2=Optimized (auto), 3=Ultimate (MUX=0)
 
@@ -211,6 +212,14 @@ public partial class MainWindow : Window
             int midFan = wmi.GetFanRpm(2);
             if (midFan > 0)
                 labelMidFan.Text = Labels.Format("mid_fan_info", $"{midFan}RPM");
+
+            // Keyboard brightness, detect external changes (physical keys, kernel driver)
+            int kbdBrightness = wmi.GetKeyboardBrightness();
+            if (kbdBrightness >= 0 && kbdBrightness != _lastKbdBrightness)
+            {
+                _lastKbdBrightness = kbdBrightness;
+                RefreshKeyboard();
+            }
         }
         catch (Exception ex)
         {
@@ -282,6 +291,10 @@ public partial class MainWindow : Window
     public void RefreshGpuModePublic() => RefreshGpuMode();
     public void RefreshBatteryPublic() => RefreshBattery();
     public void RefreshScreenPublic() => RefreshScreen();
+
+    /// <summary>Forward keyboard brightness refresh to ExtraWindow if open.</summary>
+    public void RefreshExtraKeyboardBrightness()
+        => _extraWindow?.RefreshKeyboardBrightness();
 
     private void RefreshGpuMode()
     {
@@ -780,6 +793,8 @@ public partial class MainWindow : Window
         }
 
         InitAura();
+        RefreshAuraCombos();
+        UpdateColorButtons();
     }
 
     /// <summary>
@@ -889,8 +904,8 @@ public partial class MainWindow : Window
 
         _suppressAuraEvents = true;
 
-        // Mode combo — save selection, rebuild, restore
-        int savedMode = comboAuraMode.SelectedItem is ComboBoxItem sel1 && sel1.Tag is int m ? m : (int)Aura.Mode;
+        // Mode combo, select based on current Aura.Mode (always up-to-date)
+        int savedMode = (int)Aura.Mode;
         comboAuraMode.Items.Clear();
         int selectedIdx = 0, idx = 0;
         foreach (var kv in Aura.GetModes())
@@ -901,8 +916,8 @@ public partial class MainWindow : Window
         }
         comboAuraMode.SelectedIndex = selectedIdx;
 
-        // Speed combo — save selection, rebuild, restore
-        int savedSpeed = comboAuraSpeed.SelectedItem is ComboBoxItem sel2 && sel2.Tag is int s ? s : (int)Aura.Speed;
+        // Speed combo, select based on current Aura.Speed (always up-to-date)
+        int savedSpeed = (int)Aura.Speed;
         comboAuraSpeed.Items.Clear();
         selectedIdx = 0; idx = 0;
         foreach (var kv in Aura.GetSpeeds())
@@ -1357,7 +1372,7 @@ public partial class MainWindow : Window
     {
         Helpers.CoinSound.EnsureReady();
 
-        _coinMuted = Helpers.AppConfig.Get("donate_muted") == 1;
+        _coinMuted = Helpers.AppConfig.Get("donate_muted", 1) == 1;
         UpdateMuteVisual();
 
         _coinTransform = new TranslateTransform();

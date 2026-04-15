@@ -705,6 +705,14 @@ public class LinuxAsusWmi : IAsusWmi
 
     // ── Keyboard ──
 
+    /// <summary>
+    /// True when the kernel driver handles keyboard brightness changes in hardware
+    /// (brightness_hw_changed sysfs exists). When true, physical Fn keys change sysfs
+    /// directly and userspace should NOT write, just read.
+    /// </summary>
+    public bool HasKbdBrightnessHwChanged { get; } =
+        File.Exists(Path.Combine(SysfsHelper.Leds, "asus::kbd_backlight", "brightness_hw_changed"));
+
     public int GetKeyboardBrightness()
     {
         var ledPath = Path.Combine(SysfsHelper.Leds, "asus::kbd_backlight", "brightness");
@@ -941,6 +949,7 @@ public class LinuxAsusWmi : IAsusWmi
     private void ReadEventsFromStream(FileStream fs)
     {
         var buffer = new byte[24]; // sizeof(struct input_event) on 64-bit
+        int pendingScanCode = -1;  // EV_MSC/MSC_SCAN value, reset after each EV_KEY
         try
         {
             while (_eventListening)
@@ -953,30 +962,47 @@ public class LinuxAsusWmi : IAsusWmi
                     ushort code = BitConverter.ToUInt16(buffer, 18);
                     int value = BitConverter.ToInt32(buffer, 20);
 
+                    // EV_MSC (4) / MSC_SCAN (4) — capture scan code for next EV_KEY.
+                    // MSC_SCAN values match Windows WMI event codes and are consistent
+                    // across models even when KEY_* codes differ (e.g. TUF vs ROG).
+                    if (type == 4 && code == 4)
+                    {
+                        pendingScanCode = value;
+                        continue;
+                    }
+
                     // EV_KEY = 1, key press = value 1
                     if (type == 1 && value == 1)
                     {
-                        string mappedKey = MapLinuxKeyToBindingName(code);
+                        // Try MSC_SCAN first (universal across models), fall back to KEY_* code
+                        string mappedKey = pendingScanCode >= 0
+                            ? MapScanCodeToBindingName(pendingScanCode)
+                            : "";
+                        if (mappedKey == "")
+                            mappedKey = MapLinuxKeyToBindingName(code);
+
                         if (mappedKey != "")
                         {
-                            Helpers.Logger.WriteLine($"ASUS event: key={code} (0x{code:X}) → {mappedKey}");
+                            Helpers.Logger.WriteLine($"ASUS event: key={code} (0x{code:X}) scan=0x{pendingScanCode:X} → {mappedKey}");
                             KeyBindingEvent?.Invoke(mappedKey);
                         }
                         else
                         {
-                            // Also fire legacy numeric event for non-configurable keys
-                            int legacyEvent = MapLinuxKeyToLegacyEvent(code);
+                            // Try legacy mapping: MSC_SCAN first, then KEY_* code
+                            int legacyEvent = pendingScanCode >= 0
+                                ? MapScanCodeToLegacyEvent(pendingScanCode)
+                                : -1;
+                            if (legacyEvent < 0)
+                                legacyEvent = MapLinuxKeyToLegacyEvent(code);
+
                             if (legacyEvent > 0)
                             {
-                                Helpers.Logger.WriteLine($"ASUS event: key={code} (0x{code:X}) → legacy={legacyEvent}");
+                                Helpers.Logger.WriteLine($"ASUS event: key={code} (0x{code:X}) scan=0x{pendingScanCode:X} → legacy={legacyEvent}");
                                 WmiEvent?.Invoke(legacyEvent);
                             }
-                            else
-                            {
-                                // Don't log unmapped keys — regular keyboard presses
-                                // also come through on ASUS vendor devices
-                            }
                         }
+
+                        pendingScanCode = -1;
                     }
                 }
             }
@@ -1071,6 +1097,44 @@ public class LinuxAsusWmi : IAsusWmi
             // KEY_PROG4 (203) = Fn+F5 / M4 performance key → configurable as "fnf5"
             203 => "fnf5",
             _ => ""
+        };
+    }
+
+    /// <summary>
+    /// Map MSC_SCAN values to configurable key binding names.
+    /// MSC_SCAN values equal Windows WMI event codes and are consistent across
+    /// all ASUS models (TUF, ROG, Vivobook) even when KEY_* codes differ.
+    /// </summary>
+    private static string MapScanCodeToBindingName(int scanCode)
+    {
+        return scanCode switch
+        {
+            56 => "m4",    // ROG/M4/M5 button (Windows event 0x38)
+            179 => "fnf4", // Fn+F4 Aura key (Windows event 0xB3)
+            174 => "fnf5", // Fn+F5 performance cycle (Windows event 0xAE)
+            _ => ""
+        };
+    }
+
+    /// <summary>
+    /// Map MSC_SCAN values to legacy G-Helper event codes for non-configurable keys.
+    /// MSC_SCAN values ARE the Windows WMI event codes, so they pass through directly.
+    /// </summary>
+    private static int MapScanCodeToLegacyEvent(int scanCode)
+    {
+        return scanCode switch
+        {
+            196 => 196, // Fn+F3 keyboard brightness up
+            197 => 197, // Fn+F2 keyboard brightness down
+            107 => 107, // Fn+F10 touchpad toggle
+            108 => 108, // Fn+F11 sleep
+            133 => 133, // Camera toggle
+            136 => 136, // Fn+F12 airplane
+            16 => 16,   // Fn+F7 brightness down
+            32 => 32,   // Fn+F8 brightness up
+            78 => 78,   // Fn+ESC FnLock
+            124 => 124, // Mic mute (M3)
+            _ => -1
         };
     }
 

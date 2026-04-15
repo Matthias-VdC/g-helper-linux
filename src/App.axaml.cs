@@ -594,9 +594,20 @@ public class App : Application
 
     private void CycleKeyboardBrightness(bool up)
     {
-        int current = Wmi?.GetKeyboardBrightness() ?? 0;
-        int next = up ? Math.Min(current + 1, 3) : Math.Max(current - 1, 0);
-        Wmi?.SetKeyboardBrightness(next);
+        int next;
+        if (Wmi is Platform.Linux.LinuxAsusWmi lwmi && lwmi.HasKbdBrightnessHwChanged)
+        {
+            // Kernel already changed brightness in sysfs — just read the new value
+            next = lwmi.GetKeyboardBrightness();
+            if (next < 0) next = 0;
+        }
+        else
+        {
+            // Kernel doesn't handle it, we must increment and write
+            int current = Wmi?.GetKeyboardBrightness() ?? 0;
+            next = up ? Math.Min(current + 1, 3) : Math.Max(current - 1, 0);
+            Wmi?.SetKeyboardBrightness(next);
+        }
         string level = next switch
         {
             0 => Labels.Get("kbd_off"),
@@ -608,7 +619,10 @@ public class App : Application
         System?.ShowNotification(Labels.Get("keyboard"), level, "keyboard-brightness");
 
         Avalonia.Threading.Dispatcher.UIThread.Post(() =>
-            MainWindowInstance?.RefreshKeyboard());
+        {
+            MainWindowInstance?.RefreshKeyboard();
+            MainWindowInstance?.RefreshExtraKeyboardBrightness();
+        });
     }
 
     private void SetupTrayIcon(IClassicDesktopStyleApplicationLifetime desktop)

@@ -158,8 +158,8 @@
                               Checked="CheckOverdrive_Changed"
                               Unchecked="CheckOverdrive_Changed" />
 
-                    <!-- Gamma -->
-                    <Grid ColumnDefinitions="120,*,50" Margin="0,4">
+                    <!-- Gamma (hidden on Wayland — no backend support) -->
+                    <Grid x:Name="rowGamma" ColumnDefinitions="120,*,50" Margin="0,4">
                         <TextBlock Grid.Column="0" x:Name="labelGammaLabel" Text="Gamma"
                                    Classes="label-dim" VerticalAlignment="Center" />
                         <Slider Grid.Column="1" x:Name="sliderGamma"

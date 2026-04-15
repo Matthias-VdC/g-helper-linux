@@ -291,7 +291,7 @@
                     </StackPanel>
 
                     <!-- Version -->
-                    <TextBlock x:Name="labelVersion" Classes="label-dim"
+                    <TextBlock x:Name="labelVersion" Classes="label-dim" Cursor="Hand"
                                Text="G-Helper Linux v1.0.0" FontSize="12" Margin="0,0,0,6" />
 
                     <!-- Donate + Updates + Quit -->

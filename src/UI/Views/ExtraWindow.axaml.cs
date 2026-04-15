@@ -19,6 +19,9 @@ public partial class ExtraWindow : Window
     /// <summary>PID of the systemd-inhibit process for clamshell mode, or -1 if inactive.</summary>
     private static int _clamshellInhibitPid = -1;
 
+    /// <summary>Polls display brightness sysfs every 2s to catch external changes (physical Fn keys).</summary>
+    private Avalonia.Threading.DispatcherTimer? _brightnessTimer;
+
     public ExtraWindow()
     {
         InitializeComponent();
@@ -42,7 +45,10 @@ public partial class ExtraWindow : Window
             RefreshAdvanced();
             ApplyLabels();
             _suppressEvents = false;
+
+            StartBrightnessPolling();
         };
+        Closed += (_, _) => _brightnessTimer?.Stop();
     }
 
     // ═══════════════════ LANGUAGE ═══════════════════
@@ -270,6 +276,51 @@ public partial class ExtraWindow : Window
         }
     }
 
+    /// <summary>Update keyboard brightness slider from external change (physical Fn key press).</summary>
+    public void RefreshKeyboardBrightness()
+    {
+        int brightness = App.Wmi?.GetKeyboardBrightness() ?? -1;
+        if (brightness < 0) return;
+
+        _suppressEvents = true;
+        sliderKbdBrightness.Value = brightness;
+        labelKbdBrightness.Text = brightness.ToString();
+        _suppressEvents = false;
+    }
+
+    /// <summary>Poll display + keyboard brightness every 2s to catch external changes.</summary>
+    private void StartBrightnessPolling()
+    {
+        _brightnessTimer = new Avalonia.Threading.DispatcherTimer { Interval = TimeSpan.FromSeconds(2) };
+        _brightnessTimer.Tick += (_, _) =>
+        {
+            // Display brightness
+            var display = App.Display;
+            if (display != null && rowBrightnessSlider.IsVisible)
+            {
+                int brightness = display.GetBrightness();
+                if (brightness >= 0 && brightness != (int)sliderBrightness.Value)
+                {
+                    _suppressEvents = true;
+                    sliderBrightness.Value = Math.Max(brightness, LinuxDisplayControl.MinBrightnessPercent);
+                    labelBrightness.Text = $"{brightness}%";
+                    _suppressEvents = false;
+                }
+            }
+
+            // Keyboard brightness
+            int kbdBrightness = App.Wmi?.GetKeyboardBrightness() ?? -1;
+            if (kbdBrightness >= 0 && kbdBrightness != (int)sliderKbdBrightness.Value)
+            {
+                _suppressEvents = true;
+                sliderKbdBrightness.Value = kbdBrightness;
+                labelKbdBrightness.Text = kbdBrightness.ToString();
+                _suppressEvents = false;
+            }
+        };
+        _brightnessTimer.Start();
+    }
+
     private void SliderKbdBrightness_ValueChanged(object? sender,
         Avalonia.Controls.Primitives.RangeBaseValueChangedEventArgs e)
     {
@@ -453,7 +504,11 @@ public partial class ExtraWindow : Window
         bool overdrive = App.Wmi?.GetPanelOverdrive() ?? false;
         checkOverdrive.IsChecked = overdrive;
 
-        sliderGamma.Value = 100; // Default gamma
+        // Gamma only works on X11 (xrandr). Hide on Wayland backends.
+        bool supportsGamma = display.Backend?.SupportsGamma ?? false;
+        rowGamma.IsVisible = supportsGamma;
+        if (supportsGamma)
+            sliderGamma.Value = 100;
     }
 
     private void ButtonEnableBacklight_Click(object? sender, RoutedEventArgs e)
