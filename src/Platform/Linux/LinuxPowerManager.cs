@@ -203,15 +203,26 @@ public class LinuxPowerManager : IPowerManager
             return -1;
         return SysfsHelper.ReadInt(Path.Combine(_batteryDir, "capacity"), -1);
     }
-
+    
     public int GetBatteryDrainRate()
     {
         if (_batteryDir == null)
             return 0;
 
         // power_now is in microwatts
-        int powerUw = SysfsHelper.ReadInt(Path.Combine(_batteryDir, "power_now"), 0);
-        int powerMw = powerUw / 1000;
+        int powerMw = 0;
+        if (File.Exists(Path.Combine(_batteryDir, "power_now")))
+        {
+            int powerUw = SysfsHelper.ReadInt(Path.Combine(_batteryDir, "power_now"), 0);
+            powerMw = powerUw / 1000;
+        }
+        // calculates power using current and voltage, if power isn't available
+        else if (File.Exists(Path.Combine(_batteryDir, "current_now")) && File.Exists(Path.Combine(_batteryDir, "voltage_now")))
+        {
+            long currentUa = SysfsHelper.ReadInt(Path.Combine(_batteryDir, "current_now"), 0);
+            long voltageUv = SysfsHelper.ReadInt(Path.Combine(_batteryDir, "voltage_now"), 0);
+            powerMw = (int) ((currentUa * voltageUv) / 1_000_000_000L);
+        }
 
         var status = SysfsHelper.ReadAttribute(Path.Combine(_batteryDir, "status"));
         // Return positive for discharging, negative for charging
