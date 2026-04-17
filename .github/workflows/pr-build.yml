@@ -29,13 +29,27 @@ jobs:
           sed -i "s/VERSION_PLACEHOLDER/${VERSION}/" install/90-ghelper.rules
           echo "Updated udev rules version to: ${VERSION}"
 
-      - name: Setup .NET 8
+      - name: Setup .NET 10
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.0'
+          dotnet-version: '10.0'
 
       - name: Install Native AOT dependencies
-        run: sudo apt-get update && sudo apt-get install -y clang zlib1g-dev
+        run: sudo apt-get update && sudo apt-get install -y clang zlib1g-dev libwayland-dev
+
+      - name: Build wlr-randr (vendored v0.5.0)
+        run: |
+          cd vendor/wlr-randr
+          wayland-scanner client-header \
+            protocol/wlr-output-management-unstable-v1.xml \
+            wlr-output-management-unstable-v1-client-protocol.h
+          wayland-scanner private-code \
+            protocol/wlr-output-management-unstable-v1.xml \
+            wlr-output-management-unstable-v1-protocol.c
+          cc -O2 -o wlr-randr main.c wlr-output-management-unstable-v1-protocol.c \
+            -I. -lwayland-client -lm
+          strip wlr-randr
+          ls -lh wlr-randr
 
       - name: Restore packages
         run: dotnet restore src/ --runtime linux-x64
@@ -47,7 +61,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ghelper
-          path: src/bin/Release/net8.0/linux-x64/publish/ghelper
+          path: src/bin/Release/net10.0/linux-x64/publish/ghelper
           retention-days: 7
 
       - name: Upload native libs artifact
@@ -55,8 +69,8 @@ jobs:
         with:
           name: native-libs
           path: |
-            src/bin/Release/net8.0/linux-x64/publish/libSkiaSharp.so
-            src/bin/Release/net8.0/linux-x64/publish/libHarfBuzzSharp.so
+            src/bin/Release/net10.0/linux-x64/publish/libSkiaSharp.so
+            src/bin/Release/net10.0/linux-x64/publish/libHarfBuzzSharp.so
           retention-days: 7
 
       - name: Upload udev rules artifact

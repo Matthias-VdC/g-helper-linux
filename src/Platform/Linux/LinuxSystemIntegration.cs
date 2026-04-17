@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using GHelper.Linux.I18n;
 
 namespace GHelper.Linux.Platform.Linux;
 
@@ -22,7 +23,7 @@ public class LinuxSystemIntegration : ISystemIntegration
     public string GetModelName()
     {
         return SysfsHelper.ReadAttribute(Path.Combine(SysfsHelper.DmiId, "product_name"))
-            ?? "Unknown ASUS Laptop";
+            ?? Labels.Get("unknown_asus");
     }
 
     public string GetBiosVersion()
@@ -61,8 +62,8 @@ public class LinuxSystemIntegration : ISystemIntegration
             var desktop = $"""
                 [Desktop Entry]
                 Type=Application
-                Name=G-Helper
-                Comment=ASUS Laptop Control (Linux)
+                Name={Labels.Get("ghelper")}
+                Comment={Labels.Get("asus_laptop_control")}
                 Exec={exePath}
                 Icon=ghelper
                 Terminal=false
@@ -93,21 +94,21 @@ public class LinuxSystemIntegration : ISystemIntegration
         try
         {
             Helpers.Logger.WriteLine($"ShowNotification: {title} - {body}");
-            
+
             // Build notify-send args:
-            //   -a "G-Helper"  → app name shown in notification center
-            //   -e             → transient (auto-dismiss, won't pile up in history)
-            //   -i ICON        → context-appropriate Breeze/freedesktop icon
-            //   -h string:x-canonical-private-synchronous:TAG
-            //                  → same-tagged notifications replace each other (no stacking)
+            // -a "G-Helper"  → app name shown in notification center
+            // -e             → transient (auto-dismiss, won't pile up in history)
+            // -i ICON        → context-appropriate Breeze/freedesktop icon
+            // -h string:x-canonical-private-synchronous:TAG
+            // → same-tagged notifications replace each other (no stacking)
             var tag = title.Replace(" ", "").ToLowerInvariant();
             var args = $"-a \"G-Helper\" -e -h string:x-canonical-private-synchronous:{tag}";
-            
+
             if (iconName != null)
                 args += $" -i {iconName}";
-            
+
             args += $" \"{title}\" \"{body}\"";
-            
+
             var result = SysfsHelper.RunCommand("notify-send", args);
             if (result == null)
             {
@@ -131,7 +132,7 @@ public class LinuxSystemIntegration : ISystemIntegration
         return SysfsHelper.Exists(SysfsHelper.AsusWmiPlatform);
     }
 
-    // ── Camera Toggle ──
+    // Camera Toggle
 
     /// <summary>Check if the camera (uvcvideo) module is currently loaded.</summary>
     public static bool IsCameraEnabled()
@@ -141,7 +142,7 @@ public class LinuxSystemIntegration : ISystemIntegration
     }
 
     /// <summary>Toggle camera by loading/unloading the uvcvideo kernel module.
-    /// Requires root — tries modprobe directly, then pkexec (graphical prompt).</summary>
+    /// Requires root - tries modprobe directly, then pkexec (graphical prompt).</summary>
     public static void SetCameraEnabled(bool enabled)
     {
         string args = enabled ? "uvcvideo" : "-r uvcvideo";
@@ -159,14 +160,15 @@ public class LinuxSystemIntegration : ISystemIntegration
         Helpers.Logger.WriteLine($"Camera {(enabled ? "enabled" : "disabled")}: {(result != null ? "OK (pkexec)" : "failed (needs root)")}");
     }
 
-    // ── Touchpad Toggle ──
+    // Touchpad Toggle
 
     /// <summary>Find the touchpad xinput device ID. Returns null if not found.
     /// Requires xinput (works on X11 and Wayland with XWayland).</summary>
     public static string? FindTouchpadId()
     {
         var fullList = SysfsHelper.RunCommand("xinput", "list");
-        if (fullList == null) return null;
+        if (fullList == null)
+            return null;
 
         foreach (var line in fullList.Split('\n'))
         {
@@ -185,10 +187,12 @@ public class LinuxSystemIntegration : ISystemIntegration
     public static bool? IsTouchpadEnabled()
     {
         var id = FindTouchpadId();
-        if (id == null) return null; // No touchpad found
+        if (id == null)
+            return null; // No touchpad found
 
         var props = SysfsHelper.RunCommand("xinput", $"list-props {id}");
-        if (props == null) return null;
+        if (props == null)
+            return null;
 
         // Look for "Device Enabled" property
         foreach (var line in props.Split('\n'))
@@ -216,13 +220,14 @@ public class LinuxSystemIntegration : ISystemIntegration
         Helpers.Logger.WriteLine($"Touchpad {action}d (xinput id={id})");
     }
 
-    // ── Touchscreen Toggle ──
+    // Touchscreen Toggle
 
     /// <summary>Find the touchscreen xinput device ID. Returns null if not found.</summary>
     public static string? FindTouchscreenId()
     {
         var fullList = SysfsHelper.RunCommand("xinput", "list");
-        if (fullList == null) return null;
+        if (fullList == null)
+            return null;
 
         foreach (var line in fullList.Split('\n'))
         {
@@ -243,10 +248,12 @@ public class LinuxSystemIntegration : ISystemIntegration
     public static bool? IsTouchscreenEnabled()
     {
         var id = FindTouchscreenId();
-        if (id == null) return null; // No touchscreen found
+        if (id == null)
+            return null; // No touchscreen found
 
         var props = SysfsHelper.RunCommand("xinput", $"list-props {id}");
-        if (props == null) return null;
+        if (props == null)
+            return null;
 
         foreach (var line in props.Split('\n'))
         {
@@ -273,7 +280,7 @@ public class LinuxSystemIntegration : ISystemIntegration
         Helpers.Logger.WriteLine($"Touchscreen {action}d (xinput id={id})");
     }
 
-    // ── CPU Core Control ──
+    // CPU Core Control
 
     /// <summary>Get the total number of CPU threads (logical processors).</summary>
     public static int GetCpuCount()
@@ -331,7 +338,8 @@ public class LinuxSystemIntegration : ISystemIntegration
             for (int i = 0; i < total; i++)
             {
                 var onlinePath = Path.Combine(cpuDirs[i], "online");
-                if (!File.Exists(onlinePath)) continue; // cpu0 can't be toggled
+                if (!File.Exists(onlinePath))
+                    continue; // cpu0 can't be toggled
 
                 bool shouldBeOnline = i < targetCount;
                 SysfsHelper.WriteAttribute(onlinePath, shouldBeOnline ? "1" : "0");

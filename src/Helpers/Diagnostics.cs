@@ -16,43 +16,43 @@ public static class Diagnostics
         sb.AppendLine("=== G-Helper Linux Diagnostics ===");
         sb.AppendLine();
 
-        // ── System Identity ──
+        // System Identity
         AppendSystemInfo(sb);
 
-        // ── Model Detection Flags ──
+        // Model Detection Flags
         AppendModelFlags(sb);
 
-        // ── Kernel Modules ──
+        // Kernel Modules
         AppendKernelModules(sb);
 
-        // ── Module Backend (asus-nb-wmi vs asus-armoury) ──
+        // Module Backend (asus-nb-wmi vs asus-armoury)
         AppendModuleBackend(sb);
 
-        // ── Raw WMI (debugfs) ──
+        // Raw WMI (debugfs)
         AppendRawWmiProbe(sb);
 
-        // ── Sysfs Permissions & Values ──
+        // Sysfs Permissions & Values
         AppendSysfsState(sb);
 
-        // ── hwmon Devices ──
+        // hwmon Devices
         AppendHwmon(sb);
 
-        // ── USB HID (ASUS) ──
+        // USB HID (ASUS)
         AppendUsbDevices(sb);
 
-        // ── firmware-attributes (asus_armoury) ──
+        // firmware-attributes (asus_armoury)
         AppendFirmwareAttributes(sb);
 
-        // ── Input Devices ──
+        // Input Devices
         AppendInputDevices(sb);
 
-        // ── udev / tmpfiles ──
+        // udev / tmpfiles
         AppendInstallState(sb);
 
-        // ── Boot service journal ──
+        // Boot service journal
         AppendBootServiceLog(sb);
 
-        // ── Recent log (last, always at the end) ──
+        // Recent log (last, always at the end)
         AppendRecentLog(sb);
 
         return sb.ToString();
@@ -133,7 +133,8 @@ public static class Diagnostics
 
         foreach (var (name, value) in flags)
         {
-            if (value) sb.AppendLine($"  {name}: true");
+            if (value)
+                sb.AppendLine($"  {name}: true");
         }
 
         // Show any that are true; if none are true, say so
@@ -169,7 +170,7 @@ public static class Diagnostics
         else if (hasFirmwareAttrs)
             sb.AppendLine("  Active: asus-armoury (firmware-attributes)");
         else
-            sb.AppendLine("  Active: NONE — no ASUS WMI module detected");
+            sb.AppendLine("  Active: NONE - no ASUS WMI module detected");
 
         // Show which backend resolved for the two safety-critical GPU attributes
         var criticalAttrs = new[] { Platform.Linux.AsusAttributes.DgpuDisable, Platform.Linux.AsusAttributes.GpuMuxMode };
@@ -205,7 +206,7 @@ public static class Diagnostics
     {
         sb.AppendLine("--- Sysfs State ---");
 
-        // Fixed paths (non-WMI attributes — always at known locations)
+        // Fixed paths (non-WMI attributes - always at known locations)
         var fixedPaths = new[]
         {
             // Battery
@@ -236,7 +237,7 @@ public static class Diagnostics
             var perms = GetFilePermissions(path);
             var value = Platform.Linux.SysfsHelper.ReadAttribute(path);
 
-            // kbd_rgb_mode and kbd_rgb_state are DEVICE_ATTR_WO in the kernel — read always fails
+            // kbd_rgb_mode and kbd_rgb_state are DEVICE_ATTR_WO in the kernel - read always fails
             if (value == null && (path.EndsWith("kbd_rgb_mode") || path.EndsWith("kbd_rgb_state")))
                 value = "(write-only, present)";
             else
@@ -274,7 +275,7 @@ public static class Diagnostics
         }
 
         // Resolved WMI attributes (may be legacy sysfs or firmware-attributes)
-        // Uses AsusAttributes.All as single source of truth — covers all 16 known attributes
+        // Uses AsusAttributes.All as single source of truth - covers all 16 known attributes
         sb.AppendLine();
         sb.AppendLine("  WMI attributes (resolved via ResolveAttrPath):");
 
@@ -321,12 +322,18 @@ public static class Diagnostics
                         name.Contains("nvidia", StringComparison.OrdinalIgnoreCase))
                     {
                         var extras = new List<string>();
-                        if (File.Exists(Path.Combine(hwmonDir, "fan1_input"))) extras.Add("fan1");
-                        if (File.Exists(Path.Combine(hwmonDir, "fan2_input"))) extras.Add("fan2");
-                        if (File.Exists(Path.Combine(hwmonDir, "fan3_input"))) extras.Add("fan3");
-                        if (File.Exists(Path.Combine(hwmonDir, "pwm1_enable"))) extras.Add("pwm1");
-                        if (File.Exists(Path.Combine(hwmonDir, "pwm2_enable"))) extras.Add("pwm2");
-                        if (File.Exists(Path.Combine(hwmonDir, "temp1_input"))) extras.Add("temp1");
+                        if (File.Exists(Path.Combine(hwmonDir, "fan1_input")))
+                            extras.Add("fan1");
+                        if (File.Exists(Path.Combine(hwmonDir, "fan2_input")))
+                            extras.Add("fan2");
+                        if (File.Exists(Path.Combine(hwmonDir, "fan3_input")))
+                            extras.Add("fan3");
+                        if (File.Exists(Path.Combine(hwmonDir, "pwm1_enable")))
+                            extras.Add("pwm1");
+                        if (File.Exists(Path.Combine(hwmonDir, "pwm2_enable")))
+                            extras.Add("pwm2");
+                        if (File.Exists(Path.Combine(hwmonDir, "temp1_input")))
+                            extras.Add("temp1");
 
                         var extraStr = extras.Count > 0 ? $" [{string.Join(", ", extras)}]" : "";
                         sb.AppendLine($"  {dirName} = {name}{extraStr}");
@@ -368,7 +375,7 @@ public static class Diagnostics
             {
                 sb.AppendLine("(none found)");
 
-                // Check if hid_asus module is loaded — needed for I2C-HID hidraw nodes
+                // Check if hid_asus module is loaded - needed for I2C-HID hidraw nodes
                 bool hidAsusLoaded = Directory.Exists("/sys/module/hid_asus");
                 if (!hidAsusLoaded)
                     sb.AppendLine("  NOTE: hid_asus module not loaded (try: sudo modprobe hid_asus)");
@@ -434,7 +441,8 @@ public static class Diagnostics
                 sb.AppendLine($"  {deviceName}:");
 
                 var attrsDir = Path.Combine(deviceDir, "attributes");
-                if (!Directory.Exists(attrsDir)) continue;
+                if (!Directory.Exists(attrsDir))
+                    continue;
 
                 foreach (var attrDir in Directory.GetDirectories(attrsDir))
                 {

@@ -1,26 +1,43 @@
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Threading.Tasks;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Threading;
 using GHelper.Linux.Gpu;
+using GHelper.Linux.I18n;
 using GHelper.Linux.Platform.Linux;
 using GHelper.Linux.USB;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace GHelper.Linux.UI.Views;
 
 /// <summary>
-/// Main settings window — Linux port of G-Helper's SettingsForm.
+/// Main settings window - Linux port of G-Helper's SettingsForm.
 /// Mirrors the panel layout: Performance → GPU → Screen → Keyboard → Battery → Footer
 /// </summary>
 public partial class MainWindow : Window
 {
     private readonly DispatcherTimer _refreshTimer;
     private int _batteryRefreshCounter;
+    private int _lastKbdBrightness = -1;
     private int _currentPerfMode = -1;
     private int _currentGpuMode = -1;  // 0=Eco, 1=Standard, 2=Optimized (auto), 3=Ultimate (MUX=0)
+
+    // Easter egg: click version label 7 times → arcade game
+    private int _versionClickCount;
+    private DateTime _versionClickStart;
+    private ArcadeWindow? _arcadeWindow;
+
+    // Donate button state
+    private int _coinClickCount;
+    private bool _coinMuted;
+    private DispatcherTimer? _coinDebounceTimer;
+    private DispatcherTimer? _coinShakeTimer;
+    private int _coinShakeFrame;
+    private TranslateTransform? _coinTransform;
 
     // Accent colors matching G-Helper's RForm.cs
     private static readonly IBrush AccentBrush = new SolidColorBrush(Color.Parse("#4CC2FF"));
@@ -28,10 +45,14 @@ public partial class MainWindow : Window
     private static readonly IBrush StandardBrush = new SolidColorBrush(Color.Parse("#3AAEEF"));
     private static readonly IBrush TurboBrush = new SolidColorBrush(Color.Parse("#FF2020"));
     private static readonly IBrush TransparentBrush = Brushes.Transparent;
+    private static readonly IBrush CoinGoldBrush = new SolidColorBrush(Color.Parse("#FFD700"));
+    private static readonly IBrush CoinDarkBrush = new SolidColorBrush(Color.Parse("#8B6914"));
 
     public MainWindow()
     {
         InitializeComponent();
+        Labels.LanguageChanged += () => Avalonia.Threading.Dispatcher.UIThread.Post(() => ApplyLabels());
+        InitDonate();
 
         // Refresh timer for live sensor data
         _refreshTimer = new DispatcherTimer
@@ -50,7 +71,7 @@ public partial class MainWindow : Window
         };
 
         // On close: let the window actually close (dispose).
-        // Don't cancel — this allows KDE logout/reboot to proceed.
+        // Don't cancel - this allows KDE logout/reboot to proceed.
         // The app stays alive via ShutdownMode.OnExplicitShutdown + tray icon.
         // A new MainWindow is created on tray click (see App.ToggleMainWindow).
         Closing += (_, _) =>
@@ -69,10 +90,11 @@ public partial class MainWindow : Window
         };
     }
 
-    // ── Refresh / Init ──
+    // Refresh / Init
 
     private void RefreshAll()
     {
+        ApplyLabels();
         RefreshPerformanceMode();
         RefreshGpuMode();
         RefreshScreen();
@@ -82,12 +104,63 @@ public partial class MainWindow : Window
         RefreshFooter();
     }
 
+    private void ApplyLabels()
+    {
+        // Button text (find the TextBlock children inside each button's StackPanel)
+        SetButtonText(buttonSilent, Labels.Get("mode_silent"));
+        SetButtonText(buttonBalanced, Labels.Get("mode_balanced"));
+        SetButtonText(buttonTurbo, Labels.Get("mode_turbo"));
+        SetButtonText(buttonFans, Labels.Get("fans_power"));
+        SetButtonText(buttonEco, Labels.Get("gpu_eco"));
+        SetButtonText(buttonStandard, Labels.Get("gpu_standard"));
+        SetButtonText(buttonUltimate, Labels.Get("gpu_ultimate"));
+        SetButtonText(buttonOptimized, Labels.Get("gpu_optimized"));
+        SetButtonText(buttonKeyboard, Labels.Get("backlight"));
+        SetButtonText(buttonExtra, Labels.Get("extra"));
+        SetButtonText(buttonUpdates, Labels.Get("updates"));
+        SetButtonText(buttonQuit, Labels.Get("quit"));
+        labelDonateText.Text = Labels.Get("donate");
+
+        buttonColor1.SetValue(Avalonia.Controls.ToolTip.TipProperty, Labels.Get("color_primary"));
+        buttonColor2.SetValue(Avalonia.Controls.ToolTip.TipProperty, Labels.Get("color_secondary"));
+
+        labelKeyboard.Text = Labels.Get("keyboard_header");
+        checkStartup.Content = Labels.Get("run_on_startup");
+
+        // Refresh dynamic labels
+        RefreshPerformanceMode();
+        RefreshGpuMode();
+        RefreshScreen();
+        RefreshBattery();
+        RefreshKeyboard();
+        RefreshFooter();
+        RefreshAuraCombos();
+    }
+
+    /// <summary>Helper: set text of the last TextBlock inside a Button's StackPanel content.</summary>
+    private static void SetButtonText(Button button, string text)
+    {
+        // Buttons use StackPanel > TextBlock (icon) + TextBlock (text)
+        // We want the LAST TextBlock child
+        if (button.Content is StackPanel sp)
+        {
+            var textBlock = sp.Children.OfType<Avalonia.Controls.TextBlock>().LastOrDefault();
+            if (textBlock != null)
+                textBlock.Text = text;
+        }
+        else if (button.Content is Avalonia.Controls.TextBlock tb)
+        {
+            tb.Text = text;
+        }
+    }
+
     private void RefreshSensorData()
     {
         try
         {
             var wmi = App.Wmi;
-            if (wmi == null) return;
+            if (wmi == null)
+                return;
 
             int cpuTemp = wmi.DeviceGet(0x00120094); // Temp_CPU
             int gpuTemp = wmi.DeviceGet(0x00120097); // Temp_GPU
@@ -96,7 +169,7 @@ public partial class MainWindow : Window
 
             string cpuTempStr = cpuTemp > 0 ? $"{cpuTemp}°C" : "--";
             string cpuFanStr = cpuFan > 0 ? $"{cpuFan}RPM" : "0RPM";
-            
+
             // GPU fan: might be RPM or percentage from nvidia-smi
             string gpuFanStr;
             if (gpuFan > 0)
@@ -111,9 +184,9 @@ public partial class MainWindow : Window
                 gpuFanStr = "0RPM";
 
             // Match Windows layout: "CPU: 32°C Fan: 0RPM" on the right
-            labelCPUFan.Text = $"CPU: {cpuTempStr} Fan: {cpuFanStr}";
+            labelCPUFan.Text = Labels.Format("cpu_fan_info", cpuTempStr, cpuFanStr);
 
-            // GPU fan info — compact for right-aligned display
+            // GPU fan info - compact for right-aligned display
             string gpuTempStr = gpuTemp > 0 ? $"{gpuTemp}°C" : "";
 
             // GPU load: only show when dGPU is active (not in Eco mode)
@@ -134,13 +207,21 @@ public partial class MainWindow : Window
             }
 
             labelGPUFan.Text = gpuTempStr.Length > 0
-                ? $"GPU: {gpuTempStr}{gpuLoadStr}  Fan: {gpuFanStr}"
-                : $"GPU Fan: {gpuFanStr}";
+                ? Labels.Format("gpu_fan_full_info", gpuTempStr, gpuLoadStr, gpuFanStr)
+                : Labels.Format("gpu_fan_only", gpuFanStr);
 
             // Mid fan if available
             int midFan = wmi.GetFanRpm(2);
             if (midFan > 0)
-                labelMidFan.Text = $"Mid Fan: {midFan}RPM";
+                labelMidFan.Text = Labels.Format("mid_fan_info", $"{midFan}RPM");
+
+            // Keyboard brightness, detect external changes (physical keys, kernel driver)
+            int kbdBrightness = wmi.GetKeyboardBrightness();
+            if (kbdBrightness >= 0 && kbdBrightness != _lastKbdBrightness)
+            {
+                _lastKbdBrightness = kbdBrightness;
+                RefreshKeyboard();
+            }
         }
         catch (Exception ex)
         {
@@ -148,25 +229,26 @@ public partial class MainWindow : Window
         }
     }
 
-    // ── Performance Mode ──
+    // Performance Mode
 
     public void RefreshPerformanceMode()
     {
         var wmi = App.Wmi;
-        if (wmi == null) return;
+        if (wmi == null)
+            return;
 
         _currentPerfMode = wmi.GetThrottleThermalPolicy();
 
         string modeName = _currentPerfMode switch
         {
-            0 => "Balanced",
-            1 => "Turbo",
-            2 => "Silent",
-            _ => "Unknown"
+            0 => Labels.Get("mode_balanced"),
+            1 => Labels.Get("mode_turbo"),
+            2 => Labels.Get("mode_silent"),
+            _ => Labels.Get("mode_unknown")
         };
 
         // Combined header: "Mode: Balanced" (matches Windows layout)
-        labelPerf.Text = $"Mode: {modeName}";
+        labelPerf.Text = Labels.Format("mode_prefix", modeName);
         labelPerfMode.Text = modeName;
         UpdatePerfButtons();
     }
@@ -197,7 +279,8 @@ public partial class MainWindow : Window
         if (_fansWindow == null || !_fansWindow.IsVisible)
         {
             _fansWindow = new FansWindow();
-            if (Helpers.AppConfig.Is("topmost")) _fansWindow.Topmost = true;
+            if (Helpers.AppConfig.Is("topmost"))
+                _fansWindow.Topmost = true;
             _fansWindow.Show();
         }
         else
@@ -206,16 +289,22 @@ public partial class MainWindow : Window
         }
     }
 
-    // ── GPU Mode ──
+    // GPU Mode
 
-    /// <summary>Public wrapper for RefreshGpuMode — called from App.cs on power state changes.</summary>
+    /// <summary>Public wrappers for refresh methods - called from App.cs on power state changes.</summary>
     public void RefreshGpuModePublic() => RefreshGpuMode();
     public void RefreshBatteryPublic() => RefreshBattery();
+    public void RefreshScreenPublic() => RefreshScreen();
+
+    /// <summary>Forward keyboard brightness refresh to ExtraWindow if open.</summary>
+    public void RefreshExtraKeyboardBrightness()
+        => _extraWindow?.RefreshKeyboardBrightness();
 
     private void RefreshGpuMode()
     {
         var wmi = App.Wmi;
-        if (wmi == null) return;
+        if (wmi == null)
+            return;
 
         // No GPU Eco support → hide entire GPU panel
         if (!wmi.IsGpuEcoAvailable())
@@ -251,31 +340,31 @@ public partial class MainWindow : Window
 
         string modeName = _currentGpuMode switch
         {
-            0 => "Eco",
-            1 => "Standard",
-            2 => "Optimized",
-            3 => "Ultimate",
-            _ => "Unknown"
+            0 => Labels.Get("gpu_eco"),
+            1 => Labels.Get("gpu_standard"),
+            2 => Labels.Get("gpu_optimized"),
+            3 => Labels.Get("gpu_ultimate"),
+            _ => Labels.Get("gpu_unknown")
         };
 
-        labelGPU.Text = $"GPU Mode: {modeName}";
+        labelGPU.Text = Labels.Format("gpu_mode_prefix", modeName);
         labelGPUMode.Text = modeName;
         UpdateGpuButtons();
 
-        // GPU tip — check for pending reboot first
+        // GPU tip - check for pending reboot first
         if (gpu?.IsPendingReboot() == true)
         {
             string? pending = Helpers.AppConfig.GetString("gpu_mode");
-            labelTipGPU.Text = $"{pending?.ToUpperInvariant() ?? "Mode"} pending — reboot to apply";
+            labelTipGPU.Text = Labels.Format("gpu_pending_reboot", pending?.ToUpperInvariant() ?? Labels.Get("gpu_pending_mode"));
         }
         else
         {
             labelTipGPU.Text = _currentGpuMode switch
             {
-                0 => "dGPU is off — maximum battery life",
-                1 => "Hybrid mode — dGPU powers on when needed",
-                2 => "Auto Eco on battery, Standard on AC power",
-                3 => "dGPU direct — bypass iGPU for best performance (requires reboot)",
+                0 => Labels.Get("gpu_tip_eco"),
+                1 => Labels.Get("gpu_tip_standard"),
+                2 => Labels.Get("gpu_tip_optimized"),
+                3 => Labels.Get("gpu_tip_ultimate"),
                 _ => ""
             };
         }
@@ -320,7 +409,8 @@ public partial class MainWindow : Window
     private void RequestGpuModeSwitch(GpuMode target, string switchingText)
     {
         var gpu = App.GpuModeCtrl;
-        if (gpu == null) return;
+        if (gpu == null)
+            return;
 
         if (gpu.IsSwitchInProgress)
         {
@@ -350,7 +440,7 @@ public partial class MainWindow : Window
     }
 
     /// <summary>
-    /// Handle GpuSwitchResult on the UI thread — show notifications, update tips, show dialogs.
+    /// Handle GpuSwitchResult on the UI thread - show notifications, update tips, show dialogs.
     /// </summary>
     private void HandleGpuSwitchResult(GpuSwitchResult result, GpuMode target)
     {
@@ -361,13 +451,13 @@ public partial class MainWindow : Window
             case GpuSwitchResult.Applied:
                 string appliedText = target switch
                 {
-                    GpuMode.Eco => "Eco mode — dGPU disabled",
-                    GpuMode.Standard => "Standard mode — hybrid dGPU",
-                    GpuMode.Optimized => "Optimized — auto Eco/Standard based on power",
-                    GpuMode.Ultimate => "Ultimate mode — dGPU direct",
-                    _ => "GPU mode changed"
+                    GpuMode.Eco => Labels.Get("gpu_notify_eco"),
+                    GpuMode.Standard => Labels.Get("gpu_notify_standard"),
+                    GpuMode.Optimized => Labels.Get("gpu_notify_optimized"),
+                    GpuMode.Ultimate => Labels.Get("gpu_notify_ultimate"),
+                    _ => Labels.Get("gpu_notify_changed")
                 };
-                App.System?.ShowNotification("GPU Mode", appliedText, "video-display");
+                App.System?.ShowNotification(Labels.Get("gpu_mode"), appliedText, "video-display");
                 break;
 
             case GpuSwitchResult.AlreadySet:
@@ -377,22 +467,22 @@ public partial class MainWindow : Window
             case GpuSwitchResult.RebootRequired:
                 string rebootText = target switch
                 {
-                    GpuMode.Ultimate => "Ultimate mode set — reboot required",
-                    GpuMode.Standard => "Standard mode set — reboot required for MUX change",
-                    GpuMode.Optimized => "Optimized mode — reboot required for MUX change",
-                    GpuMode.Eco => "Eco mode requires reboot — MUX and GPU changes will apply",
-                    _ => "Reboot required for GPU mode change"
+                    GpuMode.Ultimate => Labels.Get("gpu_reboot_ultimate"),
+                    GpuMode.Standard => Labels.Get("gpu_reboot_standard"),
+                    GpuMode.Optimized => Labels.Get("gpu_reboot_optimized"),
+                    GpuMode.Eco => Labels.Get("gpu_reboot_eco"),
+                    _ => Labels.Get("gpu_reboot_generic")
                 };
                 labelTipGPU.Text = target == GpuMode.Optimized
-                    ? "MUX switch changed — reboot required, then auto-switching will begin"
-                    : "You must reboot for changes to take effect";
-                App.System?.ShowNotification("GPU Mode", rebootText, "system-reboot");
+                    ? Labels.Get("gpu_mux_reboot_auto")
+                    : Labels.Get("gpu_mux_reboot");
+                App.System?.ShowNotification(Labels.Get("gpu_mode"), rebootText, "system-reboot");
                 break;
 
             case GpuSwitchResult.EcoBlocked:
-                labelTipGPU.Text = "Eco mode blocked — MUX was changed to Ultimate this session. Reboot first.";
-                App.System?.ShowNotification("GPU Mode",
-                    "Eco mode blocked: MUX was changed to Ultimate this session. Reboot first, then switch to Eco.",
+                labelTipGPU.Text = Labels.Get("gpu_eco_blocked");
+                App.System?.ShowNotification(Labels.Get("gpu_mode"),
+                    Labels.Get("gpu_eco_blocked_detail"),
                     "dialog-warning");
                 break;
 
@@ -401,21 +491,21 @@ public partial class MainWindow : Window
                 break;
 
             case GpuSwitchResult.Deferred:
-                labelTipGPU.Text = "Eco mode pending — reboot to apply";
-                App.System?.ShowNotification("GPU Mode",
-                    "Eco mode will activate after reboot", "system-reboot");
+                labelTipGPU.Text = Labels.Get("gpu_eco_pending");
+                App.System?.ShowNotification(Labels.Get("gpu_mode"),
+                    Labels.Get("gpu_eco_after_reboot"), "system-reboot");
                 break;
 
             case GpuSwitchResult.Failed:
-                App.System?.ShowNotification("GPU Mode",
-                    "GPU mode switch failed — check logs", "dialog-error");
+                App.System?.ShowNotification(Labels.Get("gpu_mode"),
+                    Labels.Get("gpu_switch_failed"), "dialog-error");
                 break;
         }
     }
 
     /// <summary>
     /// Show the "GPU Driver Active" confirmation dialog with three choices.
-    /// All button properties set directly — no CSS classes — for full control
+    /// All button properties set directly - no CSS classes - for full control
     /// over styling. The ghelper class is designed for grid-stretched main window
     /// buttons and fights with dialog layout (HorizontalAlignment=Stretch, hover
     /// state overrides accent color).
@@ -424,15 +514,15 @@ public partial class MainWindow : Window
     {
         var dialog = new Window
         {
-            Title = "GPU Driver Active",
+            Title = Labels.Get("gpu_driver_title"),
             Width = 490,
             Height = 310,
             WindowStartupLocation = WindowStartupLocation.CenterOwner,
             CanResize = false,
-            SystemDecorations = SystemDecorations.Full,
+            WindowDecorations = WindowDecorations.Full,
         };
 
-        // ── Content card — matches main window panel style (#262626) ──
+        // Content card - matches main window panel style (#262626)
         var card = new Border
         {
             Background = new SolidColorBrush(Color.Parse("#262626")),
@@ -441,17 +531,20 @@ public partial class MainWindow : Window
             Margin = new Avalonia.Thickness(0, 0, 0, 18),
         };
 
-        var titleIcon = new TextBlock
+        var titleIcon = new Avalonia.Controls.Image
         {
-            Text = "\u26a0",  // ⚠
-            FontSize = 20,
+            Source = new Avalonia.Media.Imaging.Bitmap(
+                Avalonia.Platform.AssetLoader.Open(new Uri("avares://ghelper/UI/Assets/Icons/warning.png"))),
+            Width = 22,
+            Height = 22,
             VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
             Margin = new Avalonia.Thickness(0, 0, 10, 0),
         };
+        Avalonia.Media.RenderOptions.SetBitmapInterpolationMode(titleIcon, Avalonia.Media.Imaging.BitmapInterpolationMode.HighQuality);
 
         var titleText = new TextBlock
         {
-            Text = "GPU Driver Active",
+            Text = Labels.Get("gpu_driver_title"),
             FontSize = 15,
             FontWeight = Avalonia.Media.FontWeight.Bold,
             VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
@@ -467,8 +560,7 @@ public partial class MainWindow : Window
 
         var body = new TextBlock
         {
-            Text = "The GPU is currently in use by the display system.\n" +
-                   "Switching to Eco mode requires releasing the driver first.",
+            Text = Labels.Get("gpu_driver_body"),
             TextWrapping = Avalonia.Media.TextWrapping.Wrap,
             FontSize = 13,
             LineHeight = 20,
@@ -480,7 +572,7 @@ public partial class MainWindow : Window
         cardContent.Children.Add(body);
         card.Child = cardContent;
 
-        // ── Buttons — all properties set directly, no CSS class ──
+        // Buttons - all properties set directly, no CSS class
         // Shared properties applied via helper
         Button MakeDialogButton(string text, string bg, string fg, bool bold = false)
         {
@@ -503,18 +595,18 @@ public partial class MainWindow : Window
             };
         }
 
-        var btnSwitchNow   = MakeDialogButton("Switch Now",    "#4CC2FF", "#000000", bold: true);
-        var btnAfterReboot = MakeDialogButton("After Reboot",  "#373737", "#F0F0F0");
-        var btnCancel      = MakeDialogButton("Cancel",        "#2A2A2A", "#888888");
+        var btnSwitchNow = MakeDialogButton(Labels.Get("gpu_driver_switch_now"), "#4CC2FF", "#000000", bold: true);
+        var btnAfterReboot = MakeDialogButton(Labels.Get("gpu_driver_after_reboot"), "#373737", "#F0F0F0");
+        var btnCancel = MakeDialogButton(Labels.Get("cancel"), "#2A2A2A", "#888888");
 
         btnSwitchNow.Margin = new Avalonia.Thickness(0, 0, 8, 0);
         btnAfterReboot.Margin = new Avalonia.Thickness(0, 0, 8, 0);
 
-        // ── Button click handlers ──
+        // Button click handlers
         btnSwitchNow.Click += (_, _) =>
         {
             dialog.Close();
-            LockGpuButtons("Releasing GPU driver, please wait...");
+            LockGpuButtons(Labels.Get("gpu_releasing_driver"));
 
             Task.Run(() =>
             {
@@ -528,10 +620,10 @@ public partial class MainWindow : Window
                     if (result == GpuSwitchResult.Deferred)
                     {
                         // Driver release failed (rmmod failed, pkexec cancelled, etc.)
-                        labelTipGPU.Text = "Eco mode pending — reboot to apply";
+                        labelTipGPU.Text = Labels.Get("gpu_eco_pending");
                         RefreshGpuMode();
-                        App.System?.ShowNotification("GPU Mode",
-                            "GPU held by display system — Eco mode scheduled for reboot",
+                        App.System?.ShowNotification(Labels.Get("gpu_mode"),
+                            Labels.Get("gpu_driver_eco_scheduled"),
                             "dialog-warning");
                         return;
                     }
@@ -545,10 +637,10 @@ public partial class MainWindow : Window
         {
             dialog.Close();
             App.GpuModeCtrl?.ScheduleModeForReboot(target);
-            labelTipGPU.Text = "Eco mode pending — reboot to apply";
+            labelTipGPU.Text = Labels.Get("gpu_eco_pending");
             RefreshGpuMode();
-            App.System?.ShowNotification("GPU Mode",
-                "Eco mode will activate after reboot", "system-reboot");
+            App.System?.ShowNotification(Labels.Get("gpu_mode"),
+                Labels.Get("gpu_eco_after_reboot"), "system-reboot");
         };
 
         btnCancel.Click += (_, _) =>
@@ -557,7 +649,7 @@ public partial class MainWindow : Window
             RefreshGpuMode();
         };
 
-        // ── Button row ──
+        // Button row
         var buttonPanel = new StackPanel
         {
             Orientation = Avalonia.Layout.Orientation.Horizontal,
@@ -567,11 +659,10 @@ public partial class MainWindow : Window
         buttonPanel.Children.Add(btnAfterReboot);
         buttonPanel.Children.Add(btnCancel);
 
-        // ── Footer help text ──
+        // Footer help text
         var footer = new TextBlock
         {
-            Text = "Switch Now attempts to unload the GPU driver (admin password\n" +
-                   "may be required). After Reboot saves for next startup.",
+            Text = Labels.Get("gpu_driver_footer"),
             Foreground = new SolidColorBrush(Color.Parse("#666666")),
             TextWrapping = Avalonia.Media.TextWrapping.Wrap,
             FontSize = 11,
@@ -579,7 +670,7 @@ public partial class MainWindow : Window
             Margin = new Avalonia.Thickness(2, 14, 0, 0),
         };
 
-        // ── Layout ──
+        // Layout
         var outerStack = new StackPanel { Margin = new Avalonia.Thickness(24, 20, 24, 16) };
         outerStack.Children.Add(card);
         outerStack.Children.Add(buttonPanel);
@@ -590,39 +681,43 @@ public partial class MainWindow : Window
     }
 
     private void ButtonEco_Click(object? sender, RoutedEventArgs e)
-        => RequestGpuModeSwitch(GpuMode.Eco, "Switching to Eco mode, please wait...");
+        => RequestGpuModeSwitch(GpuMode.Eco, Labels.Get("gpu_switching_eco"));
 
     private void ButtonStandard_Click(object? sender, RoutedEventArgs e)
-        => RequestGpuModeSwitch(GpuMode.Standard, "Switching to Standard mode...");
+        => RequestGpuModeSwitch(GpuMode.Standard, Labels.Get("gpu_switching_standard"));
 
     private void ButtonOptimized_Click(object? sender, RoutedEventArgs e)
-        => RequestGpuModeSwitch(GpuMode.Optimized, "Switching GPU mode...");
+        => RequestGpuModeSwitch(GpuMode.Optimized, Labels.Get("gpu_switching_generic"));
 
     private void ButtonUltimate_Click(object? sender, RoutedEventArgs e)
-        => RequestGpuModeSwitch(GpuMode.Ultimate, "Switching to Ultimate mode...");
+        => RequestGpuModeSwitch(GpuMode.Ultimate, Labels.Get("gpu_switching_ultimate"));
 
-    // ── Screen ──
+    // Screen
 
     private void RefreshScreen()
     {
         var display = App.Display;
-        if (display == null) return;
+        if (display == null)
+            return;
 
         int hz = display.GetRefreshRate();
+        var rates = display.GetAvailableRefreshRates();
+        int maxHz = rates.Count > 0 ? rates[0] : 120;
+        bool isAuto = Helpers.AppConfig.Is("screen_auto");
+
         if (hz > 0)
         {
-            // Combined header: "Laptop Screen: 60Hz" (matches Windows layout)
-            labelScreen.Text = $"Laptop Screen: {hz}Hz";
+            labelScreen.Text = Labels.Format(isAuto ? "screen_prefix_auto" : "screen_prefix", hz);
             labelScreenHz.Text = $"{hz} Hz";
-
-            // Update max refresh button label
-            var rates = display.GetAvailableRefreshRates();
-            if (rates.Count > 0)
-            {
-                int maxHz = rates[0];
-                labelHighRefresh.Text = $"{maxHz}Hz";
-            }
         }
+
+        // Update max refresh button label
+        labelHighRefresh.Text = $"{maxHz}Hz";
+
+        // Highlight active button
+        SetButtonActive(buttonScreenAuto, isAuto);
+        SetButtonActive(button60Hz, !isAuto && hz == 60);
+        SetButtonActive(button120Hz, !isAuto && hz > 60);
 
         // Check for MiniLED support
         bool hasMiniLed = App.Wmi?.IsFeatureSupported(AsusAttributes.MiniLedMode) ?? false;
@@ -631,18 +726,32 @@ public partial class MainWindow : Window
 
     private void ButtonScreenAuto_Click(object? sender, RoutedEventArgs e)
     {
-        // TODO: Toggle auto screen refresh rate
-        Helpers.Logger.WriteLine("Screen auto not yet implemented");
+        bool wasAuto = Helpers.AppConfig.Is("screen_auto");
+        if (wasAuto)
+        {
+            // Toggle off, keep current rate, just disable auto
+            Helpers.AppConfig.Set("screen_auto", 0);
+            Helpers.Logger.WriteLine("Screen auto: disabled");
+        }
+        else
+        {
+            // Enable auto and apply immediately
+            Helpers.AppConfig.Set("screen_auto", 1);
+            (App.Current as App)?.AutoScreen();
+        }
+        RefreshScreen();
     }
 
     private void Button60Hz_Click(object? sender, RoutedEventArgs e)
     {
+        Helpers.AppConfig.Set("screen_auto", 0);
         App.Display?.SetRefreshRate(60);
         RefreshScreen();
     }
 
     private void Button120Hz_Click(object? sender, RoutedEventArgs e)
     {
+        Helpers.AppConfig.Set("screen_auto", 0);
         var rates = App.Display?.GetAvailableRefreshRates();
         if (rates != null && rates.Count > 0)
             App.Display?.SetRefreshRate(rates[0]); // Use max available
@@ -654,7 +763,8 @@ public partial class MainWindow : Window
     private void ButtonMiniled_Click(object? sender, RoutedEventArgs e)
     {
         var wmi = App.Wmi;
-        if (wmi == null) return;
+        if (wmi == null)
+            return;
 
         int current = wmi.GetMiniLedMode();
         int next = current switch
@@ -667,7 +777,7 @@ public partial class MainWindow : Window
         Helpers.Logger.WriteLine($"MiniLED mode → {next}");
     }
 
-    // ── Keyboard / AURA ──
+    // Keyboard / AURA
 
     private bool _auraInitialized = false;
     private static bool _auraHardwareInitialized = false;
@@ -677,40 +787,44 @@ public partial class MainWindow : Window
     public void RefreshKeyboard()
     {
         var wmi = App.Wmi;
-        if (wmi == null) return;
+        if (wmi == null)
+            return;
 
         int brightness = wmi.GetKeyboardBrightness();
         if (brightness >= 0)
         {
             string level = brightness switch
             {
-                0 => "Off",
-                1 => "Low",
-                2 => "Medium",
-                3 => "High",
-                _ => $"Level {brightness}"
+                0 => Labels.Get("backlight_off"),
+                1 => Labels.Get("backlight_low"),
+                2 => Labels.Get("backlight_medium"),
+                3 => Labels.Get("backlight_high"),
+                _ => Labels.Format("backlight_level", brightness)
             };
-            labelBacklight.Text = $"Backlight: {level}";
+            labelBacklight.Text = Labels.Format("backlight_prefix", level);
         }
 
         InitAura();
+        RefreshAuraCombos();
+        UpdateColorButtons();
     }
 
     /// <summary>
-    /// Initialize AURA hardware — HID handshake, load config, apply RGB.
+    /// Initialize AURA hardware - HID handshake, load config, apply RGB.
     /// </summary>
     public static bool InitAuraHardware()
     {
-        if (_auraHardwareInitialized) return Aura.IsAvailable();
+        if (_auraHardwareInitialized)
+            return Aura.IsAvailable();
         _auraHardwareInitialized = true;
 
         if (!Aura.IsAvailable())
         {
-            Helpers.Logger.WriteLine("No AURA HID device found — RGB controls hidden");
+            Helpers.Logger.WriteLine("No AURA HID device found - RGB controls hidden");
             return false;
         }
 
-        Helpers.Logger.WriteLine("AURA HID device found — initializing RGB controls");
+        Helpers.Logger.WriteLine("AURA HID device found - initializing RGB controls");
 
         // Send AURA HID init handshake (wake up the LED controller).
         // This is critical for I2C-HID keyboards (e.g., FA608PP) that need
@@ -733,15 +847,17 @@ public partial class MainWindow : Window
 
     private void InitAura()
     {
-        if (_auraInitialized) return;
+        if (_auraInitialized)
+            return;
 
         // Run hardware init if not already done (normal startup path).
-        // Don't set _auraInitialized until hardware is confirmed available —
+        // Don't set _auraInitialized until hardware is confirmed available
         // if the background InitAuraHardware() hasn't finished yet, we'll retry
         // when it posts RefreshKeyboard() back to the UI thread.
         bool hasAura = InitAuraHardware();
         panelAura.IsVisible = hasAura;
-        if (!hasAura) return;
+        if (!hasAura)
+            return;
 
         _auraInitialized = true;
 
@@ -760,7 +876,8 @@ public partial class MainWindow : Window
         foreach (var kv in modes)
         {
             comboAuraMode.Items.Add(new ComboBoxItem { Content = kv.Value, Tag = (int)kv.Key });
-            if (kv.Key == Aura.Mode) selectedModeIdx = idx;
+            if (kv.Key == Aura.Mode)
+                selectedModeIdx = idx;
             idx++;
         }
         comboAuraMode.SelectedIndex = selectedModeIdx;
@@ -773,7 +890,8 @@ public partial class MainWindow : Window
         foreach (var kv in speeds)
         {
             comboAuraSpeed.Items.Add(new ComboBoxItem { Content = kv.Value, Tag = (int)kv.Key });
-            if (kv.Key == Aura.Speed) selectedSpeedIdx = idx;
+            if (kv.Key == Aura.Speed)
+                selectedSpeedIdx = idx;
             idx++;
         }
         comboAuraSpeed.SelectedIndex = selectedSpeedIdx;
@@ -796,9 +914,48 @@ public partial class MainWindow : Window
         buttonColor1.IsVisible = Aura.UsesColor();
     }
 
+    /// <summary>Rebuild Aura mode/speed combo items with current language strings.</summary>
+    private void RefreshAuraCombos()
+    {
+        if (!_auraInitialized)
+            return;
+
+        _suppressAuraEvents = true;
+
+        // Mode combo, select based on current Aura.Mode (always up-to-date)
+        int savedMode = (int)Aura.Mode;
+        comboAuraMode.Items.Clear();
+        int selectedIdx = 0, idx = 0;
+        foreach (var kv in Aura.GetModes())
+        {
+            comboAuraMode.Items.Add(new ComboBoxItem { Content = kv.Value, Tag = (int)kv.Key });
+            if ((int)kv.Key == savedMode)
+                selectedIdx = idx;
+            idx++;
+        }
+        comboAuraMode.SelectedIndex = selectedIdx;
+
+        // Speed combo, select based on current Aura.Speed (always up-to-date)
+        int savedSpeed = (int)Aura.Speed;
+        comboAuraSpeed.Items.Clear();
+        selectedIdx = 0;
+        idx = 0;
+        foreach (var kv in Aura.GetSpeeds())
+        {
+            comboAuraSpeed.Items.Add(new ComboBoxItem { Content = kv.Value, Tag = (int)kv.Key });
+            if ((int)kv.Key == savedSpeed)
+                selectedIdx = idx;
+            idx++;
+        }
+        comboAuraSpeed.SelectedIndex = selectedIdx;
+
+        _suppressAuraEvents = false;
+    }
+
     private void ComboAuraMode_Changed(object? sender, SelectionChangedEventArgs e)
     {
-        if (_suppressAuraEvents) return;
+        if (_suppressAuraEvents)
+            return;
         if (comboAuraMode.SelectedItem is ComboBoxItem item && item.Tag is int modeVal)
         {
             Helpers.Logger.WriteLine($"AURA mode changed → {(AuraMode)modeVal}");
@@ -811,7 +968,8 @@ public partial class MainWindow : Window
 
     private void ComboAuraSpeed_Changed(object? sender, SelectionChangedEventArgs e)
     {
-        if (_suppressAuraEvents) return;
+        if (_suppressAuraEvents)
+            return;
         if (comboAuraSpeed.SelectedItem is ComboBoxItem item && item.Tag is int speedVal)
         {
             Helpers.AppConfig.Set("aura_speed", speedVal);
@@ -854,13 +1012,13 @@ public partial class MainWindow : Window
     {
         var pickerWindow = new Window
         {
-            Title = "Pick Color",
+            Title = Labels.Get("pick_color"),
             Width = 320,
             Height = 420,
             WindowStartupLocation = WindowStartupLocation.CenterOwner,
             Background = new SolidColorBrush(Color.Parse("#1C1C1C")),
             CanResize = false,
-            SystemDecorations = SystemDecorations.Full,
+            WindowDecorations = WindowDecorations.Full,
         };
 
         var preview = new Border
@@ -882,7 +1040,7 @@ public partial class MainWindow : Window
         var labelB = new TextBlock { Text = $"B: {initB}", Foreground = Brushes.White, Margin = new Avalonia.Thickness(4, 2, 0, 0) };
 
         // Hex color input
-        var hexLabel = new TextBlock { Text = "Hex:", Foreground = Brushes.White, Margin = new Avalonia.Thickness(4, 6, 0, 0), FontSize = 11 };
+        var hexLabel = new TextBlock { Text = Labels.Get("hex_label"), Foreground = Brushes.White, Margin = new Avalonia.Thickness(4, 6, 0, 0), FontSize = 11 };
         var hexInput = new TextBox
         {
             Text = $"#{initR:X2}{initG:X2}{initB:X2}",
@@ -916,7 +1074,8 @@ public partial class MainWindow : Window
         hexInput.TextChanged += (_, _) =>
         {
             var text = hexInput.Text?.Trim() ?? "";
-            if (!text.StartsWith("#")) text = "#" + text;
+            if (!text.StartsWith("#"))
+                text = "#" + text;
             if (text.Length == 7)
             {
                 try
@@ -938,7 +1097,7 @@ public partial class MainWindow : Window
 
         var btnOk = new Button
         {
-            Content = "Apply",
+            Content = Labels.Get("apply"),
             HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,
             Margin = new Avalonia.Thickness(0, 12, 0, 0),
             MinWidth = 120,
@@ -964,7 +1123,8 @@ public partial class MainWindow : Window
         {
             var btn = new Button
             {
-                Width = 28, Height = 28,
+                Width = 28,
+                Height = 28,
                 Background = new SolidColorBrush(Color.FromRgb(pr, pg, pb)),
                 Margin = new Avalonia.Thickness(1),
                 BorderThickness = new Avalonia.Thickness(1),
@@ -1018,7 +1178,8 @@ public partial class MainWindow : Window
     private void ButtonKeyboard_Click(object? sender, RoutedEventArgs e)
     {
         var wmi = App.Wmi;
-        if (wmi == null) return;
+        if (wmi == null)
+            return;
 
         int current = wmi.GetKeyboardBrightness();
         int next = (current + 1) % 4; // Cycle 0→1→2→3→0
@@ -1026,12 +1187,13 @@ public partial class MainWindow : Window
         RefreshKeyboard();
     }
 
-    // ── Battery ──
+    // Battery
 
     private void RefreshBattery()
     {
         var wmi = App.Wmi;
-        if (wmi == null) return;
+        if (wmi == null)
+            return;
 
         // For models that only accept 60/80/100, snap slider to valid values
         if (Helpers.AppConfig.IsChargeLimit6080())
@@ -1048,7 +1210,7 @@ public partial class MainWindow : Window
             _updatingBatterySlider = false;
             labelBatteryLimit.Text = $"{limit}%";
             // Combined header: "Battery Charge Limit: 80%" (matches Windows)
-            labelBattery.Text = $"Battery Charge Limit: {limit}%";
+            labelBattery.Text = Labels.Format("battery_limit_prefix", limit);
         }
 
         // Show discharge/charge rate in battery section header (right side)
@@ -1065,19 +1227,19 @@ public partial class MainWindow : Window
             {
                 double watts = Math.Abs(drainMw) / 1000.0;
                 string rateStr = drainMw > 0
-                    ? $"Discharging: {watts:F1}W"
-                    : $"Charging: {watts:F1}W";
+                    ? Labels.Format("discharging_watts", $"{watts:F1}")
+                    : Labels.Format("charging_watts", $"{watts:F1}");
                 labelCharge.Text = rateStr;
             }
             else if (acPlugged)
             {
-                labelCharge.Text = "Plugged in";
+                labelCharge.Text = Labels.Get("plugged_in");
             }
 
             // Charge level in footer
             if (level >= 0)
             {
-                labelChargeFooter.Text = $"Charge: {level}%";
+                labelChargeFooter.Text = Labels.Format("charge_prefix", level);
             }
         }
     }
@@ -1087,15 +1249,16 @@ public partial class MainWindow : Window
 
     private void SliderBattery_ValueChanged(object? sender, Avalonia.Controls.Primitives.RangeBaseValueChangedEventArgs e)
     {
-        if (_updatingBatterySlider) return;
+        if (_updatingBatterySlider)
+            return;
 
         int limit = (int)e.NewValue;
 
         // Update labels immediately (responsive UI)
         labelBatteryLimit.Text = $"{limit}%";
-        labelBattery.Text = $"Battery Charge Limit: {limit}%";
+        labelBattery.Text = Labels.Format("battery_limit_prefix", limit);
 
-        // Debounce the sysfs write — only write 300ms after the user stops dragging
+        // Debounce the sysfs write - only write 300ms after the user stops dragging
         _batteryDebounce?.Stop();
         _batteryDebounce ??= new System.Timers.Timer(300) { AutoReset = false };
         _batteryDebounce.Elapsed -= BatteryDebounce_Elapsed;
@@ -1105,7 +1268,7 @@ public partial class MainWindow : Window
 
     private void BatteryDebounce_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
     {
-        // Timer fires on thread pool — read slider value and write to sysfs
+        // Timer fires on thread pool - read slider value and write to sysfs
         Avalonia.Threading.Dispatcher.UIThread.Post(() =>
         {
             int limit = (int)sliderBattery.Value;
@@ -1116,7 +1279,7 @@ public partial class MainWindow : Window
                 // Re-read actual (firmware may clamp on 6080 models)
                 int actual = App.Wmi?.GetBatteryChargeLimit() ?? limit;
                 labelBatteryLimit.Text = $"{actual}%";
-                labelBattery.Text = $"Battery Charge Limit: {actual}%";
+                labelBattery.Text = Labels.Format("battery_limit_prefix", actual);
                 Helpers.AppConfig.Set("charge_limit", actual);
 
                 if (actual != limit && actual > 0)
@@ -1128,7 +1291,7 @@ public partial class MainWindow : Window
             }
             else
             {
-                // Write failed — save user intent to config anyway
+                // Write failed - save user intent to config anyway
                 Helpers.AppConfig.Set("charge_limit", limit);
             }
         });
@@ -1160,20 +1323,21 @@ public partial class MainWindow : Window
         SetBatteryLimit(100);
     }
 
-    // ── Footer ──
+    // Footer
 
     private void RefreshFooter()
     {
         var sys = App.System;
-        if (sys == null) return;
+        if (sys == null)
+            return;
 
-        string model = sys.GetModelName() ?? "Unknown ASUS";
+        string model = sys.GetModelName() ?? Labels.Get("unknown_asus");
 
         // Show model in window title (like Windows G-Helper)
-        Title = $"G-Helper — {model}";
+        Title = Labels.Format("title_prefix", model);
 
         // Version + model in footer
-        labelVersion.Text = $"v{Helpers.AppConfig.AppVersion} — {model}";
+        labelVersion.Text = Labels.Format("version_prefix", Helpers.AppConfig.AppVersion, model);
 
         // Check autostart status from config (suppress to avoid re-writing .desktop file)
         _suppressEvents = true;
@@ -1181,34 +1345,42 @@ public partial class MainWindow : Window
         _suppressEvents = false;
 
         // System info (same as ExtraWindow)
-        labelSysModel.Text = $"Model: {model}";
-        labelSysBios.Text = $"BIOS: {sys.GetBiosVersion()}";
-        labelSysKernel.Text = $"Kernel: {sys.GetKernelVersion()}";
+        labelSysModel.Text = Labels.Format("model_prefix", model);
+        labelSysBios.Text = Labels.Format("bios_prefix", sys.GetBiosVersion());
+        labelSysKernel.Text = Labels.Format("kernel_prefix", sys.GetKernelVersion());
 
         bool wmiLoaded = sys.IsAsusWmiLoaded();
-        labelSysWmi.Text = $"asus-wmi: {(wmiLoaded ? "\u2713 Loaded" : "\u2717 Not loaded")}";
+        labelSysWmi.Text = wmiLoaded ? Labels.Get("asus_wmi_loaded") : Labels.Get("asus_wmi_not_loaded");
 
         var features = new List<string>();
         var wmi = App.Wmi;
         if (wmi != null)
         {
-            if (wmi.IsFeatureSupported(AsusAttributes.ThrottleThermalPolicy)) features.Add("Performance Modes");
-            if (wmi.IsFeatureSupported(AsusAttributes.DgpuDisable)) features.Add("GPU Eco");
-            if (wmi.IsFeatureSupported(AsusAttributes.GpuMuxMode)) features.Add("MUX Switch");
-            if (wmi.IsFeatureSupported(AsusAttributes.PanelOd)) features.Add("Panel Overdrive");
-            if (wmi.IsFeatureSupported(AsusAttributes.MiniLedMode)) features.Add("MiniLED");
-            if (wmi.IsFeatureSupported(AsusAttributes.PptPl1Spl)) features.Add("PPT Limits");
-            if (wmi.IsFeatureSupported(AsusAttributes.NvDynamicBoost)) features.Add("NVIDIA Dynamic Boost");
+            if (wmi.IsFeatureSupported(AsusAttributes.ThrottleThermalPolicy))
+                features.Add(Labels.Get("feature_perf_modes"));
+            if (wmi.IsFeatureSupported(AsusAttributes.DgpuDisable))
+                features.Add(Labels.Get("feature_gpu_eco"));
+            if (wmi.IsFeatureSupported(AsusAttributes.GpuMuxMode))
+                features.Add(Labels.Get("feature_mux"));
+            if (wmi.IsFeatureSupported(AsusAttributes.PanelOd))
+                features.Add(Labels.Get("feature_overdrive"));
+            if (wmi.IsFeatureSupported(AsusAttributes.MiniLedMode))
+                features.Add(Labels.Get("feature_miniled"));
+            if (wmi.IsFeatureSupported(AsusAttributes.PptPl1Spl))
+                features.Add(Labels.Get("feature_ppt"));
+            if (wmi.IsFeatureSupported(AsusAttributes.NvDynamicBoost))
+                features.Add(Labels.Get("feature_nv_boost"));
         }
 
         labelSysFeatures.Text = features.Count > 0
-            ? $"Features: {string.Join(", ", features)}"
-            : "No ASUS-specific features detected";
+            ? Labels.Format("features_prefix", string.Join(", ", features))
+            : Labels.Get("no_features");
     }
 
     private void CheckStartup_Changed(object? sender, RoutedEventArgs e)
     {
-        if (_suppressEvents) return;
+        if (_suppressEvents)
+            return;
         bool enabled = checkStartup.IsChecked ?? false;
         Helpers.AppConfig.Set("autostart", enabled ? 1 : 0);
         App.System?.SetAutostart(enabled);
@@ -1221,7 +1393,8 @@ public partial class MainWindow : Window
         if (_extraWindow == null || !_extraWindow.IsVisible)
         {
             _extraWindow = new ExtraWindow();
-            if (Helpers.AppConfig.Is("topmost")) _extraWindow.Topmost = true;
+            if (Helpers.AppConfig.Is("topmost"))
+                _extraWindow.Topmost = true;
             _extraWindow.Show();
         }
         else
@@ -1230,6 +1403,150 @@ public partial class MainWindow : Window
         }
     }
 
+
+    private const string DonateUrl = "https://buymeacoffee.com/utajum";
+
+    private void InitDonate()
+    {
+        Helpers.CoinSound.EnsureReady();
+
+        _coinMuted = Helpers.AppConfig.Get("donate_muted", 1) == 1;
+        UpdateMuteVisual();
+
+        _coinTransform = new TranslateTransform();
+        buttonDonate.RenderTransform = _coinTransform;
+
+        // Easter egg: 7 clicks on version label within 3 seconds
+        labelVersion.PointerPressed += (_, _) =>
+        {
+            var now = DateTime.UtcNow;
+            if ((now - _versionClickStart).TotalSeconds > 3)
+            {
+                _versionClickCount = 0;
+                _versionClickStart = now;
+            }
+            _versionClickCount++;
+            if (_versionClickCount == 5)
+                Helpers.Logger.WriteLine("Easter egg: 🎮 getting close...");
+            if (_versionClickCount >= 7)
+            {
+                _versionClickCount = 0;
+                if (_arcadeWindow == null || !_arcadeWindow.IsVisible)
+                {
+                    _arcadeWindow = new ArcadeWindow();
+                    _arcadeWindow.Show();
+                }
+                else
+                {
+                    _arcadeWindow.Activate();
+                }
+            }
+        };
+
+        // Hover events
+        buttonDonate.PointerEntered += ButtonDonate_PointerEntered;
+        buttonDonate.PointerExited += ButtonDonate_PointerExited;
+
+        // Mute toggle - intercept click on the mute badge (Border + TextBlock)
+        borderCoinMute.PointerPressed += LabelCoinMute_PointerPressed;
+        labelCoinMute.PointerPressed += LabelCoinMute_PointerPressed;
+
+        // Debounce timer: fires 2s after last click → opens URL
+        _coinDebounceTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(2) };
+        _coinDebounceTimer.Tick += CoinDebounce_Tick;
+
+        // Shake timer: runs at ~30ms for oscillation frames
+        _coinShakeTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(30) };
+        _coinShakeTimer.Tick += CoinShake_Tick;
+    }
+
+    private void ButtonDonate_Click(object? sender, RoutedEventArgs e)
+    {
+        _coinClickCount++;
+        labelCoinCount.Text = $"\u00D7{_coinClickCount}";
+
+        if (!_coinMuted)
+            Helpers.CoinSound.Play();
+        StartCoinShake();
+
+        // Restart 2-second debounce
+        _coinDebounceTimer?.Stop();
+        _coinDebounceTimer?.Start();
+    }
+
+    private void ButtonDonate_PointerEntered(object? sender, PointerEventArgs e)
+    {
+        if (!_coinMuted)
+            Helpers.CoinSound.Play();
+        StartCoinShake();
+    }
+
+    private void ButtonDonate_PointerExited(object? sender, PointerEventArgs e)
+    {
+        StopCoinShake();
+    }
+
+    private void LabelCoinMute_PointerPressed(object? sender, PointerPressedEventArgs e)
+    {
+        e.Handled = true; // Don't trigger parent button click
+        _coinMuted = !_coinMuted;
+        UpdateMuteVisual();
+        Helpers.AppConfig.Set("donate_muted", _coinMuted ? 1 : 0);
+    }
+
+    private void UpdateMuteVisual()
+    {
+        labelCoinMute.Text = _coinMuted ? "M" : "\u266A";
+        labelCoinMute.Foreground = _coinMuted ? CoinDarkBrush : CoinGoldBrush;
+    }
+
+    private void CoinDebounce_Tick(object? sender, EventArgs e)
+    {
+        _coinDebounceTimer?.Stop();
+
+        try
+        {
+            string url = $"{DonateUrl}?coins={_coinClickCount}";
+            Process.Start(new ProcessStartInfo("xdg-open", url) { UseShellExecute = false });
+            Helpers.Logger.WriteLine($"Donate: opened {url}");
+        }
+        catch (Exception ex)
+        {
+            Helpers.Logger.WriteLine($"Donate: failed to open URL: {ex.Message}");
+        }
+
+        _coinClickCount = 0;
+        labelCoinCount.Text = "";
+    }
+
+    private void StartCoinShake()
+    {
+        _coinShakeFrame = 0;
+        _coinShakeTimer?.Start();
+    }
+
+    private void StopCoinShake()
+    {
+        _coinShakeTimer?.Stop();
+        if (_coinTransform != null)
+            _coinTransform.X = 0;
+    }
+
+    // Shake pattern: decaying oscillation over ~10 frames (300ms)
+    private static readonly double[] ShakeOffsets = { 3, -3, 2.5, -2.5, 2, -2, 1.5, -1.5, 1, 0 };
+
+    private void CoinShake_Tick(object? sender, EventArgs e)
+    {
+        if (_coinTransform == null || _coinShakeFrame >= ShakeOffsets.Length)
+        {
+            StopCoinShake();
+            return;
+        }
+        _coinTransform.X = ShakeOffsets[_coinShakeFrame++];
+    }
+
+    // Updates + Quit
+
     private UpdatesWindow? _updatesWindow;
 
     private void ButtonUpdates_Click(object? sender, RoutedEventArgs e)
@@ -1237,7 +1554,8 @@ public partial class MainWindow : Window
         if (_updatesWindow == null || !_updatesWindow.IsVisible)
         {
             _updatesWindow = new UpdatesWindow();
-            if (Helpers.AppConfig.Is("topmost")) _updatesWindow.Topmost = true;
+            if (Helpers.AppConfig.Is("topmost"))
+                _updatesWindow.Topmost = true;
             _updatesWindow.Show();
         }
         else
@@ -1259,7 +1577,7 @@ public partial class MainWindow : Window
         }
     }
 
-    // ── UI Helpers ──
+    // UI Helpers
 
     private static void SetButtonActive(Button button, bool active)
     {

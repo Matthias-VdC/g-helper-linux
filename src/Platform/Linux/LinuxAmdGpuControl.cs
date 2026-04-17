@@ -57,39 +57,44 @@ public class LinuxAmdGpuControl : IGpuControl
 
     public string? GetGpuName() => _gpuName;
 
-    // ── Temperature ──
+    // Temperature
 
     public int? GetCurrentTemp()
     {
-        if (_hwmonDir == null) return null;
+        if (_hwmonDir == null)
+            return null;
 
         // temp1_input = edge temperature in millidegrees Celsius
         int temp = SysfsHelper.ReadInt(Path.Combine(_hwmonDir, "temp1_input"), -1);
-        if (temp > 0) return temp / 1000;
+        if (temp > 0)
+            return temp / 1000;
 
         // temp2_input = junction temperature (some GPUs)
         temp = SysfsHelper.ReadInt(Path.Combine(_hwmonDir, "temp2_input"), -1);
-        if (temp > 0) return temp / 1000;
+        if (temp > 0)
+            return temp / 1000;
 
         return null;
     }
 
-    // ── Utilization ──
+    // Utilization
 
     public int? GetGpuUse()
     {
-        if (_deviceDir == null) return null;
+        if (_deviceDir == null)
+            return null;
 
         // gpu_busy_percent: 0-100
         int usage = SysfsHelper.ReadInt(Path.Combine(_deviceDir, "gpu_busy_percent"), -1);
         return usage >= 0 ? usage : null;
     }
 
-    // ── Clocks ──
+    // Clocks
 
     public int? GetCurrentClock()
     {
-        if (_hwmonDir == null) return null;
+        if (_hwmonDir == null)
+            return null;
 
         // freq1_input: current GPU clock in Hz
         var freqStr = SysfsHelper.ReadAttribute(Path.Combine(_hwmonDir, "freq1_input"));
@@ -102,7 +107,8 @@ public class LinuxAmdGpuControl : IGpuControl
 
     public int? GetCurrentMemoryClock()
     {
-        if (_hwmonDir == null) return null;
+        if (_hwmonDir == null)
+            return null;
 
         // freq2_input: current memory clock in Hz
         var freqStr = SysfsHelper.ReadAttribute(Path.Combine(_hwmonDir, "freq2_input"));
@@ -113,11 +119,12 @@ public class LinuxAmdGpuControl : IGpuControl
         return ParseActiveClockFromDpm("pp_dpm_mclk");
     }
 
-    // ── Power ──
+    // Power
 
     public int? GetCurrentPower()
     {
-        if (_hwmonDir == null) return null;
+        if (_hwmonDir == null)
+            return null;
 
         // power1_average: average power in microwatts
         var powerStr = SysfsHelper.ReadAttribute(Path.Combine(_hwmonDir, "power1_average"));
@@ -127,42 +134,10 @@ public class LinuxAmdGpuControl : IGpuControl
         return null;
     }
 
-    // ── Clock Control ──
-
-    public void SetClockLimit(int maxMhz)
-    {
-        if (_deviceDir == null) return;
-
-        var ppOdPath = Path.Combine(_deviceDir, "pp_od_clk_voltage");
-        var perfLevelPath = Path.Combine(_deviceDir, "power_dpm_force_performance_level");
-
-        if (maxMhz <= 0)
-        {
-            // Reset to automatic
-            SysfsHelper.WriteAttribute(perfLevelPath, "auto");
-            SysfsHelper.WriteAttribute(ppOdPath, "r"); // reset
-            SysfsHelper.WriteAttribute(ppOdPath, "c"); // commit
-            Helpers.Logger.WriteLine("AMD GPU: Reset clock limits to auto");
-        }
-        else
-        {
-            maxMhz = Math.Clamp(maxMhz, 200, 3000);
-
-            // Set manual performance level to allow overriding
-            SysfsHelper.WriteAttribute(perfLevelPath, "manual");
-
-            // Write to pp_od_clk_voltage: "s 1 <maxMhz>"
-            // s = sclk, 1 = highest state
-            SysfsHelper.WriteAttribute(ppOdPath, $"s 1 {maxMhz}");
-            SysfsHelper.WriteAttribute(ppOdPath, "c"); // commit
-
-            Helpers.Logger.WriteLine($"AMD GPU: Set max clock to {maxMhz} MHz");
-        }
-    }
-
     public void SetCoreClockOffset(int offsetMhz)
     {
-        if (_deviceDir == null) return;
+        if (_deviceDir == null)
+            return;
 
         var ppOdPath = Path.Combine(_deviceDir, "pp_od_clk_voltage");
         var perfLevelPath = Path.Combine(_deviceDir, "power_dpm_force_performance_level");
@@ -200,7 +175,8 @@ public class LinuxAmdGpuControl : IGpuControl
 
     public void SetMemoryClockOffset(int offsetMhz)
     {
-        if (_deviceDir == null) return;
+        if (_deviceDir == null)
+            return;
 
         var ppOdPath = Path.Combine(_deviceDir, "pp_od_clk_voltage");
         var perfLevelPath = Path.Combine(_deviceDir, "power_dpm_force_performance_level");
@@ -231,7 +207,7 @@ public class LinuxAmdGpuControl : IGpuControl
         Helpers.Logger.WriteLine($"AMD GPU: Set memory clock offset {offsetMhz} MHz (target={targetClock} MHz)");
     }
 
-    // ── Private helpers ──
+    // Private helpers
 
     /// <summary>
     /// Find the discrete AMD GPU hwmon (not the iGPU).
@@ -240,16 +216,18 @@ public class LinuxAmdGpuControl : IGpuControl
     private static string? FindAmdGpuHwmon()
     {
         var hwmons = SysfsHelper.FindAllHwmonByName("amdgpu");
-        if (hwmons.Count == 0) return null;
-        if (hwmons.Count == 1) return hwmons[0];
+        if (hwmons.Count == 0)
+            return null;
+        if (hwmons.Count == 1)
+            return hwmons[0];
 
-        // Multiple amdgpu hwmons — pick the dGPU (higher power cap)
+        // Multiple amdgpu hwmons - pick the dGPU (higher power cap)
         string? best = null;
         long bestPower = 0;
 
         foreach (var hwmon in hwmons)
         {
-            // power1_cap in microwatts — dGPU typically has much higher cap
+            // power1_cap in microwatts - dGPU typically has much higher cap
             var capStr = SysfsHelper.ReadAttribute(Path.Combine(hwmon, "power1_cap"));
             if (capStr != null && long.TryParse(capStr, out long cap))
             {
@@ -266,15 +244,18 @@ public class LinuxAmdGpuControl : IGpuControl
 
     private string? QueryGpuName()
     {
-        if (_deviceDir == null) return null;
+        if (_deviceDir == null)
+            return null;
 
         // Try to read the PCI device name
         var marketingName = SysfsHelper.ReadAttribute(Path.Combine(_deviceDir, "product_name"));
-        if (marketingName != null) return marketingName;
+        if (marketingName != null)
+            return marketingName;
 
         // Fallback: read from lspci
         var vbiosVersion = SysfsHelper.ReadAttribute(Path.Combine(_deviceDir, "vbios_version"));
-        if (vbiosVersion != null) return $"AMD GPU ({vbiosVersion})";
+        if (vbiosVersion != null)
+            return $"AMD GPU ({vbiosVersion})";
 
         // Last resort: use the hwmon name
         return "AMD GPU";
@@ -287,10 +268,12 @@ public class LinuxAmdGpuControl : IGpuControl
     /// </summary>
     private int? ParseActiveClockFromDpm(string dpmFile)
     {
-        if (_deviceDir == null) return null;
+        if (_deviceDir == null)
+            return null;
 
         var content = SysfsHelper.ReadAttribute(Path.Combine(_deviceDir, dpmFile));
-        if (content == null) return null;
+        if (content == null)
+            return null;
 
         foreach (var line in content.Split('\n'))
         {
@@ -319,10 +302,12 @@ public class LinuxAmdGpuControl : IGpuControl
 
     private int? GetMaxClockFromDpm(string dpmFile)
     {
-        if (_deviceDir == null) return null;
+        if (_deviceDir == null)
+            return null;
 
         var content = SysfsHelper.ReadAttribute(Path.Combine(_deviceDir, dpmFile));
-        if (content == null) return null;
+        if (content == null)
+            return null;
 
         int maxClock = -1;
         foreach (var line in content.Split('\n'))

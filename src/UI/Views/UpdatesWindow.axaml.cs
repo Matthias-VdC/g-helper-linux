@@ -2,15 +2,17 @@ using System.Diagnostics;
 using System.Net;
 using System.Text.Json;
 using Avalonia.Controls;
+using Avalonia.Input.Platform;
 using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Threading;
+using GHelper.Linux.I18n;
 
 namespace GHelper.Linux.UI.Views;
 
 /// <summary>
-/// BIOS and Driver Updates window — Linux port of G-Helper's Updates form.
+/// BIOS and Driver Updates window - Linux port of G-Helper's Updates form.
 /// Queries ASUS ROG support API for BIOS and driver updates,
 /// compares versions, shows download links.
 /// 
@@ -52,7 +54,24 @@ public partial class UpdatesWindow : Window
     {
         InitializeComponent();
 
+        Labels.LanguageChanged += ApplyLabels;
+        ApplyLabels();
+
         Loaded += (_, _) => LoadUpdates();
+    }
+
+    private void ApplyLabels()
+    {
+        Title = Labels.Get("updates_title");
+        labelTitle.Text = Labels.Get("updates_header");
+        buttonDiagnostics.Content = Labels.Get("copy_diagnostics");
+        buttonRefresh.Content = Labels.Get("refresh");
+        labelLegendUpToDate.Text = Labels.Get("up_to_date");
+        labelLegendUpdateAvailable.Text = Labels.Get("update_available");
+        labelLegendCantCheck.Text = Labels.Get("cant_check");
+        labelGHelperSection.Text = Labels.Get("ghelper_linux");
+        labelBiosSection.Text = Labels.Get("bios");
+        labelDriversSection.Text = Labels.Get("drivers_software");
     }
 
     private void ButtonRefresh_Click(object? sender, RoutedEventArgs e)
@@ -65,7 +84,7 @@ public partial class UpdatesWindow : Window
         try
         {
             buttonDiagnostics.IsEnabled = false;
-            buttonDiagnostics.Content = "Collecting...";
+            buttonDiagnostics.Content = Labels.Get("collecting");
 
             var report = await Task.Run(() => Helpers.Diagnostics.GenerateReport());
 
@@ -73,25 +92,25 @@ public partial class UpdatesWindow : Window
             if (clipboard != null)
             {
                 await clipboard.SetTextAsync(report);
-                buttonDiagnostics.Content = "Copied!";
+                buttonDiagnostics.Content = Labels.Get("copied");
                 Helpers.Logger.WriteLine($"Diagnostics: copied {report.Length} chars to clipboard");
             }
             else
             {
-                buttonDiagnostics.Content = "Clipboard unavailable";
+                buttonDiagnostics.Content = Labels.Get("clipboard_unavailable");
             }
         }
         catch (Exception ex)
         {
             Helpers.Logger.WriteLine($"Diagnostics failed: {ex.Message}");
-            buttonDiagnostics.Content = "Failed";
+            buttonDiagnostics.Content = Labels.Get("failed");
         }
 
         // Reset button after 2 seconds
         _ = Task.Delay(2000).ContinueWith(_ =>
             Dispatcher.UIThread.Post(() =>
             {
-                buttonDiagnostics.Content = "Copy Diagnostics";
+                buttonDiagnostics.Content = Labels.Get("copy_diagnostics");
                 buttonDiagnostics.IsEnabled = true;
             }));
     }
@@ -112,24 +131,24 @@ public partial class UpdatesWindow : Window
             _biosVersion = null;
         }
 
-        var modelName = App.System?.GetModelName() ?? "Unknown";
-        Title = $"BIOS & Driver Updates: {modelName} ({_model} BIOS {_biosVersion ?? "?"})";
-        labelAppVersion.Text = $"G-Helper Linux v{Helpers.AppConfig.AppVersion} — {modelName}";
+        var modelName = App.System?.GetModelName() ?? Labels.Get("unknown");
+        Title = Labels.Format("updates_title_format", modelName, _model ?? "", _biosVersion ?? "?");
+        labelAppVersion.Text = Labels.Format("app_version_format", Helpers.AppConfig.AppVersion, modelName);
 
         _updatesCount = 0;
-        labelUpdates.Text = "Checking...";
+        labelUpdates.Text = Labels.Get("checking");
         labelUpdates.Foreground = ColorGreen;
 
         // Clear tables
         panelBios.Children.Clear();
-        panelBios.Children.Add(new TextBlock { Text = "Loading BIOS info...", Foreground = ColorDim, FontSize = 12 });
+        panelBios.Children.Add(new TextBlock { Text = Labels.Get("loading_bios"), Foreground = ColorDim, FontSize = 12 });
         panelDrivers.Children.Clear();
-        panelDrivers.Children.Add(new TextBlock { Text = "Loading drivers...", Foreground = ColorDim, FontSize = 12 });
+        panelDrivers.Children.Add(new TextBlock { Text = Labels.Get("loading_drivers"), Foreground = ColorDim, FontSize = 12 });
 
         // Check for G-Helper Linux self-update
         panelSelfUpdate.Children.Clear();
         panelSelfUpdate.Children.Add(labelSelfUpdateStatus);
-        labelSelfUpdateStatus.Text = "Checking for updates...";
+        labelSelfUpdateStatus.Text = Labels.Get("checking_updates");
         labelSelfUpdateStatus.Foreground = ColorDim;
         Task.Run(async () => await CheckSelfUpdateAsync());
 
@@ -200,7 +219,7 @@ public partial class UpdatesWindow : Window
                 if (isNewer)
                 {
                     _updatesCount++;
-                    labelUpdates.Text = $"Updates available: {_updatesCount}";
+                    labelUpdates.Text = Labels.Format("updates_available_format", _updatesCount);
                     labelUpdates.Foreground = ColorRed;
                     labelUpdates.FontWeight = FontWeight.Bold;
 
@@ -208,7 +227,7 @@ public partial class UpdatesWindow : Window
 
                     row.Children.Add(new TextBlock
                     {
-                        Text = $"New version available: v{latestVersion}  (current: v{Helpers.AppConfig.AppVersion})",
+                        Text = Labels.Format("new_version_format", latestVersion, Helpers.AppConfig.AppVersion),
                         Foreground = ColorRed,
                         FontSize = 12,
                         FontWeight = FontWeight.Bold,
@@ -218,21 +237,21 @@ public partial class UpdatesWindow : Window
 
                     var btnUpdate = new Button
                     {
-                        Content = "Download & Install",
+                        Content = Labels.Get("download_install"),
                         MinWidth = 130,
                         Foreground = ColorWhite,
                     };
                     btnUpdate.Click += async (_, _) =>
                     {
                         btnUpdate.IsEnabled = false;
-                        btnUpdate.Content = "Downloading...";
+                        btnUpdate.Content = Labels.Get("downloading");
                         await Task.Run(async () => await DownloadAndInstallUpdate(downloadUrl, btnUpdate));
                     };
                     btnRow.Children.Add(btnUpdate);
 
                     var btnRelease = new Button
                     {
-                        Content = "View Release",
+                        Content = Labels.Get("view_release"),
                         MinWidth = 100,
                         Foreground = ColorDim,
                         Background = Brushes.Transparent,
@@ -242,7 +261,8 @@ public partial class UpdatesWindow : Window
                     string url = releaseUrl;
                     btnRelease.Click += (_, _) =>
                     {
-                        try { Process.Start(new ProcessStartInfo(url) { UseShellExecute = true }); }
+                        try
+                        { Process.Start(new ProcessStartInfo(url) { UseShellExecute = true }); }
                         catch { }
                     };
                     btnRow.Children.Add(btnRelease);
@@ -254,14 +274,14 @@ public partial class UpdatesWindow : Window
                 {
                     panelSelfUpdate.Children.Add(new TextBlock
                     {
-                        Text = $"v{Helpers.AppConfig.AppVersion} — Up to date",
+                        Text = Labels.Format("up_to_date_format", Helpers.AppConfig.AppVersion),
                         Foreground = ColorGreen,
                         FontSize = 12,
                     });
                 }
             });
 
-            Helpers.Logger.WriteLine($"Self-update: current=v{Helpers.AppConfig.AppVersion} latest=v{latestVersion} newer={isNewer} mode={( IsAppImage ? "AppImage" : "binary" )}");
+            Helpers.Logger.WriteLine($"Self-update: current=v{Helpers.AppConfig.AppVersion} latest=v{latestVersion} newer={isNewer} mode={(IsAppImage ? "AppImage" : "binary")}");
         }
         catch (Exception ex)
         {
@@ -271,7 +291,7 @@ public partial class UpdatesWindow : Window
                 panelSelfUpdate.Children.Clear();
                 panelSelfUpdate.Children.Add(new TextBlock
                 {
-                    Text = $"v{Helpers.AppConfig.AppVersion} — Could not check for updates",
+                    Text = Labels.Format("cant_check_format", Helpers.AppConfig.AppVersion),
                     Foreground = ColorDim,
                     FontSize = 12,
                 });
@@ -331,7 +351,7 @@ public partial class UpdatesWindow : Window
                         var mb = downloaded / (1024.0 * 1024.0);
                         var totalMb = totalBytes.Value / (1024.0 * 1024.0);
                         Dispatcher.UIThread.Post(() =>
-                            btn.Content = $"Downloading... {mb:F1}/{totalMb:F1} MB ({pct}%)");
+                            btn.Content = Labels.Format("download_progress", $"{mb:F1}", $"{totalMb:F1}", pct));
                     }
                 }
             }
@@ -350,7 +370,8 @@ public partial class UpdatesWindow : Window
                 // (the process keeps using the old inode), but does NOT allow
                 // overwriting it directly ("Text file busy" / ETXTBSY).
                 var backupPath = targetPath + ".bak";
-                if (File.Exists(backupPath)) File.Delete(backupPath);
+                if (File.Exists(backupPath))
+                    File.Delete(backupPath);
                 File.Move(targetPath, backupPath);  // rename running file → .bak (allowed)
                 File.Move(tmpPath, targetPath);      // place new file at original path
 
@@ -358,7 +379,7 @@ public partial class UpdatesWindow : Window
 
                 Dispatcher.UIThread.Post(() =>
                 {
-                    btn.Content = "Restart to apply";
+                    btn.Content = Labels.Get("restart_to_apply");
                     btn.IsEnabled = true;
                     btn.Click -= null!; // clear old handlers
                     btn.Click += (_, _) =>
@@ -374,7 +395,7 @@ public partial class UpdatesWindow : Window
             }
             else
             {
-                // Can't determine target path — save to downloads
+                // Can't determine target path - save to downloads
                 var fileName = IsAppImage ? "GHelper-x86_64.AppImage" : "ghelper";
                 var savePath = Path.Combine(
                     Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
@@ -383,7 +404,7 @@ public partial class UpdatesWindow : Window
 
                 Dispatcher.UIThread.Post(() =>
                 {
-                    btn.Content = $"Saved to ~/Downloads/{fileName}";
+                    btn.Content = Labels.Format("saved_to_downloads", fileName);
                     btn.IsEnabled = false;
                 });
 
@@ -395,7 +416,7 @@ public partial class UpdatesWindow : Window
             Helpers.Logger.WriteLine($"Self-update download failed: {ex.Message}");
             Dispatcher.UIThread.Post(() =>
             {
-                btn.Content = "Download failed";
+                btn.Content = Labels.Get("download_failed");
                 btn.IsEnabled = true;
             });
         }
@@ -414,7 +435,8 @@ public partial class UpdatesWindow : Window
         {
             int numA = i < partsA.Length && int.TryParse(partsA[i], out var na) ? na : 0;
             int numB = i < partsB.Length && int.TryParse(partsB[i], out var nb) ? nb : 0;
-            if (numA != numB) return numA - numB;
+            if (numA != numB)
+                return numA - numB;
         }
         return 0;
     }
@@ -512,7 +534,7 @@ public partial class UpdatesWindow : Window
                         int remote = int.Parse(driver.Version);
                         int local = int.Parse(_biosVersion);
                         status = remote > local ? 1 : -1;
-                        tooltip = $"Download: {driver.Version}\nInstalled: {_biosVersion}";
+                        tooltip = Labels.Format("download_tooltip", driver.Version, _biosVersion ?? "");
                     }
                     catch
                     {
@@ -522,11 +544,12 @@ public partial class UpdatesWindow : Window
                 else if (!isBios)
                 {
                     // On Linux we can't easily check installed driver versions via WMI,
-                    // so we show them all as "can't check" (gray) — user can click to download
+                    // so we show them all as "can't check" (gray) - user can click to download
                     status = 0;
                 }
 
-                if (status == 1) localUpdates++;
+                if (status == 1)
+                    localUpdates++;
 
                 // Must capture for closure
                 var d = driver;
@@ -541,7 +564,7 @@ public partial class UpdatesWindow : Window
                 _updatesCount += localUpdates;
                 Dispatcher.UIThread.Post(() =>
                 {
-                    labelUpdates.Text = $"Updates available: {_updatesCount}";
+                    labelUpdates.Text = Labels.Format("updates_available_format", _updatesCount);
                     labelUpdates.Foreground = ColorRed;
                     labelUpdates.FontWeight = FontWeight.Bold;
                 });
@@ -559,7 +582,7 @@ public partial class UpdatesWindow : Window
                 {
                     panel.Children.Add(new TextBlock
                     {
-                        Text = "No entries found",
+                        Text = Labels.Get("no_entries"),
                         Foreground = ColorDim,
                         FontSize = 12
                     });
@@ -568,7 +591,7 @@ public partial class UpdatesWindow : Window
                 // Update header if no updates found
                 if (_updatesCount == 0)
                 {
-                    labelUpdates.Text = "No new updates";
+                    labelUpdates.Text = Labels.Get("no_new_updates");
                     labelUpdates.Foreground = ColorGreen;
                 }
             });
@@ -585,7 +608,7 @@ public partial class UpdatesWindow : Window
                 panel.Children.Clear();
                 panel.Children.Add(new TextBlock
                 {
-                    Text = $"Failed to fetch: {ex.Message}",
+                    Text = Labels.Format("fetch_failed", ex.Message),
                     Foreground = ColorRed,
                     FontSize = 12,
                     TextWrapping = TextWrapping.Wrap,
@@ -682,7 +705,7 @@ public partial class UpdatesWindow : Window
                     Helpers.Logger.WriteLine($"Failed to open URL: {ex.Message}");
                 }
             };
-            ToolTip.SetTip(versionBtn, tooltip + "\nClick to download");
+            ToolTip.SetTip(versionBtn, tooltip + "\n" + Labels.Get("click_to_download"));
         }
         else
         {

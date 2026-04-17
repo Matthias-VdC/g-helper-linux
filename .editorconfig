@@ -1,0 +1,72 @@
+root = true
+
+[*]
+indent_style = space
+indent_size = 4
+end_of_line = lf
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+[*.cs]
+# Namespace
+csharp_style_namespace_declarations = file_scoped:warning
+
+# Consecutive blank lines
+dotnet_diagnostic.SA1507.severity = warning
+
+# Using directives
+dotnet_sort_system_directives_first = true
+dotnet_separate_import_directive_groups = false
+
+# var preferences
+csharp_style_var_for_built_in_types = false:suggestion
+csharp_style_var_when_type_is_apparent = true:suggestion
+csharp_style_var_elsewhere = false:suggestion
+
+# Braces
+csharp_prefer_braces = when_multiline:suggestion
+
+# Expression-bodied members
+csharp_style_expression_bodied_methods = when_on_single_line:suggestion
+csharp_style_expression_bodied_constructors = false:suggestion
+csharp_style_expression_bodied_properties = true:suggestion
+csharp_style_expression_bodied_accessors = true:suggestion
+
+# Pattern matching
+csharp_style_pattern_matching_over_is_with_cast_check = true:suggestion
+csharp_style_pattern_matching_over_as_with_null_check = true:suggestion
+
+# Null checking
+csharp_style_throw_expression = true:suggestion
+csharp_style_conditional_delegate_call = true:suggestion
+
+# Newline preferences
+csharp_new_line_before_open_brace = all
+csharp_new_line_before_else = true
+csharp_new_line_before_catch = true
+csharp_new_line_before_finally = true
+
+# Indentation
+csharp_indent_case_contents = true
+csharp_indent_switch_labels = true
+
+# Spacing
+csharp_space_after_cast = false
+csharp_space_after_keywords_in_control_flow_statements = true
+
+# Wrapping
+csharp_preserve_single_line_blocks = true
+csharp_preserve_single_line_statements = false
+
+[*.axaml]
+indent_size = 4
+
+[*.xml]
+indent_size = 2
+
+[*.json]
+indent_size = 2
+
+[*.sh]
+indent_size = 4

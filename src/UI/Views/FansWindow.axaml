@@ -13,11 +13,11 @@
 
     <Grid RowDefinitions="Auto,*,Auto">
 
-        <!-- ═══════════════════ HEADER ═══════════════════ -->
+        <!-- HEADER -->
         <Border Grid.Row="0" Classes="panel-header" Margin="10,10,10,5">
             <Grid ColumnDefinitions="*,Auto,Auto,Auto,Auto">
                 <StackPanel Grid.Column="0">
-                    <TextBlock Classes="header" Text="Fan Curves" FontSize="14" />
+                    <TextBlock x:Name="headerFanCurves" Classes="header" Text="Fan Curves" FontSize="14" />
                     <TextBlock x:Name="labelMode" Classes="label-dim"
                                Text="Mode: Balanced" />
                 </StackPanel>
@@ -33,12 +33,11 @@
                 <CheckBox Grid.Column="4" x:Name="checkApplyFans"
                           Content="Auto-apply" Margin="8,0,0,0"
                           VerticalAlignment="Center"
-                          Checked="CheckApplyFans_Changed"
-                          Unchecked="CheckApplyFans_Changed" />
+                          IsCheckedChanged="CheckApplyFans_Changed" />
             </Grid>
         </Border>
 
-        <!-- ═══════════════════ CHARTS ═══════════════════ -->
+        <!-- CHARTS -->
         <Grid x:Name="chartGrid" Grid.Row="1" Margin="10,5" RowDefinitions="*,*,Auto">
             <!-- CPU Fan Chart -->
             <controls:FanCurveChart x:Name="chartCPU"
@@ -63,14 +62,14 @@
                                      IsVisible="False" />
         </Grid>
 
-        <!-- ═══════════════════ POWER LIMITS ═══════════════════ -->
+        <!-- POWER LIMITS -->
         <Border Grid.Row="2" Classes="panel" Margin="10,5,10,10">
             <StackPanel>
-                <TextBlock Classes="header" Text="Power Limits" Margin="0,0,0,8" />
+                <TextBlock x:Name="headerPowerLimits" Classes="header" Text="Power Limits" Margin="0,0,0,8" />
 
                 <!-- PPT SPL (PL1) -->
                 <Grid ColumnDefinitions="120,*,50" Margin="0,4">
-                    <TextBlock Grid.Column="0" Text="CPU PL1 (SPL)"
+                    <TextBlock Grid.Column="0" x:Name="labelPL1Label" Text="CPU PL1 (SPL)"
                                Classes="label-dim" VerticalAlignment="Center" />
                     <Slider Grid.Column="1" x:Name="sliderPL1"
                             Minimum="5" Maximum="120" Value="45"
@@ -83,7 +82,7 @@
 
                 <!-- PPT SPPT (PL2) -->
                 <Grid ColumnDefinitions="120,*,50" Margin="0,4">
-                    <TextBlock Grid.Column="0" Text="CPU PL2 (SPPT)"
+                    <TextBlock Grid.Column="0" x:Name="labelPL2Label" Text="CPU PL2 (SPPT)"
                                Classes="label-dim" VerticalAlignment="Center" />
                     <Slider Grid.Column="1" x:Name="sliderPL2"
                             Minimum="5" Maximum="150" Value="65"
@@ -96,7 +95,7 @@
 
                 <!-- PPT fPPT (fast boost) -->
                 <Grid x:Name="gridFppt" ColumnDefinitions="120,*,50" Margin="0,4" IsVisible="False">
-                    <TextBlock Grid.Column="0" Text="CPU fPPT (Fast)"
+                    <TextBlock Grid.Column="0" x:Name="labelFpptLabel" Text="CPU fPPT (Fast)"
                                Classes="label-dim" VerticalAlignment="Center" />
                     <Slider Grid.Column="1" x:Name="sliderFppt"
                             Minimum="5" Maximum="150" Value="65"
@@ -109,7 +108,7 @@
 
                 <!-- CPU Boost -->
                 <Grid ColumnDefinitions="120,*" Margin="0,8,0,0">
-                    <TextBlock Grid.Column="0" Text="CPU Boost"
+                    <TextBlock Grid.Column="0" x:Name="labelCpuBoostLabel" Text="CPU Boost"
                                Classes="label-dim" VerticalAlignment="Center" />
                     <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="4">
                         <Button x:Name="buttonBoostOff" Classes="ghelper"
@@ -122,8 +121,7 @@
                 <!-- Auto-apply power -->
                 <CheckBox x:Name="checkApplyPower"
                           Content="Auto-apply power limits on mode change" Margin="0,8,0,0"
-                          Checked="CheckApplyPower_Changed"
-                          Unchecked="CheckApplyPower_Changed" />
+                          IsCheckedChanged="CheckApplyPower_Changed" />
 
                 <!-- Sensor readings -->
                 <TextBlock x:Name="labelSensors" Classes="label-dim"

@@ -49,7 +49,9 @@ public static class NativeLibExtractor
                 var cached = Path.Combine(CacheDir, lib);
                 if (File.Exists(cached))
                 {
-                    try { handle = NativeLibrary.Load(cached); } catch { }
+                    try
+                    { handle = NativeLibrary.Load(cached); }
+                    catch { }
                 }
             }
 
@@ -59,14 +61,18 @@ public static class NativeLibExtractor
                 var extracted = ExtractFromResources(lib);
                 if (extracted != null)
                 {
-                    try { handle = NativeLibrary.Load(extracted); } catch { }
+                    try
+                    { handle = NativeLibrary.Load(extracted); }
+                    catch { }
                 }
             }
 
             // Strategy 4: Let the system find it (LD_LIBRARY_PATH, /usr/lib, etc.)
             if (handle == IntPtr.Zero)
             {
-                try { handle = NativeLibrary.Load(lib); } catch { }
+                try
+                { handle = NativeLibrary.Load(lib); }
+                catch { }
             }
 
             if (handle != IntPtr.Zero)
@@ -91,6 +97,48 @@ public static class NativeLibExtractor
         catch { }
     }
 
+    /// <summary>
+    /// Find an embedded tool binary (e.g. wlr-randr).
+    /// Search order: extract from resources → cache dir → system PATH.
+    /// Returns the full path to the executable, or null if not found.
+    /// </summary>
+    public static string? FindTool(string toolName)
+    {
+        // Strategy 1: Extract from embedded resources (always overwrites cache for freshness)
+        var extracted = ExtractFromResources(toolName);
+        if (extracted != null)
+            return extracted;
+
+        // Strategy 2: Previously extracted to cache (fallback if resource not embedded, e.g. dev builds)
+        var cached = Path.Combine(CacheDir, toolName);
+        if (File.Exists(cached))
+            return cached;
+
+        // Strategy 3: System PATH
+        try
+        {
+            var psi = new System.Diagnostics.ProcessStartInfo
+            {
+                FileName = "which",
+                Arguments = toolName,
+                RedirectStandardOutput = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
+            using var proc = System.Diagnostics.Process.Start(psi);
+            if (proc != null)
+            {
+                var path = proc.StandardOutput.ReadToEnd().Trim();
+                proc.WaitForExit(3000);
+                if (proc.ExitCode == 0 && path.Length > 0)
+                    return path;
+            }
+        }
+        catch { }
+
+        return null;
+    }
+
     private static IntPtr ResolveNativeLib(string libraryName, Assembly assembly, DllImportSearchPath? searchPath)
     {
         // Try exact match first ("libSkiaSharp" or "libSkiaSharp.so")
@@ -112,7 +160,8 @@ public static class NativeLibExtractor
             using var stream = typeof(NativeLibExtractor).Assembly
                 .GetManifestResourceStream(resourceName);
 
-            if (stream == null) return null;
+            if (stream == null)
+                return null;
 
             Directory.CreateDirectory(CacheDir);
             var targetPath = Path.Combine(CacheDir, resourceName);

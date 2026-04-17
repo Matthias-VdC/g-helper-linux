@@ -64,8 +64,10 @@ cp "$DIST_DIR/libSkiaSharp.so"     "$APPDIR/usr/bin/"
 cp "$DIST_DIR/libHarfBuzzSharp.so" "$APPDIR/usr/bin/"
 chmod +x "$APPDIR/usr/bin/ghelper"
 
-# Desktop entry (required by appimagetool at AppDir root)
+# Desktop entry (required by appimagetool at AppDir root + standard path for validation)
 cp "$INSTALL_DIR/ghelper.desktop" "$APPDIR/ghelper.desktop"
+mkdir -p "$APPDIR/usr/share/applications"
+cp "$INSTALL_DIR/ghelper.desktop" "$APPDIR/usr/share/applications/"
 
 # Icon (required by appimagetool at AppDir root, matching Icon= in .desktop)
 if [[ -f "$INSTALL_DIR/ghelper.png" ]]; then
@@ -80,6 +82,10 @@ else
         exit 1
     fi
 fi
+
+# AppStream metadata (suppresses appimagetool warning)
+mkdir -p "$APPDIR/usr/share/metainfo"
+cp "$INSTALL_DIR/ghelper.appdata.xml" "$APPDIR/usr/share/metainfo/"
 
 # AppRun — entry point that appimagetool expects
 cat > "$APPDIR/AppRun" << 'APPRUN'
@@ -98,10 +104,10 @@ export ARCH=x86_64
 
 # appimagetool itself is an AppImage — if FUSE is not available, extract and run
 if "$APPIMAGETOOL" --version &>/dev/null 2>&1; then
-    "$APPIMAGETOOL" "$APPDIR" "$OUTPUT"
+    "$APPIMAGETOOL" --no-appstream "$APPDIR" "$OUTPUT"
 else
     echo "  (FUSE not available, using --appimage-extract-and-run)"
-    "$APPIMAGETOOL" --appimage-extract-and-run "$APPDIR" "$OUTPUT"
+    "$APPIMAGETOOL" --no-appstream --appimage-extract-and-run "$APPDIR" "$OUTPUT"
 fi
 
 # ── Cleanup ───────────────────────────────────────────────────────────────────

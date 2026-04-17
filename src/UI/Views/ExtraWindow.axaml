@@ -13,16 +13,32 @@
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <StackPanel Margin="10" Spacing="5">
 
-            <!-- ═══════════════════ KEYBOARD BACKLIGHT ═══════════════════ -->
+            <!-- LANGUAGE -->
             <Border Classes="panel">
                 <StackPanel>
                     <Border Classes="panel-header" Margin="0,0,0,8">
-                        <TextBlock Classes="header" Text="Keyboard Backlight" />
+                        <TextBlock x:Name="labelLanguageHeader" Classes="header" Text="Language" />
+                    </Border>
+                    <Grid ColumnDefinitions="120,*" Margin="0,4">
+                        <TextBlock Grid.Column="0" x:Name="labelLanguageLabel" Text="Language"
+                                   Classes="label-dim" VerticalAlignment="Center" />
+                        <ComboBox Grid.Column="1" x:Name="comboLanguage"
+                                  HorizontalAlignment="Stretch"
+                                  SelectionChanged="ComboLanguage_Changed" />
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- KEYBOARD BACKLIGHT -->
+            <Border Classes="panel">
+                <StackPanel>
+                    <Border Classes="panel-header" Margin="0,0,0,8">
+                        <TextBlock x:Name="headerKbdBacklight" Classes="header" Text="Keyboard Backlight" />
                     </Border>
 
                     <!-- Brightness slider (0-3) -->
                     <Grid ColumnDefinitions="120,*,40" Margin="0,4">
-                        <TextBlock Grid.Column="0" Text="Brightness"
+                        <TextBlock Grid.Column="0" x:Name="labelKbdBrightnessLabel" Text="Brightness"
                                    Classes="label-dim" VerticalAlignment="Center" />
                         <Slider Grid.Column="1" x:Name="sliderKbdBrightness"
                                 Minimum="0" Maximum="3" Value="3"
@@ -35,7 +51,7 @@
 
                     <!-- Animation Speed -->
                     <Grid ColumnDefinitions="120,*" Margin="0,4">
-                        <TextBlock Grid.Column="0" Text="Animation Speed"
+                        <TextBlock Grid.Column="0" x:Name="labelAnimSpeed" Text="Animation Speed"
                                    Classes="label-dim" VerticalAlignment="Center" />
                         <ComboBox Grid.Column="1" x:Name="comboKbdSpeed"
                                   Width="120" Height="28"
@@ -43,70 +59,79 @@
                     </Grid>
 
                     <!-- Power Zone Checkboxes -->
-                    <TextBlock Text="Power Zones" Classes="label-dim" Margin="0,8,0,4" FontWeight="SemiBold" />
+                    <TextBlock x:Name="labelPowerZones" Text="Power Zones" Classes="label-dim" Margin="0,8,0,4" FontWeight="SemiBold" />
 
                     <!-- Header row -->
                     <Grid ColumnDefinitions="80,60,60,60,60,60" Margin="0,2">
                         <TextBlock Grid.Column="0" Text="" />
-                        <TextBlock Grid.Column="1" Text="Awake" Classes="label-dim" FontSize="10" HorizontalAlignment="Center" />
-                        <TextBlock Grid.Column="2" Text="Boot" Classes="label-dim" FontSize="10" HorizontalAlignment="Center" />
-                        <TextBlock Grid.Column="3" Text="Sleep" Classes="label-dim" FontSize="10" HorizontalAlignment="Center" />
-                        <TextBlock Grid.Column="4" Text="Shutdown" Classes="label-dim" FontSize="10" HorizontalAlignment="Center" />
-                        <TextBlock Grid.Column="5" Text="Battery" Classes="label-dim" FontSize="10" HorizontalAlignment="Center" />
+                        <TextBlock Grid.Column="1" x:Name="labelColAwake" Text="Awake" Classes="label-dim" FontSize="10" HorizontalAlignment="Center" />
+                        <TextBlock Grid.Column="2" x:Name="labelColBoot" Text="Boot" Classes="label-dim" FontSize="10" HorizontalAlignment="Center" />
+                        <TextBlock Grid.Column="3" x:Name="labelColSleep" Text="Sleep" Classes="label-dim" FontSize="10" HorizontalAlignment="Center" />
+                        <TextBlock Grid.Column="4" x:Name="labelColShutdown" Text="Shutdown" Classes="label-dim" FontSize="10" HorizontalAlignment="Center" />
+                        <TextBlock Grid.Column="5" x:Name="labelColBattery" Text="Battery" Classes="label-dim" FontSize="10" HorizontalAlignment="Center" />
                     </Grid>
 
                     <!-- Keyboard row -->
                     <Grid ColumnDefinitions="80,60,60,60,60,60" Margin="0,1" x:Name="rowPowerKeyboard">
-                        <TextBlock Grid.Column="0" Text="Keyboard" Classes="label-dim" FontSize="11" VerticalAlignment="Center" />
-                        <CheckBox Grid.Column="1" x:Name="checkAwake" HorizontalAlignment="Center" Checked="CheckPower_Changed" Unchecked="CheckPower_Changed" />
-                        <CheckBox Grid.Column="2" x:Name="checkBoot" HorizontalAlignment="Center" Checked="CheckPower_Changed" Unchecked="CheckPower_Changed" />
-                        <CheckBox Grid.Column="3" x:Name="checkSleep" HorizontalAlignment="Center" Checked="CheckPower_Changed" Unchecked="CheckPower_Changed" />
-                        <CheckBox Grid.Column="4" x:Name="checkShutdown" HorizontalAlignment="Center" Checked="CheckPower_Changed" Unchecked="CheckPower_Changed" />
-                        <CheckBox Grid.Column="5" x:Name="checkBattery" HorizontalAlignment="Center" Checked="CheckPower_Changed" Unchecked="CheckPower_Changed" />
+                        <TextBlock Grid.Column="0" x:Name="labelRowKeyboard" Text="Keyboard" Classes="label-dim" FontSize="11" VerticalAlignment="Center" />
+                        <CheckBox Grid.Column="1" x:Name="checkAwake" HorizontalAlignment="Center" IsCheckedChanged="CheckPower_Changed" />
+                        <CheckBox Grid.Column="2" x:Name="checkBoot" HorizontalAlignment="Center" IsCheckedChanged="CheckPower_Changed" />
+                        <CheckBox Grid.Column="3" x:Name="checkSleep" HorizontalAlignment="Center" IsCheckedChanged="CheckPower_Changed" />
+                        <CheckBox Grid.Column="4" x:Name="checkShutdown" HorizontalAlignment="Center" IsCheckedChanged="CheckPower_Changed" />
+                        <CheckBox Grid.Column="5" x:Name="checkBattery" HorizontalAlignment="Center" IsCheckedChanged="CheckPower_Changed" />
                     </Grid>
 
                     <!-- Logo row -->
                     <Grid ColumnDefinitions="80,60,60,60,60,60" Margin="0,1" x:Name="rowPowerLogo">
-                        <TextBlock Grid.Column="0" Text="Logo" Classes="label-dim" FontSize="11" VerticalAlignment="Center" />
-                        <CheckBox Grid.Column="1" x:Name="checkAwakeLogo" HorizontalAlignment="Center" Checked="CheckPower_Changed" Unchecked="CheckPower_Changed" />
-                        <CheckBox Grid.Column="2" x:Name="checkBootLogo" HorizontalAlignment="Center" Checked="CheckPower_Changed" Unchecked="CheckPower_Changed" />
-                        <CheckBox Grid.Column="3" x:Name="checkSleepLogo" HorizontalAlignment="Center" Checked="CheckPower_Changed" Unchecked="CheckPower_Changed" />
-                        <CheckBox Grid.Column="4" x:Name="checkShutdownLogo" HorizontalAlignment="Center" Checked="CheckPower_Changed" Unchecked="CheckPower_Changed" />
-                        <CheckBox Grid.Column="5" x:Name="checkBatteryLogo" HorizontalAlignment="Center" Checked="CheckPower_Changed" Unchecked="CheckPower_Changed" />
+                        <TextBlock Grid.Column="0" x:Name="labelRowLogo" Text="Logo" Classes="label-dim" FontSize="11" VerticalAlignment="Center" />
+                        <CheckBox Grid.Column="1" x:Name="checkAwakeLogo" HorizontalAlignment="Center" IsCheckedChanged="CheckPower_Changed" />
+                        <CheckBox Grid.Column="2" x:Name="checkBootLogo" HorizontalAlignment="Center" IsCheckedChanged="CheckPower_Changed" />
+                        <CheckBox Grid.Column="3" x:Name="checkSleepLogo" HorizontalAlignment="Center" IsCheckedChanged="CheckPower_Changed" />
+                        <CheckBox Grid.Column="4" x:Name="checkShutdownLogo" HorizontalAlignment="Center" IsCheckedChanged="CheckPower_Changed" />
+                        <CheckBox Grid.Column="5" x:Name="checkBatteryLogo" HorizontalAlignment="Center" IsCheckedChanged="CheckPower_Changed" />
                     </Grid>
 
                     <!-- Lightbar row -->
                     <Grid ColumnDefinitions="80,60,60,60,60,60" Margin="0,1" x:Name="rowPowerBar">
-                        <TextBlock Grid.Column="0" Text="Lightbar" Classes="label-dim" FontSize="11" VerticalAlignment="Center" />
-                        <CheckBox Grid.Column="1" x:Name="checkAwakeBar" HorizontalAlignment="Center" Checked="CheckPower_Changed" Unchecked="CheckPower_Changed" />
-                        <CheckBox Grid.Column="2" x:Name="checkBootBar" HorizontalAlignment="Center" Checked="CheckPower_Changed" Unchecked="CheckPower_Changed" />
-                        <CheckBox Grid.Column="3" x:Name="checkSleepBar" HorizontalAlignment="Center" Checked="CheckPower_Changed" Unchecked="CheckPower_Changed" />
-                        <CheckBox Grid.Column="4" x:Name="checkShutdownBar" HorizontalAlignment="Center" Checked="CheckPower_Changed" Unchecked="CheckPower_Changed" />
-                        <CheckBox Grid.Column="5" x:Name="checkBatteryBar" HorizontalAlignment="Center" Checked="CheckPower_Changed" Unchecked="CheckPower_Changed" />
+                        <TextBlock Grid.Column="0" x:Name="labelRowLightbar" Text="Lightbar" Classes="label-dim" FontSize="11" VerticalAlignment="Center" />
+                        <CheckBox Grid.Column="1" x:Name="checkAwakeBar" HorizontalAlignment="Center" IsCheckedChanged="CheckPower_Changed" />
+                        <CheckBox Grid.Column="2" x:Name="checkBootBar" HorizontalAlignment="Center" IsCheckedChanged="CheckPower_Changed" />
+                        <CheckBox Grid.Column="3" x:Name="checkSleepBar" HorizontalAlignment="Center" IsCheckedChanged="CheckPower_Changed" />
+                        <CheckBox Grid.Column="4" x:Name="checkShutdownBar" HorizontalAlignment="Center" IsCheckedChanged="CheckPower_Changed" />
+                        <CheckBox Grid.Column="5" x:Name="checkBatteryBar" HorizontalAlignment="Center" IsCheckedChanged="CheckPower_Changed" />
                     </Grid>
 
                     <!-- Lid row -->
                     <Grid ColumnDefinitions="80,60,60,60,60,60" Margin="0,1" x:Name="rowPowerLid">
-                        <TextBlock Grid.Column="0" Text="Lid" Classes="label-dim" FontSize="11" VerticalAlignment="Center" />
-                        <CheckBox Grid.Column="1" x:Name="checkAwakeLid" HorizontalAlignment="Center" Checked="CheckPower_Changed" Unchecked="CheckPower_Changed" />
-                        <CheckBox Grid.Column="2" x:Name="checkBootLid" HorizontalAlignment="Center" Checked="CheckPower_Changed" Unchecked="CheckPower_Changed" />
-                        <CheckBox Grid.Column="3" x:Name="checkSleepLid" HorizontalAlignment="Center" Checked="CheckPower_Changed" Unchecked="CheckPower_Changed" />
-                        <CheckBox Grid.Column="4" x:Name="checkShutdownLid" HorizontalAlignment="Center" Checked="CheckPower_Changed" Unchecked="CheckPower_Changed" />
-                        <CheckBox Grid.Column="5" x:Name="checkBatteryLid" HorizontalAlignment="Center" Checked="CheckPower_Changed" Unchecked="CheckPower_Changed" />
+                        <TextBlock Grid.Column="0" x:Name="labelRowLid" Text="Lid" Classes="label-dim" FontSize="11" VerticalAlignment="Center" />
+                        <CheckBox Grid.Column="1" x:Name="checkAwakeLid" HorizontalAlignment="Center" IsCheckedChanged="CheckPower_Changed" />
+                        <CheckBox Grid.Column="2" x:Name="checkBootLid" HorizontalAlignment="Center" IsCheckedChanged="CheckPower_Changed" />
+                        <CheckBox Grid.Column="3" x:Name="checkSleepLid" HorizontalAlignment="Center" IsCheckedChanged="CheckPower_Changed" />
+                        <CheckBox Grid.Column="4" x:Name="checkShutdownLid" HorizontalAlignment="Center" IsCheckedChanged="CheckPower_Changed" />
+                        <CheckBox Grid.Column="5" x:Name="checkBatteryLid" HorizontalAlignment="Center" IsCheckedChanged="CheckPower_Changed" />
                     </Grid>
                 </StackPanel>
             </Border>
 
-            <!-- ═══════════════════ DISPLAY SETTINGS ═══════════════════ -->
+            <!-- DISPLAY SETTINGS -->
             <Border Classes="panel">
                 <StackPanel>
                     <Border Classes="panel-header" Margin="0,0,0,8">
-                        <TextBlock Classes="header" Text="Display" />
+                        <TextBlock x:Name="headerDisplay" Classes="header" Text="Display" />
                     </Border>
+
+                    <!-- Backlight controller selector (visible when multiple backlight devices) -->
+                    <Grid x:Name="rowBacklightSelector" ColumnDefinitions="120,*" Margin="0,4" IsVisible="False">
+                        <TextBlock Grid.Column="0" x:Name="labelControllerLabel" Text="Controller"
+                                   Classes="label-dim" VerticalAlignment="Center" />
+                        <ComboBox Grid.Column="1" x:Name="comboBacklight"
+                                  HorizontalAlignment="Stretch"
+                                  SelectionChanged="ComboBacklight_SelectionChanged" />
+                    </Grid>
 
                     <!-- Brightness slider (visible when backlight device exists) -->
                     <Grid x:Name="rowBrightnessSlider" ColumnDefinitions="120,*,50" Margin="0,4">
-                        <TextBlock Grid.Column="0" Text="Brightness"
+                        <TextBlock Grid.Column="0" x:Name="labelDisplayBrightnessLabel" Text="Brightness"
                                    Classes="label-dim" VerticalAlignment="Center" />
                         <Slider Grid.Column="1" x:Name="sliderBrightness"
                                 Minimum="4" Maximum="100" Value="100"
@@ -130,12 +155,11 @@
                     <!-- Panel Overdrive -->
                     <CheckBox x:Name="checkOverdrive" Content="Panel Overdrive"
                               Margin="0,4"
-                              Checked="CheckOverdrive_Changed"
-                              Unchecked="CheckOverdrive_Changed" />
+                              IsCheckedChanged="CheckOverdrive_Changed" />
 
-                    <!-- Gamma -->
-                    <Grid ColumnDefinitions="120,*,50" Margin="0,4">
-                        <TextBlock Grid.Column="0" Text="Gamma"
+                    <!-- Gamma (hidden on Wayland, no backend support) -->
+                    <Grid x:Name="rowGamma" ColumnDefinitions="120,*,50" Margin="0,4">
+                        <TextBlock Grid.Column="0" x:Name="labelGammaLabel" Text="Gamma"
                                    Classes="label-dim" VerticalAlignment="Center" />
                         <Slider Grid.Column="1" x:Name="sliderGamma"
                                 Minimum="50" Maximum="200" Value="100"
@@ -148,73 +172,110 @@
                 </StackPanel>
             </Border>
 
-            <!-- ═══════════════════ OTHER SETTINGS ═══════════════════ -->
+
+            <Border Classes="panel" x:Name="panelGpuTuning" IsVisible="False">
+                <StackPanel>
+                    <Border Classes="panel-header" Margin="0,0,0,8">
+                        <TextBlock x:Name="headerGpuTuning" Classes="header" Text="GPU Tuning" />
+                    </Border>
+
+                    <TextBlock x:Name="labelGpuTuningInfo" Classes="label-dim"
+                               Text="NVIDIA GPU" Margin="0,0,0,6" />
+
+                    <!-- Power Limit slider -->
+                    <Grid ColumnDefinitions="110,*,50" Margin="0,4">
+                        <TextBlock Grid.Column="0" x:Name="labelPowerLimitLabel" Text="Power Limit"
+                                   Classes="label-dim" VerticalAlignment="Center" />
+                        <Slider Grid.Column="1" x:Name="sliderGpuPowerLimit"
+                                Minimum="5" Maximum="115" Value="55"
+                                TickFrequency="5" IsSnapToTickEnabled="True"
+                                ValueChanged="SliderGpuPowerLimit_ValueChanged" />
+                        <TextBlock Grid.Column="2" x:Name="labelGpuPowerLimit"
+                                   Classes="value" Text="55W"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Grid>
+
+                    <!-- Clock Lock -->
+                    <Grid ColumnDefinitions="110,Auto,*,50" Margin="0,4">
+                        <TextBlock Grid.Column="0" x:Name="labelClockLockLabel" Text="Clock Lock"
+                                   Classes="label-dim" VerticalAlignment="Center" />
+                        <CheckBox Grid.Column="1" x:Name="checkGpuClockLock"
+                                  Margin="0,0,8,0" VerticalAlignment="Center"
+                                  IsCheckedChanged="CheckGpuClockLock_Changed" />
+                        <Slider Grid.Column="2" x:Name="sliderGpuClockLock"
+                                Minimum="200" Maximum="3000" Value="2400"
+                                TickFrequency="50" IsSnapToTickEnabled="True"
+                                IsEnabled="False"
+                                ValueChanged="SliderGpuClockLock_ValueChanged" />
+                        <TextBlock Grid.Column="3" x:Name="labelGpuClockLock"
+                                   Classes="value" Text="--"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Grid>
+
+                    <Button x:Name="buttonGpuApply" Classes="ghelper"
+                            Content="Apply GPU Settings" Margin="0,8,0,0"
+                            Click="ButtonGpuApply_Click" />
+                </StackPanel>
+            </Border>
+
+            <!-- OTHER SETTINGS -->
             <Border Classes="panel">
                 <StackPanel>
                     <Border Classes="panel-header" Margin="0,0,0,8">
-                        <TextBlock Classes="header" Text="Other" />
+                        <TextBlock x:Name="headerOther" Classes="header" Text="Other" />
                     </Border>
 
                     <CheckBox x:Name="checkBootSound" Content="Boot Sound"
                               Margin="0,4"
-                              Checked="CheckBootSound_Changed"
-                              Unchecked="CheckBootSound_Changed" />
+                              IsCheckedChanged="CheckBootSound_Changed" />
 
                     <CheckBox x:Name="checkPerKeyRGB" Content="Per-Key RGB (instead of 4-zone)"
                               Margin="0,4" IsVisible="False"
-                              Checked="CheckPerKeyRGB_Changed"
-                              Unchecked="CheckPerKeyRGB_Changed" />
+                              IsCheckedChanged="CheckPerKeyRGB_Changed" />
 
                     <CheckBox x:Name="checkTopmost" Content="Window Always on Top"
                               Margin="0,4"
-                              Checked="CheckTopmost_Changed"
-                              Unchecked="CheckTopmost_Changed" />
+                              IsCheckedChanged="CheckTopmost_Changed" />
 
                     <CheckBox x:Name="checkBWIcon" Content="B&amp;W Tray Icon"
                               Margin="0,4"
-                              Checked="CheckBWIcon_Changed"
-                              Unchecked="CheckBWIcon_Changed" />
+                              IsCheckedChanged="CheckBWIcon_Changed" />
 
                     <CheckBox x:Name="checkClamshell" Content="Clamshell Mode (disable sleep on lid close)"
                               Margin="0,4"
-                              Checked="CheckClamshell_Changed"
-                              Unchecked="CheckClamshell_Changed" />
+                              IsCheckedChanged="CheckClamshell_Changed" />
 
                     <CheckBox x:Name="checkSilentStart" Content="Start minimized to tray"
                               Margin="0,4"
-                              Checked="CheckSilentStart_Changed"
-                              Unchecked="CheckSilentStart_Changed" />
+                              IsCheckedChanged="CheckSilentStart_Changed" />
 
                     <Separator Margin="0,8,0,4" />
 
                     <!-- Device toggles -->
                     <CheckBox x:Name="checkCamera" Content="Camera"
                               Margin="0,4"
-                              Checked="CheckCamera_Changed"
-                              Unchecked="CheckCamera_Changed" />
+                              IsCheckedChanged="CheckCamera_Changed" />
 
                     <CheckBox x:Name="checkTouchpad" Content="Touchpad"
                               Margin="0,4"
-                              Checked="CheckTouchpad_Changed"
-                              Unchecked="CheckTouchpad_Changed" />
+                              IsCheckedChanged="CheckTouchpad_Changed" />
 
                     <CheckBox x:Name="checkTouchscreen" Content="Touchscreen"
                               Margin="0,4" IsVisible="False"
-                              Checked="CheckTouchscreen_Changed"
-                              Unchecked="CheckTouchscreen_Changed" />
+                              IsCheckedChanged="CheckTouchscreen_Changed" />
                 </StackPanel>
             </Border>
 
-            <!-- ═══════════════════ KEY BINDINGS ═══════════════════ -->
+            <!-- KEY BINDINGS -->
             <Border Classes="panel">
                 <StackPanel>
                     <Border Classes="panel-header" Margin="0,0,0,8">
-                        <TextBlock Classes="header" Text="Key Bindings" />
+                        <TextBlock x:Name="headerKeyBindings" Classes="header" Text="Key Bindings" />
                     </Border>
 
                     <!-- ROG / M5 Key -->
                     <Grid ColumnDefinitions="180,*" Margin="0,4">
-                        <TextBlock Grid.Column="0" Text="ROG / M5 Key"
+                        <TextBlock Grid.Column="0" x:Name="labelKeyM4" Text="ROG / M5 Key"
                                    Classes="label-dim" VerticalAlignment="Center" />
                         <ComboBox Grid.Column="1" x:Name="comboKeyM4"
                                   Width="220" Height="28"
@@ -223,7 +284,7 @@
 
                     <!-- Fn+F4 (Aura) -->
                     <Grid ColumnDefinitions="180,*" Margin="0,4">
-                        <TextBlock Grid.Column="0" Text="Fn+F4 (Aura)"
+                        <TextBlock Grid.Column="0" x:Name="labelKeyFnF4" Text="Fn+F4 (Aura)"
                                    Classes="label-dim" VerticalAlignment="Center" />
                         <ComboBox Grid.Column="1" x:Name="comboKeyFnF4"
                                   Width="220" Height="28"
@@ -232,7 +293,7 @@
 
                     <!-- Fn+F5 / M4 (Performance) -->
                     <Grid ColumnDefinitions="180,*" Margin="0,4">
-                        <TextBlock Grid.Column="0" Text="Fn+F5 / M4"
+                        <TextBlock Grid.Column="0" x:Name="labelKeyFnF5" Text="Fn+F5 / M4"
                                    Classes="label-dim" VerticalAlignment="Center" />
                         <ComboBox Grid.Column="1" x:Name="comboKeyFnF5"
                                   Width="220" Height="28"
@@ -241,16 +302,16 @@
                 </StackPanel>
             </Border>
 
-            <!-- ═══════════════════ POWER MANAGEMENT ═══════════════════ -->
+            <!-- POWER MANAGEMENT -->
             <Border Classes="panel">
                 <StackPanel>
                     <Border Classes="panel-header" Margin="0,0,0,8">
-                        <TextBlock Classes="header" Text="Power Management" />
+                        <TextBlock x:Name="headerPowerMgmt" Classes="header" Text="Power Management" />
                     </Border>
 
                     <!-- Platform Profile -->
                     <Grid ColumnDefinitions="120,*" Margin="0,4">
-                        <TextBlock Grid.Column="0" Text="Platform Profile"
+                        <TextBlock Grid.Column="0" x:Name="labelPlatformProfileLabel" Text="Platform Profile"
                                    Classes="label-dim" VerticalAlignment="Center" />
                         <ComboBox Grid.Column="1" x:Name="comboPlatformProfile"
                                   Width="200" SelectionChanged="ComboPlatformProfile_Changed">
@@ -262,7 +323,7 @@
 
                     <!-- ASPM Policy -->
                     <Grid ColumnDefinitions="120,*" Margin="0,4">
-                        <TextBlock Grid.Column="0" Text="PCIe ASPM"
+                        <TextBlock Grid.Column="0" x:Name="labelAspmLabel" Text="PCIe ASPM"
                                    Classes="label-dim" VerticalAlignment="Center" />
                         <ComboBox Grid.Column="1" x:Name="comboAspm"
                                   Width="200" SelectionChanged="ComboAspm_Changed">
@@ -274,18 +335,27 @@
                     </Grid>
 
                     <!-- Battery Health -->
-                    <TextBlock x:Name="labelBatteryHealth" Classes="label-dim"
-                               Text="Battery health: --%" Margin="0,8,0,0" />
-                    <TextBlock x:Name="labelPowerDraw" Classes="label-dim"
-                               Text="Power draw: -- mW" Margin="0,4,0,0" />
+                    <Grid ColumnDefinitions="*,Auto" Margin="0,8,0,0">
+                        <StackPanel Grid.Column="0">
+                            <TextBlock x:Name="labelBatteryHealth" Classes="label-dim"
+                                       Text="Battery health: --%" />
+                            <TextBlock x:Name="labelPowerDraw" Classes="label-dim"
+                                       Text="Power draw: - mW" Margin="0,4,0,0" />
+                        </StackPanel>
+                        <Button Grid.Column="1" x:Name="buttonBatteryInfo" Classes="ghelper"
+                                Height="28" VerticalAlignment="Center"
+                                Click="ButtonBatteryInfo_Click">
+                            <TextBlock x:Name="labelBatteryDetails" Text="Details..." FontSize="11" />
+                        </Button>
+                    </Grid>
                 </StackPanel>
             </Border>
 
-            <!-- ═══════════════════ SYSTEM INFO ═══════════════════ -->
+            <!-- SYSTEM INFO -->
             <Border Classes="panel">
                 <StackPanel>
                     <Border Classes="panel-header" Margin="0,0,0,8">
-                        <TextBlock Classes="header" Text="System Info" />
+                        <TextBlock x:Name="headerSystemInfo" Classes="header" Text="System Info" />
                     </Border>
 
                     <TextBlock x:Name="labelModel" Classes="label-dim"
@@ -301,35 +371,32 @@
                 </StackPanel>
             </Border>
 
-            <!-- ═══════════════════ ADVANCED ═══════════════════ -->
+            <!-- ADVANCED -->
             <Border Classes="panel">
                 <StackPanel>
                     <Border Classes="panel-header" Margin="0,0,0,8">
-                        <TextBlock Classes="header" Text="Advanced" />
+                        <TextBlock x:Name="headerAdvanced" Classes="header" Text="Advanced" />
                     </Border>
 
                     <CheckBox x:Name="checkAutoApplyPower" Content="Auto-apply power limits on mode change"
                               Margin="0,4"
-                              Checked="CheckAutoApplyPower_Changed"
-                              Unchecked="CheckAutoApplyPower_Changed" />
+                              IsCheckedChanged="CheckAutoApplyPower_Changed" />
 
                     <CheckBox x:Name="checkRawWmi"
-                              Content="Raw WMI mode (experimental — GPU Eco via ACPI debugfs)"
+                              Content="Raw WMI mode (experimental - GPU Eco via ACPI debugfs)"
                               Margin="0,4"
-                              Checked="CheckRawWmi_Changed"
-                              Unchecked="CheckRawWmi_Changed" />
+                              IsCheckedChanged="CheckRawWmi_Changed" />
                     <TextBlock x:Name="labelRawWmiHint" Classes="label-dim"
                                Text="For laptops without GPU Eco sysfs. App will restart when toggled."
                                FontSize="10" Margin="20,0,0,4" />
 
                     <CheckBox x:Name="checkScreenAuto" Content="Auto-switch refresh rate (AC/Battery)"
                               Margin="0,4"
-                              Checked="CheckScreenAuto_Changed"
-                              Unchecked="CheckScreenAuto_Changed" />
+                              IsCheckedChanged="CheckScreenAuto_Changed" />
 
                     <!-- CPU Cores -->
                     <Grid ColumnDefinitions="120,*,50" Margin="0,8,0,4" x:Name="panelCpuCores">
-                        <TextBlock Grid.Column="0" Text="CPU Cores"
+                        <TextBlock Grid.Column="0" x:Name="labelCpuCoresLabel" Text="CPU Cores"
                                    Classes="label-dim" VerticalAlignment="Center" />
                         <Slider Grid.Column="1" x:Name="sliderCpuCores"
                                 Minimum="1" Maximum="32" Value="32"

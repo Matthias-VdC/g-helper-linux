@@ -1,8 +1,10 @@
+using GHelper.Linux.I18n;
+
 namespace GHelper.Linux.Mode;
 
 /// <summary>
 /// Performance mode definitions and management.
-/// Ported from G-Helper's Modes.cs — same mode system:
+/// Ported from G-Helper's Modes.cs - same mode system:
 ///   0 = Balanced, 1 = Turbo, 2 = Silent, 3+ = Custom
 /// </summary>
 public static class Modes
@@ -26,7 +28,8 @@ public static class Modes
     /// <summary>Get the base mode (0-2) for a given mode index.</summary>
     public static int GetBase(int mode)
     {
-        if (mode >= 0 && mode <= 2) return mode;
+        if (mode >= 0 && mode <= 2)
+            return mode;
         return Helpers.AppConfig.Get($"mode_base_{mode}", -1);
     }
 
@@ -47,10 +50,10 @@ public static class Modes
     {
         return mode switch
         {
-            0 => "Balanced",
-            1 => "Turbo",
-            2 => "Silent",
-            _ => Helpers.AppConfig.GetString($"mode_name_{mode}") ?? $"Custom {mode - 2}"
+            0 => Labels.Get("mode_balanced"),
+            1 => Labels.Get("mode_turbo"),
+            2 => Labels.Get("mode_silent"),
+            _ => Helpers.AppConfig.GetString($"mode_name_{mode}") ?? Labels.Format("mode_custom", mode - 2)
         };
     }
 
@@ -73,7 +76,8 @@ public static class Modes
 
         for (int i = 3; i < MaxModes; i++)
         {
-            if (Exists(i)) modes.Add(i);
+            if (Exists(i))
+                modes.Add(i);
         }
 
         return modes;
@@ -84,14 +88,15 @@ public static class Modes
     {
         var modes = new Dictionary<int, string>
         {
-            { 2, "Silent" },
-            { 0, "Balanced" },
-            { 1, "Turbo" }
+            { 2, Labels.Get("mode_silent") },
+            { 0, Labels.Get("mode_balanced") },
+            { 1, Labels.Get("mode_turbo") }
         };
 
         for (int i = 3; i < MaxModes; i++)
         {
-            if (Exists(i)) modes.Add(i, GetName(i));
+            if (Exists(i))
+                modes.Add(i, GetName(i));
         }
 
         return modes;
@@ -106,12 +111,14 @@ public static class Modes
         if (back)
         {
             index--;
-            if (index < 0) index = modes.Count - 1;
+            if (index < 0)
+                index = modes.Count - 1;
         }
         else
         {
             index++;
-            if (index >= modes.Count) index = 0;
+            if (index >= modes.Count)
+                index = 0;
         }
 
         return modes[index];
@@ -124,10 +131,11 @@ public static class Modes
 
         for (int i = 3; i < MaxModes; i++)
         {
-            if (Exists(i)) continue;
+            if (Exists(i))
+                continue;
 
             Helpers.AppConfig.Set($"mode_base_{i}", GetCurrentBase());
-            Helpers.AppConfig.Set($"mode_name_{i}", $"Custom {i - 2}");
+            Helpers.AppConfig.Set($"mode_name_{i}", Labels.Format("mode_custom", i - 2));
 
             return i;
         }
@@ -138,7 +146,8 @@ public static class Modes
     /// <summary>Remove a custom mode.</summary>
     public static void Remove(int mode)
     {
-        if (mode <= 2) return; // Can't remove built-in modes
+        if (mode <= 2)
+            return; // Can't remove built-in modes
 
         var keys = new[]
         {

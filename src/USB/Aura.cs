@@ -1,5 +1,6 @@
 using System.Text;
 using GHelper.Linux.Helpers;
+using GHelper.Linux.I18n;
 
 namespace GHelper.Linux.USB;
 
@@ -97,41 +98,41 @@ public static class Aura
     private static bool _isStrix4Zone = AppConfig.Is4ZoneRGB();
     private static bool _isSingleColor = AppConfig.IsSingleColor();
 
-    // ── Mode dictionaries ──
+    // Mode dictionaries
 
-    private static readonly Dictionary<AuraMode, string> ModesSingleColor = new()
+    private static Dictionary<AuraMode, string> ModesSingleColor => new()
     {
-        { AuraMode.AuraStatic, "Static" },
-        { AuraMode.AuraBreathe, "Breathe" },
-        { AuraMode.AuraStrobe, "Strobe" },
+        { AuraMode.AuraStatic, Labels.Get("aura_static") },
+        { AuraMode.AuraBreathe, Labels.Get("aura_breathe") },
+        { AuraMode.AuraStrobe, Labels.Get("aura_strobe") },
     };
 
-    private static readonly Dictionary<AuraMode, string> ModesStandard = new()
+    private static Dictionary<AuraMode, string> ModesStandard => new()
     {
-        { AuraMode.AuraStatic, "Static" },
-        { AuraMode.AuraBreathe, "Breathe" },
-        { AuraMode.AuraColorCycle, "Color Cycle" },
-        { AuraMode.AuraRainbow, "Rainbow" },
-        { AuraMode.AuraStrobe, "Strobe" },
+        { AuraMode.AuraStatic, Labels.Get("aura_static") },
+        { AuraMode.AuraBreathe, Labels.Get("aura_breathe") },
+        { AuraMode.AuraColorCycle, Labels.Get("aura_color_cycle") },
+        { AuraMode.AuraRainbow, Labels.Get("aura_rainbow") },
+        { AuraMode.AuraStrobe, Labels.Get("aura_strobe") },
     };
 
-    private static readonly Dictionary<AuraMode, string> ModesStrix = new()
+    private static Dictionary<AuraMode, string> ModesStrix => new()
     {
-        { AuraMode.AuraStatic, "Static" },
-        { AuraMode.AuraBreathe, "Breathe" },
-        { AuraMode.AuraColorCycle, "Color Cycle" },
-        { AuraMode.AuraRainbow, "Rainbow" },
-        { AuraMode.Star, "Star" },
-        { AuraMode.Rain, "Rain" },
-        { AuraMode.Highlight, "Highlight" },
-        { AuraMode.Laser, "Laser" },
-        { AuraMode.Ripple, "Ripple" },
-        { AuraMode.AuraStrobe, "Strobe" },
-        { AuraMode.Comet, "Comet" },
-        { AuraMode.Flash, "Flash" },
+        { AuraMode.AuraStatic, Labels.Get("aura_static") },
+        { AuraMode.AuraBreathe, Labels.Get("aura_breathe") },
+        { AuraMode.AuraColorCycle, Labels.Get("aura_color_cycle") },
+        { AuraMode.AuraRainbow, Labels.Get("aura_rainbow") },
+        { AuraMode.Star, Labels.Get("aura_star") },
+        { AuraMode.Rain, Labels.Get("aura_rain") },
+        { AuraMode.Highlight, Labels.Get("aura_highlight") },
+        { AuraMode.Laser, Labels.Get("aura_laser") },
+        { AuraMode.Ripple, Labels.Get("aura_ripple") },
+        { AuraMode.AuraStrobe, Labels.Get("aura_strobe") },
+        { AuraMode.Comet, Labels.Get("aura_comet") },
+        { AuraMode.Flash, Labels.Get("aura_flash") },
     };
 
-    // ── Properties ──
+    // Properties
 
     public static AuraMode Mode
     {
@@ -157,17 +158,19 @@ public static class Aura
         return _mode != AuraMode.AuraColorCycle && _mode != AuraMode.AuraRainbow;
     }
 
-    // ── Mode/Speed lists ──
+    // Mode/Speed lists
 
     public static Dictionary<AuraMode, string> GetModes()
     {
-        if (_isSingleColor) return ModesSingleColor;
+        if (_isSingleColor)
+            return ModesSingleColor;
 
         if (AppConfig.IsAdvancedRGB() && !AppConfig.Is4ZoneRGB())
             return ModesStrix;
 
         var modes = new Dictionary<AuraMode, string>(ModesStandard);
-        if (_isACPI) modes.Remove(AuraMode.AuraRainbow);
+        if (_isACPI)
+            modes.Remove(AuraMode.AuraRainbow);
         return modes;
     }
 
@@ -175,13 +178,13 @@ public static class Aura
     {
         return new Dictionary<AuraSpeed, string>
         {
-            { AuraSpeed.Slow, "Slow" },
-            { AuraSpeed.Normal, "Normal" },
-            { AuraSpeed.Fast, "Fast" },
+            { AuraSpeed.Slow, Labels.Get("speed_slow") },
+            { AuraSpeed.Normal, Labels.Get("speed_normal") },
+            { AuraSpeed.Fast, Labels.Get("speed_fast") },
         };
     }
 
-    // ── Color helpers ──
+    // Color helpers
 
     public static void SetColor(int argb)
     {
@@ -207,7 +210,7 @@ public static class Aura
         return (255 << 24) | (Color2R << 16) | (Color2G << 8) | Color2B;
     }
 
-    // ── Protocol messages ──
+    // Protocol messages
 
     /// <summary>
     /// Build the 17-byte AURA mode message.
@@ -254,7 +257,7 @@ public static class Aura
         if (AppConfig.IsDynamicLighting())
             AsusHid.Write(new byte[] { AsusHid.AURA_ID, 0xC0, 0x03, 0x01 }, "DynamicLightingInit");
 
-        // Probe hardware capabilities via GetFeature (diagnostic — log raw response)
+        // Probe hardware capabilities via GetFeature (diagnostic - log raw response)
         // This runs async to avoid blocking startup; results are logged for analysis.
         Task.Run(() =>
         {
@@ -264,18 +267,31 @@ public static class Aura
                 if (response != null)
                 {
                     Logger.WriteLine($"AURA Capabilities (hardware query):");
-                    Logger.WriteLine($"  KBBackLightType[9]=0x{response[9]:X2} ({response[9] switch {
-                        0 => "SingleColor", 1 => "MinimalZone", 2 => "MultiZone",
-                        3 => "PerKey", 4 => "FourZone", _ => "Unknown" }})");
+                    Logger.WriteLine($"  KBBackLightType[9]=0x{response[9]:X2} ({response[9] switch
+                    {
+                        0 => "SingleColor",
+                        1 => "MinimalZone",
+                        2 => "MultiZone",
+                        3 => "PerKey",
+                        4 => "FourZone",
+                        _ => "Unknown"
+                    }})");
                     Logger.WriteLine($"  Zones[13]=0x{response[13]:X2} (Logo={((response[13] & 0x01) != 0 ? "yes" : "no")}" +
                         $", Lightbar={((response[13] & 0x02) != 0 ? "yes" : "no")}" +
                         $", VCut={((response[13] & 0x10) != 0 ? "yes" : "no")}" +
                         $", Aero={((response[13] & 0x20) != 0 ? "yes" : "no")}" +
                         $", Bump={((response[13] & 0x40) != 0 ? "yes" : "no")}" +
                         $", Rearglow={((response[13] & 0x80) != 0 ? "yes" : "no")})");
-                    Logger.WriteLine($"  Version[10]=0x{response[10]:X2}, ModelSeries[17]=0x{response[17]:X2} ({response[17] switch {
-                        1 => "Strix", 2 => "Flow", 4 => "Zephyrus", 8 => "TUF",
-                        0x10 => "SE", 0x20 => "Desktop", _ => $"0x{response[17]:X2}" }})");
+                    Logger.WriteLine($"  Version[10]=0x{response[10]:X2}, ModelSeries[17]=0x{response[17]:X2} ({response[17] switch
+                    {
+                        1 => "Strix",
+                        2 => "Flow",
+                        4 => "Zephyrus",
+                        8 => "TUF",
+                        0x10 => "SE",
+                        0x20 => "Desktop",
+                        _ => $"0x{response[17]:X2}"
+                    }})");
                     Logger.WriteLine($"  LEDs: Bar={response[18]}, Logo={response[19]}, Aero={response[20]}, VCut={response[21]}, Rear={response[22]}, Bump={response[23]}");
                 }
             }
@@ -292,7 +308,8 @@ public static class Aura
     /// </summary>
     public static void ApplyBrightness(int brightness, string log = "Backlight")
     {
-        if (brightness == 0) _backlight = false;
+        if (brightness == 0)
+            _backlight = false;
 
         if (AppConfig.IsInputBacklight())
             AsusHid.WriteInput(new byte[] { AsusHid.INPUT_ID, 0xBA, 0xC5, 0xC4, (byte)brightness }, log);
@@ -305,7 +322,8 @@ public static class Aura
 
         if (brightness > 0)
         {
-            if (!_backlight) _initDirect = true;
+            if (!_backlight)
+                _initDirect = true;
             _backlight = true;
         }
     }
@@ -318,38 +336,67 @@ public static class Aura
     {
         byte keyb = 0, bar = 0, lid = 0, rear = 0;
 
-        if (flags.BootLogo) keyb |= 1 << 0;
-        if (flags.BootKeyb) keyb |= 1 << 1;
-        if (flags.AwakeLogo) keyb |= 1 << 2;
-        if (flags.AwakeKeyb) keyb |= 1 << 3;
-        if (flags.SleepLogo) keyb |= 1 << 4;
-        if (flags.SleepKeyb) keyb |= 1 << 5;
-        if (flags.ShutdownLogo) keyb |= 1 << 6;
-        if (flags.ShutdownKeyb) keyb |= 1 << 7;
+        if (flags.BootLogo)
+            keyb |= 1 << 0;
+        if (flags.BootKeyb)
+            keyb |= 1 << 1;
+        if (flags.AwakeLogo)
+            keyb |= 1 << 2;
+        if (flags.AwakeKeyb)
+            keyb |= 1 << 3;
+        if (flags.SleepLogo)
+            keyb |= 1 << 4;
+        if (flags.SleepKeyb)
+            keyb |= 1 << 5;
+        if (flags.ShutdownLogo)
+            keyb |= 1 << 6;
+        if (flags.ShutdownKeyb)
+            keyb |= 1 << 7;
 
-        if (flags.AwakeBar) bar |= 1 << 0;
-        if (flags.BootBar) bar |= 1 << 1;
-        if (flags.AwakeBar) bar |= 1 << 2;
-        if (flags.SleepBar) bar |= 1 << 3;
-        if (flags.ShutdownBar) bar |= 1 << 4;
+        if (flags.AwakeBar)
+            bar |= 1 << 0;
+        if (flags.BootBar)
+            bar |= 1 << 1;
+        if (flags.AwakeBar)
+            bar |= 1 << 2;
+        if (flags.SleepBar)
+            bar |= 1 << 3;
+        if (flags.ShutdownBar)
+            bar |= 1 << 4;
 
-        if (flags.BootLid) lid |= 1 << 0;
-        if (flags.AwakeLid) lid |= 1 << 1;
-        if (flags.SleepLid) lid |= 1 << 2;
-        if (flags.ShutdownLid) lid |= 1 << 3;
-        if (flags.BootLid) lid |= 1 << 4;
-        if (flags.AwakeLid) lid |= 1 << 5;
-        if (flags.SleepLid) lid |= 1 << 6;
-        if (flags.ShutdownLid) lid |= 1 << 7;
+        if (flags.BootLid)
+            lid |= 1 << 0;
+        if (flags.AwakeLid)
+            lid |= 1 << 1;
+        if (flags.SleepLid)
+            lid |= 1 << 2;
+        if (flags.ShutdownLid)
+            lid |= 1 << 3;
+        if (flags.BootLid)
+            lid |= 1 << 4;
+        if (flags.AwakeLid)
+            lid |= 1 << 5;
+        if (flags.SleepLid)
+            lid |= 1 << 6;
+        if (flags.ShutdownLid)
+            lid |= 1 << 7;
 
-        if (flags.BootRear) rear |= 1 << 0;
-        if (flags.AwakeRear) rear |= 1 << 1;
-        if (flags.SleepRear) rear |= 1 << 2;
-        if (flags.ShutdownRear) rear |= 1 << 3;
-        if (flags.BootRear) rear |= 1 << 4;
-        if (flags.AwakeRear) rear |= 1 << 5;
-        if (flags.SleepRear) rear |= 1 << 6;
-        if (flags.ShutdownRear) rear |= 1 << 7;
+        if (flags.BootRear)
+            rear |= 1 << 0;
+        if (flags.AwakeRear)
+            rear |= 1 << 1;
+        if (flags.SleepRear)
+            rear |= 1 << 2;
+        if (flags.ShutdownRear)
+            rear |= 1 << 3;
+        if (flags.BootRear)
+            rear |= 1 << 4;
+        if (flags.AwakeRear)
+            rear |= 1 << 5;
+        if (flags.SleepRear)
+            rear |= 1 << 6;
+        if (flags.ShutdownRear)
+            rear |= 1 << 7;
 
         return new byte[] { AsusHid.AURA_ID, 0xBD, 0x01, keyb, bar, lid, rear, 0xFF };
     }
@@ -392,10 +439,14 @@ public static class Aura
         // the "Logo" checkboxes in the UI (Windows g-helper pattern).
         if (AppConfig.IsZ13())
         {
-            flags.AwakeBar = flags.AwakeLogo;   flags.BootBar = flags.BootLogo;
-            flags.SleepBar = flags.SleepLogo;   flags.ShutdownBar = flags.ShutdownLogo;
-            flags.AwakeLid = flags.AwakeLogo;   flags.BootLid = flags.BootLogo;
-            flags.SleepLid = flags.SleepLogo;   flags.ShutdownLid = flags.ShutdownLogo;
+            flags.AwakeBar = flags.AwakeLogo;
+            flags.BootBar = flags.BootLogo;
+            flags.SleepBar = flags.SleepLogo;
+            flags.ShutdownBar = flags.ShutdownLogo;
+            flags.AwakeLid = flags.AwakeLogo;
+            flags.BootLid = flags.BootLogo;
+            flags.SleepLid = flags.SleepLogo;
+            flags.ShutdownLid = flags.ShutdownLogo;
         }
 
         // TUF: use sysfs kbd_rgb_state instead of HID power message
@@ -413,7 +464,7 @@ public static class Aura
         AsusHid.Write(AuraPowerMessage(flags));
     }
 
-    // ── 4-zone direct RGB map ──
+    // 4-zone direct RGB map
 
     /// <summary>
     /// Zone mapping for 4-zone Strix keyboards.
@@ -427,7 +478,7 @@ public static class Aura
            7,  7,  6,  5,  4,  4,
     };
 
-    // ── Per-key maps (for per-key RGB Strix) ──
+    // Per-key maps (for per-key RGB Strix)
 
     private static readonly byte[] PacketMap = new byte[]
     {
@@ -484,14 +535,15 @@ public static class Aura
         var modeKeys = new List<AuraMode>(modes.Keys);
 
         if (modeKeys.Count == 0)
-            return "No modes";
+            return Labels.Get("aura_no_modes");
 
         // Current mode
         var current = (AuraMode)AppConfig.Get("aura_mode");
         int currentIdx = modeKeys.IndexOf(current);
 
         // If current mode not found in list, start from 0
-        if (currentIdx < 0) currentIdx = 0;
+        if (currentIdx < 0)
+            currentIdx = 0;
 
         // Advance
         int nextIdx = (currentIdx + direction + modeKeys.Count) % modeKeys.Count;
@@ -576,7 +628,8 @@ public static class Aura
     /// </summary>
     public static void ApplyDirect(byte r, byte g, byte b, bool init = false)
     {
-        if (!_backlight) return;
+        if (!_backlight)
+            return;
 
         if (_isACPI)
         {
@@ -643,7 +696,8 @@ public static class Aura
     /// </summary>
     public static void ApplyDirectZones(byte[] colors, bool init = false)
     {
-        if (!_backlight) return;
+        if (!_backlight)
+            return;
 
         const byte keySet = 167;
         const byte ledCount = 178;
@@ -689,7 +743,8 @@ public static class Aura
             for (int i = 0; i < keySet; i += ledsPerPacket)
             {
                 byte ledsRemaining = (byte)(keySet - i);
-                if (ledsRemaining < ledsPerPacket) buffer[7] = ledsRemaining;
+                if (ledsRemaining < ledsPerPacket)
+                    buffer[7] = ledsRemaining;
 
                 buffer[6] = (byte)i;
                 Buffer.BlockCopy(keyBuf, 3 * i, buffer, 9, 3 * buffer[7]);
@@ -736,13 +791,15 @@ public static class Aura
     /// </summary>
     public static bool IsAvailable()
     {
-        if (AsusHid.IsAvailable()) return true;
+        if (AsusHid.IsAvailable())
+            return true;
 
         // TUF/VivoZenPro: kbd_rgb_mode sysfs works independently of HID
         if (_isACPI)
         {
             var wmi = App.Wmi as Platform.Linux.LinuxAsusWmi;
-            if (wmi != null && wmi.HasKeyboardRgbMode()) return true;
+            if (wmi != null && wmi.HasKeyboardRgbMode())
+                return true;
         }
         return false;
     }

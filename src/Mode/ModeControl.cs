@@ -1,7 +1,9 @@
+using GHelper.Linux.I18n;
+
 namespace GHelper.Linux.Mode;
 
 /// <summary>
-/// Performance mode controller — the core business logic orchestrator.
+/// Performance mode controller - the core business logic orchestrator.
 /// Ported from G-Helper's ModeControl.cs.
 /// 
 /// When a mode change occurs, this class:
@@ -17,36 +19,47 @@ public class ModeControl
     // Track whether custom power limits were applied (for IsResetRequired workaround)
     private int _customPower;
 
-    // ── Power limit bounds (matches Windows G-Helper AsusACPI constructor) ──
+    // Power limit bounds (matches Windows G-Helper AsusACPI constructor)
 
     private const int MinTotal = 5;
     private const int MinGpuBoost = 5;
 
     private static int GetMaxTotal()
     {
-        if (Helpers.AppConfig.IsAdvantageEdition()) return 250;
-        if (Helpers.AppConfig.IsX13()) return 75;
-        if (Helpers.AppConfig.IsAlly()) return 50;
-        if (Helpers.AppConfig.IsIntelHX()) return 175;
+        if (Helpers.AppConfig.IsAdvantageEdition())
+            return 250;
+        if (Helpers.AppConfig.IsX13())
+            return 75;
+        if (Helpers.AppConfig.IsAlly())
+            return 50;
+        if (Helpers.AppConfig.IsIntelHX())
+            return 175;
         // IsZ1325 must be checked before IsCPULight: GZ302E matches both,
         // but the Z13 2025 (GZ302EA) needs 93W max, not 90W.
-        if (Helpers.AppConfig.IsZ1325()) return 93;
-        if (Helpers.AppConfig.IsCPULight()) return 90;
-        if (Helpers.AppConfig.IsFA401EA()) return 115;
+        if (Helpers.AppConfig.IsZ1325())
+            return 93;
+        if (Helpers.AppConfig.IsCPULight())
+            return 90;
+        if (Helpers.AppConfig.IsFA401EA())
+            return 115;
         return 150; // default
     }
 
     private static int GetMaxCpu()
     {
-        if (Helpers.AppConfig.IsFA401EA()) return 115;
+        if (Helpers.AppConfig.IsFA401EA())
+            return 115;
         return 100; // default
     }
 
     private static int GetMaxGpuBoost()
     {
-        if (Helpers.AppConfig.DynamicBoost5()) return 5;
-        if (Helpers.AppConfig.DynamicBoost15()) return 15;
-        if (Helpers.AppConfig.DynamicBoost20()) return 20;
+        if (Helpers.AppConfig.DynamicBoost5())
+            return 5;
+        if (Helpers.AppConfig.DynamicBoost15())
+            return 15;
+        if (Helpers.AppConfig.DynamicBoost20())
+            return 20;
         return 25; // default
     }
 
@@ -60,8 +73,10 @@ public class ModeControl
     public void SetPerformanceMode(int mode = -1, bool notify = false)
     {
         int oldMode = Modes.GetCurrent();
-        if (mode < 0) mode = oldMode;
-        if (!Modes.Exists(mode)) mode = 0;
+        if (mode < 0)
+            mode = oldMode;
+        if (!Modes.Exists(mode))
+            mode = 0;
 
         Modes.SetCurrent(mode);
         int baseMode = Modes.GetBase(mode);
@@ -100,12 +115,12 @@ public class ModeControl
         App.Power?.SetPlatformProfile(profile);
 
         // 3. Verify: on some kernels, throttle_thermal_policy and platform_profile
-        // are coupled — writing platform_profile may reset throttle_thermal_policy.
+        // are coupled - writing platform_profile may reset throttle_thermal_policy.
         // Read back and re-apply if needed.
         //
         // On newer kernels with asus-armoury firmware-attributes, throttle_thermal_policy
         // may not exist as a separate sysfs file. In that case GetThrottleThermalPolicy()
-        // derives its value from platform_profile — so if platform_profile is correct,
+        // derives its value from platform_profile - so if platform_profile is correct,
         // there's nothing to re-apply.
         int verifyPolicy = App.Wmi?.GetThrottleThermalPolicy() ?? -1;
         string verifyProfile = App.Power?.GetPlatformProfile() ?? "unknown";
@@ -114,7 +129,7 @@ public class ModeControl
         // Only re-apply if we got a definite wrong answer (not -1 = "unavailable")
         if (verifyPolicy >= 0 && verifyPolicy != baseMode)
         {
-            // Check if platform_profile is already correct — if so, the "mismatch" is just
+            // Check if platform_profile is already correct - if so, the "mismatch" is just
             // because thermal_policy is derived from platform_profile on this kernel.
             bool profileCorrect = verifyProfile == profile ||
                 (profile == "low-power" && verifyProfile == "quiet");
@@ -132,10 +147,10 @@ public class ModeControl
 
         // 4. Apply power limits, ASPM, then fan curves LAST
         // Fan curves must be written after everything else because:
-        //   - AutoPower writes nv_dynamic_boost/nv_temp_target which can cause the EC
-        //     to recalculate GPU fan strategy and override custom curves
-        //   - ASPM policy changes trigger PCIe link renegotiation which can reset curves
-        //   - The kernel resets fan curves when thermal profile changes (asusctl documents this)
+        // - AutoPower writes nv_dynamic_boost/nv_temp_target which can cause the EC
+        // to recalculate GPU fan strategy and override custom curves
+        // - ASPM policy changes trigger PCIe link renegotiation which can reset curves
+        // - The kernel resets fan curves when thermal profile changes (asusctl documents this)
         // By writing curves last, nothing runs after them to reset them.
         Task.Run(async () =>
         {
@@ -154,7 +169,7 @@ public class ModeControl
                 App.Power?.SetCpuBoost(autoBoost == 1);
             }
 
-            // ASPM — on by default (synced with upstream IsAutoASPM/IsNotFalse behavior)
+            // ASPM - on by default (synced with upstream IsAutoASPM/IsNotFalse behavior)
             if (Helpers.AppConfig.IsNotFalse("aspm"))
             {
                 App.Power?.SetAspmPolicy(baseMode == 2 ? "powersave" : "default");
@@ -167,7 +182,7 @@ public class ModeControl
 
         if (notify)
         {
-            App.System?.ShowNotification("Performance", Modes.GetName(mode), "preferences-system-performance");
+            App.System?.ShowNotification(Labels.Get("performance"), Modes.GetName(mode), "preferences-system-performance");
         }
     }
 
@@ -193,10 +208,12 @@ public class ModeControl
     /// <summary>Apply saved fan curves for the given mode.</summary>
     private void AutoFans(int mode)
     {
-        if (!Helpers.AppConfig.IsMode("auto_apply_fans")) return;
+        if (!Helpers.AppConfig.IsMode("auto_apply_fans"))
+            return;
 
         var wmi = App.Wmi;
-        if (wmi == null) return;
+        if (wmi == null)
+            return;
 
         int fanCount = wmi.FanCount;
         for (int fan = 0; fan < fanCount; fan++)
@@ -213,10 +230,12 @@ public class ModeControl
     /// <summary>Apply saved power limits for the given mode.</summary>
     private void AutoPower(int mode)
     {
-        if (!Helpers.AppConfig.IsMode("auto_apply_power")) return;
+        if (!Helpers.AppConfig.IsMode("auto_apply_power"))
+            return;
 
         var wmi = App.Wmi;
-        if (wmi == null) return;
+        if (wmi == null)
+            return;
 
         int maxTotal = GetMaxTotal();
         int maxGpuBoost = GetMaxGpuBoost();
@@ -225,8 +244,10 @@ public class ModeControl
         int pl2 = Helpers.AppConfig.GetMode("limit_fast");
 
         // Validate against model-specific bounds (matches Windows G-Helper)
-        if (pl1 > maxTotal || pl1 < MinTotal) pl1 = -1;
-        if (pl2 > maxTotal || pl2 < MinTotal) pl2 = -1;
+        if (pl1 > maxTotal || pl1 < MinTotal)
+            pl1 = -1;
+        if (pl2 > maxTotal || pl2 < MinTotal)
+            pl2 = -1;
 
         if (pl1 > 0)
         {
@@ -238,16 +259,17 @@ public class ModeControl
         if (pl2 > 0)
         {
             wmi.SetPptLimit(Platform.Linux.AsusAttributes.PptPl2Sppt, pl2);
-            if (pl2 > _customPower) _customPower = pl2;
+            if (pl2 > _customPower)
+                _customPower = pl2;
             Helpers.Logger.WriteLine($"AutoPower: PL2 = {pl2}W (max={maxTotal}W)");
         }
 
-        // APU SPPT / Platform SPPT — secondary AMD power tracking limits.
+        // APU SPPT / Platform SPPT - secondary AMD power tracking limits.
         //
         // On Windows, setting the ACPI thermal policy propagates internally to all PPT
         // registers. On Linux with dual-backend kernels (asus-nb-wmi + asus-armoury),
         // writing throttle_thermal_policy does NOT reliably update ppt_apu_sppt and
-        // ppt_platform_sppt — they can remain stuck at the previous mode's values
+        // ppt_platform_sppt - they can remain stuck at the previous mode's values
         // (e.g. 5W from Silent mode) even after switching to Turbo.
         //
         // Since AMD firmware enforces min(all PPT limits), a 5W APU SPPT hard-caps
@@ -273,17 +295,20 @@ public class ModeControl
 
         // fPPT (fast boost)
         int fppt = Helpers.AppConfig.GetMode("limit_fppt");
-        if (fppt > maxTotal || fppt < MinTotal) fppt = -1;
+        if (fppt > maxTotal || fppt < MinTotal)
+            fppt = -1;
         if (fppt > 0 && wmi.IsFeatureSupported(Platform.Linux.AsusAttributes.PptFppt))
         {
             wmi.SetPptLimit(Platform.Linux.AsusAttributes.PptFppt, fppt);
-            if (fppt > _customPower) _customPower = fppt;
+            if (fppt > _customPower)
+                _customPower = fppt;
             Helpers.Logger.WriteLine($"AutoPower: fPPT = {fppt}W (max={maxTotal}W)");
         }
 
         // NVIDIA dynamic boost
         int nvBoost = Helpers.AppConfig.GetMode("gpu_boost");
-        if (nvBoost > maxGpuBoost) nvBoost = maxGpuBoost;
+        if (nvBoost > maxGpuBoost)
+            nvBoost = maxGpuBoost;
         if (nvBoost > 0 && wmi.IsFeatureSupported(Platform.Linux.AsusAttributes.NvDynamicBoost))
         {
             wmi.SetPptLimit(Platform.Linux.AsusAttributes.NvDynamicBoost, nvBoost);
@@ -297,7 +322,7 @@ public class ModeControl
             wmi.SetPptLimit(Platform.Linux.AsusAttributes.NvTempTarget, nvTemp);
         }
 
-        // Verify PPT writes took effect — read back and warn on mismatches
+        // Verify PPT writes took effect - read back and warn on mismatches
         VerifyPptLimits(wmi, pl1, pl2, fppt, apuPlatCeiling > 0 ? apuPlatCeiling : -1);
     }
 

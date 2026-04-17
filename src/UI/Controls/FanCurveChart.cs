@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
+using GHelper.Linux.I18n;
 
 namespace GHelper.Linux.UI.Controls;
 
@@ -19,7 +20,7 @@ namespace GHelper.Linux.UI.Controls;
 /// </summary>
 public class FanCurveChart : Control
 {
-    // ── Dependency Properties ──
+    // Dependency Properties
 
     public static readonly StyledProperty<byte[]?> CurveDataProperty =
         AvaloniaProperty.Register<FanCurveChart, byte[]?>(nameof(CurveData));
@@ -64,7 +65,7 @@ public class FanCurveChart : Control
         set => SetValue(DisabledProperty, value);
     }
 
-    // ── Constants ──
+    // Constants
 
     private const int PointCount = 8;
     private const int TempMin = 20;
@@ -74,11 +75,11 @@ public class FanCurveChart : Control
     private const double PointRadius = 6;
     private const double ChartMargin = 40; // Space for axis labels
 
-    // ── State ──
+    // State
 
     private int _dragIndex = -1;
 
-    // ── Colors matching G-Helper ──
+    // Colors matching G-Helper
     private static readonly IBrush BackgroundBrush = new SolidColorBrush(Color.Parse("#232323"));
     private static readonly IBrush GridBrush = new SolidColorBrush(Color.Parse("#464646"));
     private static readonly IBrush AxisBrush = new SolidColorBrush(Color.Parse("#666666"));
@@ -100,7 +101,7 @@ public class FanCurveChart : Control
             InvalidateVisual();
     }
 
-    // ── Rendering ──
+    // Rendering
 
     public override void Render(DrawingContext context)
     {
@@ -131,13 +132,13 @@ public class FanCurveChart : Control
             13, LabelBrush);
         context.DrawText(labelText, new Point(chartArea.Left + 5, 12));
 
-        // Disabled overlay — drawn when firmware is controlling fans (pwm_enable != 1)
+        // Disabled overlay - drawn when firmware is controlling fans (pwm_enable != 1)
         if (Disabled)
         {
             var overlayBrush = new SolidColorBrush(Color.Parse("#CC1C1C1C")); // 80% opaque dark
             context.FillRectangle(overlayBrush, bounds);
 
-            var overlayText = new FormattedText("Firmware control",
+            var overlayText = new FormattedText(Labels.Get("firmware_control"),
                 System.Globalization.CultureInfo.InvariantCulture,
                 FlowDirection.LeftToRight,
                 new Typeface("Segoe UI, Ubuntu, sans-serif", FontStyle.Normal, FontWeight.SemiBold),
@@ -236,12 +237,13 @@ public class FanCurveChart : Control
         }
     }
 
-    // ── Mouse interaction ──
+    // Mouse interaction
 
     protected override void OnPointerPressed(PointerPressedEventArgs e)
     {
         base.OnPointerPressed(e);
-        if (CurveData is not { Length: 16 } || Disabled) return;
+        if (CurveData is not { Length: 16 } || Disabled)
+            return;
 
         var pos = e.GetPosition(this);
         var area = GetChartArea();
@@ -258,7 +260,8 @@ public class FanCurveChart : Control
     protected override void OnPointerMoved(PointerEventArgs e)
     {
         base.OnPointerMoved(e);
-        if (_dragIndex < 0 || CurveData is not { Length: 16 }) return;
+        if (_dragIndex < 0 || CurveData is not { Length: 16 })
+            return;
 
         var pos = e.GetPosition(this);
         var area = GetChartArea();
@@ -298,7 +301,7 @@ public class FanCurveChart : Control
         }
     }
 
-    // ── Coordinate mapping ──
+    // Coordinate mapping
 
     private Rect GetChartArea()
     {
@@ -331,7 +334,8 @@ public class FanCurveChart : Control
 
     private int FindClosestPoint(Point mouse, Rect area)
     {
-        if (CurveData is not { Length: 16 }) return -1;
+        if (CurveData is not { Length: 16 })
+            return -1;
 
         double minDist = PointRadius * 3; // Max grab distance
         int closest = -1;

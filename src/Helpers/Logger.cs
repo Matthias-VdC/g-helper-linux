@@ -25,7 +25,8 @@ public static class Logger
             {
                 _buffer[_writeIndex] = line;
                 _writeIndex = (_writeIndex + 1) % BufferSize;
-                if (_count < BufferSize) _count++;
+                if (_count < BufferSize)
+                    _count++;
                 _totalLines++;
             }
         }
@@ -42,7 +43,7 @@ public static class Logger
 
     /// <summary>
     /// Returns the most recent log lines in chronological order.
-    /// Thread-safe snapshot — callers get a copy, not a live view.
+    /// Thread-safe snapshot - callers get a copy, not a live view.
     /// </summary>
     public static string[] GetRecentLines()
     {
@@ -51,12 +52,12 @@ public static class Logger
             var result = new string[_count];
             if (_count < BufferSize)
             {
-                // Buffer hasn't wrapped yet — lines are 0.._count-1
+                // Buffer hasn't wrapped yet - lines are 0.._count-1
                 Array.Copy(_buffer, 0, result, 0, _count);
             }
             else
             {
-                // Buffer has wrapped — oldest line is at _writeIndex
+                // Buffer has wrapped - oldest line is at _writeIndex
                 int firstChunk = BufferSize - _writeIndex;
                 Array.Copy(_buffer, _writeIndex, result, 0, firstChunk);
                 Array.Copy(_buffer, 0, result, firstChunk, _writeIndex);

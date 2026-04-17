@@ -1,0 +1,18 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="GHelper.Linux.UI.Views.ArcadeWindow"
+        Title="ROG Fighter"
+        Width="480" Height="640"
+        MinWidth="480" MinHeight="640"
+        MaxWidth="480" MaxHeight="640"
+        CanResize="False"
+        WindowStartupLocation="CenterScreen"
+        Background="#1C1C1C"
+        Icon="avares://ghelper/UI/Assets/standard.ico"
+        Focusable="True">
+
+    <Canvas x:Name="gameCanvas" Background="#0A0A0A"
+            Width="480" Height="640"
+            ClipToBounds="True" Focusable="True" />
+
+</Window>

@@ -9,8 +9,8 @@ namespace GHelper.Linux.USB;
 /// HidSharpCore only discovers USB-HID devices (it calls
 /// udev_device_get_parent_with_subsystem_devtype("usb","usb_device")
 /// and discards anything without a USB parent). This means I2C-HID
-/// devices — like the ASUS TUF FA608PP keyboard (ITE51368:00 0B05:19B6)
-/// — are completely invisible.
+/// devices - like the ASUS TUF FA608PP keyboard (ITE51368:00 0B05:19B6)
+/// - are completely invisible.
 ///
 /// This helper scans /dev/hidraw* directly using ioctl(HIDIOCGRAWINFO)
 /// to get vendor/product IDs regardless of bus type (USB, I2C, SPI).
@@ -22,23 +22,23 @@ namespace GHelper.Linux.USB;
 /// </summary>
 public static class HidrawHelper
 {
-    // ── ioctl constants (from linux/hidraw.h) ──
+    // ioctl constants (from linux/hidraw.h)
 
-    // _IOR('H', 0x03, struct hidraw_devinfo)  — get bus/vendor/product
+    // _IOR('H', 0x03, struct hidraw_devinfo)  - get bus/vendor/product
     private const uint HIDIOCGRAWINFO = 0x80084803;
-    // _IOR('H', 0x01, int)  — get report descriptor size
+    // _IOR('H', 0x01, int)  - get report descriptor size
     private const uint HIDIOCGRDESCSIZE = 0x80044801;
-    // _IOR('H', 0x02, struct hidraw_report_descriptor)  — get report descriptor
+    // _IOR('H', 0x02, struct hidraw_report_descriptor)  - get report descriptor
     private const uint HIDIOCGRDESC = 0x90044802;
 
-    // HIDIOCSFEATURE = _IOWR('H', 0x06, len)  — send SetFeature report
+    // HIDIOCSFEATURE = _IOWR('H', 0x06, len)  - send SetFeature report
     // The size field is variable; we encode it at call time.
     private static uint HIDIOCSFEATURE(int size)
     {
         return (uint)(0xC0004806 | ((size & 0x3FFF) << 16));
     }
 
-    // HIDIOCGFEATURE = _IOWR('H', 0x07, len)  — read GetFeature report
+    // HIDIOCGFEATURE = _IOWR('H', 0x07, len)  - read GetFeature report
     private static uint HIDIOCGFEATURE(int size)
     {
         return (uint)(0xC0004807 | ((size & 0x3FFF) << 16));
@@ -60,7 +60,7 @@ public static class HidrawHelper
         0x1B4C, 0x1B6E, 0x1B2C, 0x8854
     };
 
-    // ── P/Invoke ──
+    // P/Invoke
 
     [DllImport("libc", SetLastError = true)]
     private static extern int open([MarshalAs(UnmanagedType.LPStr)] string pathname, int flags);
@@ -86,7 +86,7 @@ public static class HidrawHelper
     private const int O_RDWR = 0x02;
     private const int O_NONBLOCK = 0x800;
 
-    // ── Structs ──
+    // Structs
 
     [StructLayout(LayoutKind.Sequential)]
     private struct HidrawDevinfo
@@ -98,7 +98,7 @@ public static class HidrawHelper
 
     /// <summary>
     /// Matches kernel struct hidraw_report_descriptor { __u32 size; __u8 value[HID_MAX_DESCRIPTOR_SIZE]; }
-    /// Must use [MarshalAs] for correct pinning/layout — a raw byte[] doesn't work
+    /// Must use [MarshalAs] for correct pinning/layout - a raw byte[] doesn't work
     /// reliably with ioctl because the marshaller may copy instead of pin.
     /// See HidSharpCore's NativeMethods.hidraw_report_descriptor for reference.
     /// </summary>
@@ -135,7 +135,7 @@ public static class HidrawHelper
         public bool IsUSB => BusType == BUS_USB;
     }
 
-    // ── Cache ──
+    // Cache
 
     private static List<HidrawDeviceInfo>? _cachedDevices;
     private static readonly object _cacheLock = new();
@@ -159,7 +159,8 @@ public static class HidrawHelper
                 for (int i = 0; i < 32; i++)
                 {
                     string path = $"/dev/hidraw{i}";
-                    if (!File.Exists(path)) continue;
+                    if (!File.Exists(path))
+                        continue;
 
                     var info = ProbeDevice(path);
                     if (info != null && info.Vendor == ASUS_VENDOR_ID)
@@ -184,7 +185,8 @@ public static class HidrawHelper
     /// </summary>
     public static void InvalidateCache()
     {
-        lock (_cacheLock) { _cachedDevices = null; }
+        lock (_cacheLock)
+        { _cachedDevices = null; }
     }
 
     /// <summary>
@@ -213,7 +215,8 @@ public static class HidrawHelper
     public static bool WriteAll(byte reportId, List<byte[]> messages, string? log = null)
     {
         var paths = GetAuraDevicePaths().ToList();
-        if (paths.Count == 0) return false;
+        if (paths.Count == 0)
+            return false;
 
         bool anySuccess = false;
         foreach (var path in paths)
@@ -240,7 +243,8 @@ public static class HidrawHelper
             }
             finally
             {
-                if (fd >= 0) close(fd);
+                if (fd >= 0)
+                    close(fd);
             }
         }
 
@@ -259,8 +263,8 @@ public static class HidrawHelper
     /// Query AURA device capabilities via SetFeature(0x05) + GetFeature(0x5D).
     /// Returns raw 64-byte response, or null on failure.
     /// Protocol (from Armoury Crate decompilation of AacNBDTHal):
-    ///   1. SetFeature [0x5D, 0x05, 0x20, 0x31, 0x00, 0x1A] — query command
-    ///   2. GetFeature [0x5D, ...] — read back capability response
+    ///   1. SetFeature [0x5D, 0x05, 0x20, 0x31, 0x00, 0x1A] - query command
+    ///   2. GetFeature [0x5D, ...] - read back capability response
     /// Response bytes of interest:
     ///   [9]  = KBBackLightType (0=single, 1=minimal, 2=multi-zone, 3=per-key, 4=four-zone)
     ///   [10] = Keyboard version (> 0x22 enables extended fields [17]-[23])
@@ -305,7 +309,7 @@ public static class HidrawHelper
             // Small delay for firmware to prepare response
             Thread.Sleep(50);
 
-            // Read back via GetFeature — report ID must be pre-set in buffer
+            // Read back via GetFeature - report ID must be pre-set in buffer
             byte[] response = new byte[64];
             response[0] = 0x5D;  // report ID
             ret = ioctl(fd, HIDIOCGFEATURE(64), response);
@@ -325,11 +329,12 @@ public static class HidrawHelper
         }
         finally
         {
-            if (fd >= 0) close(fd);
+            if (fd >= 0)
+                close(fd);
         }
     }
 
-    // ── Internal ──
+    // Internal
 
     /// <summary>
     /// Probe a single /dev/hidraw* device for vendor/product info and AURA capability.
@@ -344,7 +349,8 @@ public static class HidrawHelper
             {
                 // Try read-only for probing (might lack write perms)
                 fd = open(path, 0 /* O_RDONLY */ | O_NONBLOCK);
-                if (fd < 0) return null;
+                if (fd < 0)
+                    return null;
             }
 
             // Get device info (bus, vendor, product)
@@ -378,7 +384,8 @@ public static class HidrawHelper
         }
         finally
         {
-            if (fd >= 0) close(fd);
+            if (fd >= 0)
+                close(fd);
         }
     }
 
@@ -456,14 +463,14 @@ public static class HidrawHelper
     /// even when the descriptor check fails. This handles I2C-HID devices
     /// (like the TUF FA608PP) where the AURA report may not be formally
     /// declared in the descriptor but the device still responds to AURA protocol.
-    /// USB devices are NOT given this fallback — descriptor must match.
+    /// USB devices are NOT given this fallback - descriptor must match.
     /// </summary>
     private static bool FallbackForI2c(ushort busType, ushort pid, string reason)
     {
         if (busType == BUS_I2C && AuraProductIds.Contains(pid))
         {
             Helpers.Logger.WriteLine(
-                $"HidrawHelper: I2C fallback — assuming AURA support for known PID 0x{pid:X4} ({reason})");
+                $"HidrawHelper: I2C fallback - assuming AURA support for known PID 0x{pid:X4} ({reason})");
             return true;
         }
         return false;
