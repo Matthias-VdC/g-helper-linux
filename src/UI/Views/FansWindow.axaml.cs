@@ -533,9 +533,10 @@ public partial class FansWindow : Window
         _updatingUV = true;
         try
         {
+            // Config stores negative cpu_uv (matches Windows); slider is 0..40 positive intensity.
             int cpuUV = Helpers.AppConfig.GetMode("cpu_uv", 0);
             cpuUV = Math.Clamp(cpuUV, Platform.Linux.RyzenSmu.MinCPUUV, Platform.Linux.RyzenSmu.MaxCPUUV);
-            sliderCpuUV.Value = cpuUV;
+            sliderCpuUV.Value = -cpuUV;
             labelCpuUV.Text = cpuUV.ToString();
             checkApplyUV.IsChecked = Helpers.AppConfig.IsMode("auto_uv");
         }
@@ -549,11 +550,11 @@ public partial class FansWindow : Window
         Avalonia.Controls.Primitives.RangeBaseValueChangedEventArgs e)
     {
         if (_updatingUV) return;
-        // Defense-in-depth: slider XAML already enforces [-40, 0] via Minimum/Maximum,
-        // but clamp here too so a bad value can never reach config → AutoRyzen on next boot.
-        int v = Math.Clamp((int)e.NewValue, Platform.Linux.RyzenSmu.MinCPUUV, Platform.Linux.RyzenSmu.MaxCPUUV);
-        labelCpuUV.Text = v.ToString();
-        Helpers.AppConfig.SetMode("cpu_uv", v);
+        // Slider value is positive intensity (0..40); config stores negated (−40..0).
+        int intensity = Math.Clamp((int)e.NewValue, 0, -Platform.Linux.RyzenSmu.MinCPUUV);
+        int cpuUV = -intensity;
+        labelCpuUV.Text = cpuUV.ToString();
+        Helpers.AppConfig.SetMode("cpu_uv", cpuUV);
     }
 
     private void ButtonApplyUV_Click(object? sender, RoutedEventArgs e) => App.Mode?.SetRyzen();

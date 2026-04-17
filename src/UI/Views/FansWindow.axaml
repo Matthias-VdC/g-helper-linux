@@ -139,8 +139,10 @@
                 <Grid ColumnDefinitions="120,*,50" Margin="0,4">
                     <TextBlock Grid.Column="0" Text="CPU"
                                Classes="label-dim" VerticalAlignment="Center" />
+                    <!-- Slider is positive 0..40 (intensity) so the fill bar grows
+                         left-to-right with UV strength; value is negated when stored. -->
                     <Slider Grid.Column="1" x:Name="sliderCpuUV"
-                            Minimum="-40" Maximum="0" Value="0"
+                            Minimum="0" Maximum="40" Value="0"
                             TickFrequency="1" IsSnapToTickEnabled="True"
                             ValueChanged="SliderCpuUV_ValueChanged" />
                     <TextBlock Grid.Column="2" x:Name="labelCpuUV" Classes="value"
