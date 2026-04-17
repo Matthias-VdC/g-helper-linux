@@ -18,6 +18,7 @@ public partial class FansWindow : Window
     private readonly DispatcherTimer _sensorTimer;
     private System.Timers.Timer? _plDebounce;
     private bool _updatingPLSliders;
+    private bool _updatingUV;
 
     public FansWindow()
     {
@@ -41,6 +42,7 @@ public partial class FansWindow : Window
         {
             LoadFanCurves();
             LoadPowerLimits();
+            LoadUV();
             RefreshBoostButton();
             RefreshSensors();
             _sensorTimer.Start();
@@ -510,5 +512,72 @@ public partial class FansWindow : Window
                 return true;
         }
         return false;
+    }
+
+    // ── Ryzen Curve Optimizer undervolt (mirrors Windows Fans.cs: trackUV / checkApplyUV) ──
+
+    private void LoadUV()
+    {
+        var smu = App.Smu;
+        if (smu == null || !smu.IsAvailable)
+        {
+            panelUV.IsVisible = false;
+            return;
+        }
+
+        panelUV.IsVisible = true;
+
+        // Suppress ValueChanged/Checked handlers while programmatically populating controls —
+        // otherwise setting checkApplyUV.IsChecked would call AutoRyzen and apply UV to
+        // hardware just because the user opened the window.
+        _updatingUV = true;
+        try
+        {
+            int cpuUV = Helpers.AppConfig.GetMode("cpu_uv", 0);
+            cpuUV = Math.Clamp(cpuUV, Platform.Linux.RyzenSmu.MinCPUUV, Platform.Linux.RyzenSmu.MaxCPUUV);
+            sliderCpuUV.Value = cpuUV;
+            labelCpuUV.Text = cpuUV.ToString();
+            checkApplyUV.IsChecked = Helpers.AppConfig.IsMode("auto_uv");
+        }
+        finally
+        {
+            _updatingUV = false;
+        }
+    }
+
+    private void SliderCpuUV_ValueChanged(object? sender,
+        Avalonia.Controls.Primitives.RangeBaseValueChangedEventArgs e)
+    {
+        if (_updatingUV) return;
+        // Defense-in-depth: slider XAML already enforces [-40, 0] via Minimum/Maximum,
+        // but clamp here too so a bad value can never reach config → AutoRyzen on next boot.
+        int v = Math.Clamp((int)e.NewValue, Platform.Linux.RyzenSmu.MinCPUUV, Platform.Linux.RyzenSmu.MaxCPUUV);
+        labelCpuUV.Text = v.ToString();
+        Helpers.AppConfig.SetMode("cpu_uv", v);
+    }
+
+    private void ButtonApplyUV_Click(object? sender, RoutedEventArgs e) => App.Mode?.SetRyzen();
+
+    private void ButtonResetUV_Click(object? sender, RoutedEventArgs e)
+    {
+        _updatingUV = true;
+        try
+        {
+            sliderCpuUV.Value = 0;
+            labelCpuUV.Text = "0";
+        }
+        finally
+        {
+            _updatingUV = false;
+        }
+        Helpers.AppConfig.SetMode("cpu_uv", 0);
+        App.Mode?.ResetRyzen();
+    }
+
+    private void CheckApplyUV_Changed(object? sender, RoutedEventArgs e)
+    {
+        if (_updatingUV) return;
+        Helpers.AppConfig.SetMode("auto_uv", checkApplyUV.IsChecked == true ? 1 : 0);
+        App.Mode?.AutoRyzen();
     }
 }

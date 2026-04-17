@@ -162,6 +162,9 @@ public class ModeControl
 
             AutoPower(mode);
 
+            // Ryzen CO undervolt (independent of auto_apply_power — uses its own auto_uv flag)
+            AutoRyzen();
+
             // CPU Boost override
             int autoBoost = Helpers.AppConfig.GetMode("auto_boost");
             if (autoBoost >= 0)
@@ -324,6 +327,35 @@ public class ModeControl
 
         // Verify PPT writes took effect - read back and warn on mismatches
         VerifyPptLimits(wmi, pl1, pl2, fppt, apuPlatCeiling > 0 ? apuPlatCeiling : -1);
+    }
+
+    // ── Ryzen Curve Optimizer undervolt (mirrors Windows ModeControl.AutoRyzen/SetRyzen/ResetRyzen/SetUV) ──
+
+    /// <summary>Apply or reset CPU undervolt for the current mode, based on "auto_uv" flag.</summary>
+    public void AutoRyzen()
+    {
+        if (App.Smu == null || !App.Smu.IsAvailable) return;
+        if (Helpers.AppConfig.IsMode("auto_uv")) SetRyzen();
+        else ResetRyzen();
+    }
+
+    /// <summary>Apply the current mode's saved cpu_uv value to the SMU.</summary>
+    public void SetRyzen()
+    {
+        int cpuUV = Helpers.AppConfig.GetMode("cpu_uv", 0);
+        SetUV(cpuUV);
+    }
+
+    /// <summary>Reset CPU undervolt to 0 (stock voltage).</summary>
+    public void ResetRyzen() => SetUV(0);
+
+    private static void SetUV(int cpuUV)
+    {
+        cpuUV = Math.Clamp(cpuUV, Platform.Linux.RyzenSmu.MinCPUUV, Platform.Linux.RyzenSmu.MaxCPUUV);
+        if (App.Smu?.SetCoAll(cpuUV) == true)
+            Helpers.Logger.WriteLine($"Ryzen UV: cpu_uv={cpuUV} applied");
+        else
+            Helpers.Logger.WriteLine($"Ryzen UV: cpu_uv={cpuUV} apply FAILED");
     }
 
     /// <summary>
