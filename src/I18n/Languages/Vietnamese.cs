@@ -304,6 +304,12 @@ public static class Vietnamese
         ["firmware_control"] = "Điều khiển firmware",
         ["fan_sensor_format"] = "CPU: {0} / GPU: {1} Tải: {2}   Giữa: {3} RPM",
 
+        // UNDERVOLTING
+        ["undervolt_header"] = "Undervolting (thử nghiệm)",
+        ["undervolt_desc"] = "Offset Curve Optimizer. Càng âm = điện áp càng thấp. Giá trị quá thấp có thể gây mất ổn định hoặc hỏng dữ liệu. Bắt đầu từ nhỏ. Đặt lại khi khởi động lại.",
+        ["undervolt_cpu"] = "CPU",
+        ["undervolt_auto_apply"] = "Tự động áp dụng khi đổi chế độ",
+
         // BATTERY INFO WINDOW
         ["battery_info_title"] = "Thông tin pin",
         ["health_header"] = "Tình trạng",

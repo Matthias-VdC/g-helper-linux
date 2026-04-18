@@ -35,7 +35,7 @@ namespace GHelper.Linux.Platform.Linux;
 ///   - All SMU interactions logged
 ///   - Application-level lock (defense-in-depth over kernel mutex)
 /// </summary>
-public sealed class RyzenSmu : IDisposable
+public sealed class RyzenSmu
 {
     private const string DriverPath = "/sys/kernel/ryzen_smu_drv";
     private const string RsmuCmdPath = DriverPath + "/rsmu_cmd";
@@ -177,7 +177,8 @@ public sealed class RyzenSmu : IDisposable
     /// </summary>
     private bool ValidateCommandSet()
     {
-        if (_commands == null) return false;
+        if (_commands == null)
+            return false;
 
         Helpers.Logger.WriteLine("RyzenSmu: validating with GetDldoPsmMargin (read-only) for CCD0/core0...");
 
@@ -213,7 +214,8 @@ public sealed class RyzenSmu : IDisposable
     /// does NOT flip the return to false (the write itself still succeeded).</returns>
     public bool SetCoAll(int offset)
     {
-        if (!IsAvailable || _commands == null) return false;
+        if (!IsAvailable || _commands == null)
+            return false;
 
         offset = Math.Clamp(offset, MinCPUUV, MaxCPUUV);
         uint encoded = EncodeCOMargin(offset);
@@ -252,7 +254,8 @@ public sealed class RyzenSmu : IDisposable
     /// <param name="offset">CO offset, clamped to [MinCPUUV, MaxCPUUV]. Negative = undervolt.</param>
     public bool SetPerCoreCO(int ccd, int core, int offset)
     {
-        if (!IsAvailable || _commands == null) return false;
+        if (!IsAvailable || _commands == null)
+            return false;
 
         offset = Math.Clamp(offset, MinCPUUV, MaxCPUUV);
         uint encoded = EncodeCOMargin(offset);
@@ -291,7 +294,8 @@ public sealed class RyzenSmu : IDisposable
     /// <returns>The CO offset value, or null on failure.</returns>
     public int? GetPerCoreCO(int ccd, int core)
     {
-        if (!IsAvailable || _commands == null) return null;
+        if (!IsAvailable || _commands == null)
+            return null;
 
         uint coreMask = ((uint)ccd << 28) | ((uint)(core % 8) << 20);
 
@@ -435,10 +439,12 @@ public sealed class RyzenSmu : IDisposable
         while (total < count)
         {
             int n = fs.Read(buf, total, count - total);
-            if (n == 0) break;
+            if (n == 0)
+                break;
             total += n;
         }
-        if (total == count) return buf;
+        if (total == count)
+            return buf;
         var trimmed = new byte[total];
         Array.Copy(buf, trimmed, total);
         return trimmed;
@@ -449,7 +455,8 @@ public sealed class RyzenSmu : IDisposable
     {
         try
         {
-            if (!File.Exists(path)) return false;
+            if (!File.Exists(path))
+                return false;
             using var fs = File.Open(path, FileMode.Open, FileAccess.Write, FileShare.ReadWrite);
             return true;
         }
@@ -470,9 +477,4 @@ public sealed class RyzenSmu : IDisposable
         _ => $"Unknown (0x{status:X2})"
     };
 
-    public void Dispose()
-    {
-        // No persistent resources to clean up.
-        // CO values persist until reboot (SMU firmware state), not tied to this object.
-    }
 }

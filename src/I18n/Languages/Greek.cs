@@ -307,6 +307,12 @@ public static class Greek
         ["firmware_control"] = "Έλεγχος firmware",
         ["fan_sensor_format"] = "CPU: {0} / GPU: {1} Φορτίο: {2}   Μεσαίος: {3} RPM",
 
+        // UNDERVOLTING
+        ["undervolt_header"] = "Undervolting (Πειραματικό)",
+        ["undervolt_desc"] = "Αντιστάθμιση Curve Optimizer. Πιο αρνητικό = χαμηλότερη τάση. Πολύ χαμηλές τιμές μπορεί να προκαλέσουν αστάθεια ή καταστροφή δεδομένων. Ξεκινήστε με μικρές. Επαναφέρεται στην επανεκκίνηση.",
+        ["undervolt_cpu"] = "CPU",
+        ["undervolt_auto_apply"] = "Αυτόματη εφαρμογή στην αλλαγή λειτουργίας",
+
         // BATTERY INFO WINDOW
         ["battery_info_title"] = "Πληροφορίες μπαταρίας",
         ["health_header"] = "Υγεία",

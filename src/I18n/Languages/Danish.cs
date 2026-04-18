@@ -307,6 +307,12 @@ public static class Danish
         ["firmware_control"] = "Firmware-styring",
         ["fan_sensor_format"] = "CPU: {0} / GPU: {1} Last: {2}   Midt: {3} RPM",
 
+        // UNDERVOLTING
+        ["undervolt_header"] = "Undervolting (eksperimentel)",
+        ["undervolt_desc"] = "Curve Optimizer-offset. Mere negativ = lavere spænding. For lave værdier kan forårsage ustabilitet eller datakorruption. Start småt. Nulstilles ved genstart.",
+        ["undervolt_cpu"] = "CPU",
+        ["undervolt_auto_apply"] = "Anvend automatisk ved tilstandsændring",
+
         // BATTERY INFO WINDOW
         ["battery_info_title"] = "Batterioplysninger",
         ["health_header"] = "Sundhed",

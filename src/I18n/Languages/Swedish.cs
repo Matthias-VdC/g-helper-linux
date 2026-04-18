@@ -307,6 +307,12 @@ public static class Swedish
         ["firmware_control"] = "Firmware-styrning",
         ["fan_sensor_format"] = "CPU: {0} / GPU: {1} Last: {2}   Mitt: {3} RPM",
 
+        // UNDERVOLTING
+        ["undervolt_header"] = "Undervolting (experimentellt)",
+        ["undervolt_desc"] = "Curve Optimizer-förskjutning. Mer negativ = lägre spänning. För låga värden kan orsaka instabilitet eller datakorruption. Börja smått. Återställs vid omstart.",
+        ["undervolt_cpu"] = "CPU",
+        ["undervolt_auto_apply"] = "Tillämpa automatiskt vid lägesändring",
+
         // BATTERY INFO WINDOW
         ["battery_info_title"] = "Batteriinformation",
         ["health_header"] = "Hälsa",

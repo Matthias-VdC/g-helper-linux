@@ -70,6 +70,12 @@ public partial class FansWindow : Window
         chartCPU.FanLabel = Labels.Get("cpu_fan");
         chartGPU.FanLabel = Labels.Get("gpu_fan");
         chartMid.FanLabel = Labels.Get("mid_fan");
+        headerUndervolt.Text = Labels.Get("undervolt_header");
+        labelUndervoltDesc.Text = Labels.Get("undervolt_desc");
+        labelUndervoltCpu.Text = Labels.Get("undervolt_cpu");
+        buttonApplyUV.Content = Labels.Get("apply");
+        buttonResetUV.Content = Labels.Get("reset");
+        checkApplyUV.Content = Labels.Get("undervolt_auto_apply");
     }
 
     // Fan Curves
@@ -514,7 +520,7 @@ public partial class FansWindow : Window
         return false;
     }
 
-    // ── Ryzen Curve Optimizer undervolt (mirrors Windows Fans.cs: trackUV / checkApplyUV) ──
+    // Ryzen Curve Optimizer undervolt (mirrors Windows Fans.cs: trackUV / checkApplyUV)
 
     private void LoadUV()
     {
@@ -549,7 +555,8 @@ public partial class FansWindow : Window
     private void SliderCpuUV_ValueChanged(object? sender,
         Avalonia.Controls.Primitives.RangeBaseValueChangedEventArgs e)
     {
-        if (_updatingUV) return;
+        if (_updatingUV)
+            return;
         // Slider value is positive intensity (0..40); config stores negated (−40..0).
         int intensity = Math.Clamp((int)e.NewValue, 0, -Platform.Linux.RyzenSmu.MinCPUUV);
         int cpuUV = -intensity;
@@ -577,7 +584,8 @@ public partial class FansWindow : Window
 
     private void CheckApplyUV_Changed(object? sender, RoutedEventArgs e)
     {
-        if (_updatingUV) return;
+        if (_updatingUV)
+            return;
         Helpers.AppConfig.SetMode("auto_uv", checkApplyUV.IsChecked == true ? 1 : 0);
         App.Mode?.AutoRyzen();
     }

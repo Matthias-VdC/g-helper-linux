@@ -304,6 +304,12 @@ public static class Russian
         ["firmware_control"] = "Управление прошивкой",
         ["fan_sensor_format"] = "CPU: {0} / GPU: {1} Нагрузка: {2}   Средний: {3} RPM",
 
+        // UNDERVOLTING
+        ["undervolt_header"] = "Андервольтинг (экспериментально)",
+        ["undervolt_desc"] = "Смещение Curve Optimizer. Более отрицательное = меньшее напряжение. Слишком низкие значения могут вызвать нестабильность или повреждение данных. Начинайте с малого. Сбрасывается при перезагрузке.",
+        ["undervolt_cpu"] = "CPU",
+        ["undervolt_auto_apply"] = "Автоматически применять при смене режима",
+
         // BATTERY INFO WINDOW
         ["battery_info_title"] = "Информация о батарее",
         ["health_header"] = "Здоровье",

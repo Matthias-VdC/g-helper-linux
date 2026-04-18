@@ -329,14 +329,17 @@ public class ModeControl
         VerifyPptLimits(wmi, pl1, pl2, fppt, apuPlatCeiling > 0 ? apuPlatCeiling : -1);
     }
 
-    // ── Ryzen Curve Optimizer undervolt (mirrors Windows ModeControl.AutoRyzen/SetRyzen/ResetRyzen/SetUV) ──
+    // Ryzen Curve Optimizer undervolt (mirrors Windows ModeControl.AutoRyzen/SetRyzen/ResetRyzen/SetUV)
 
     /// <summary>Apply or reset CPU undervolt for the current mode, based on "auto_uv" flag.</summary>
     public void AutoRyzen()
     {
-        if (App.Smu == null || !App.Smu.IsAvailable) return;
-        if (Helpers.AppConfig.IsMode("auto_uv")) SetRyzen();
-        else ResetRyzen();
+        if (App.Smu == null || !App.Smu.IsAvailable)
+            return;
+        if (Helpers.AppConfig.IsMode("auto_uv"))
+            SetRyzen();
+        else
+            ResetRyzen();
     }
 
     /// <summary>Apply the current mode's saved cpu_uv value to the SMU.</summary>

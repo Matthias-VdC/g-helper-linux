@@ -307,6 +307,12 @@ public static class ChineseTraditional
         ["firmware_control"] = "韌體控制",
         ["fan_sensor_format"] = "CPU：{0} / GPU：{1} 負載：{2}   中間：{3} RPM",
 
+        // UNDERVOLTING
+        ["undervolt_header"] = "降壓（實驗性）",
+        ["undervolt_desc"] = "Curve Optimizer 偏移。值越負 = 電壓越低。值過低可能導致不穩定或資料損毀。從小值開始。重啟後重置。",
+        ["undervolt_cpu"] = "CPU",
+        ["undervolt_auto_apply"] = "模式切換時自動套用",
+
         // BATTERY INFO WINDOW
         ["battery_info_title"] = "電池資訊",
         ["health_header"] = "健康狀況",
