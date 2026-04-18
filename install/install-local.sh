@@ -46,7 +46,7 @@ else
 fi
 
 # ── Configuration ──────────────────────────────────────────────────────────────
-BINARY_DEST="/usr/local/bin/ghelper"
+INSTALL_DIR="/opt/ghelper"
 UDEV_DEST="/etc/udev/rules.d/90-ghelper.rules"
 DESKTOP_DEST="/usr/share/applications/ghelper.desktop"
 
@@ -233,17 +233,17 @@ if [[ "$MODE" == "uninstall" ]]; then
         _info "ghelper-gpu-boot.service disabled"
     fi
 
-    _safe_remove "$BINARY_DEST"                          "binary"
-    _safe_remove "$UDEV_DEST"                            "udev rules"
-    _safe_remove "/etc/tmpfiles.d/90-ghelper.conf"       "tmpfiles config"
+    _safe_remove "$INSTALL_DIR"                          "install directory ($INSTALL_DIR)"
+    _safe_remove "/usr/local/bin/ghelper"                 "symlink"
+    _safe_remove "$UDEV_DEST"                             "udev rules"
+    _safe_remove "/etc/tmpfiles.d/90-ghelper.conf"        "tmpfiles config"
     _safe_remove "/etc/systemd/system/ghelper-gpu-boot.service" "GPU boot systemd unit"
-    _safe_remove "/usr/local/lib/ghelper"                "ghelper lib directory"
-    _safe_remove "/opt/ghelper"                           "install directory (cross-installer)"
-    _safe_remove "/etc/sudoers.d/ghelper-gpu"            "sudoers rule"
+    _safe_remove "/usr/local/lib/ghelper"                 "ghelper lib directory"
+    _safe_remove "/etc/sudoers.d/ghelper-gpu"             "sudoers rule"
     _safe_remove "/etc/modprobe.d/ghelper-gpu-block.conf"    "dGPU block (modprobe)"
     _safe_remove "/etc/udev/rules.d/50-ghelper-remove-dgpu.rules" "dGPU block (udev)"
-    _safe_remove "/etc/ghelper"                          "ghelper config dir"
-    _safe_remove "$DESKTOP_DEST"                         "desktop entry (system)"
+    _safe_remove "/etc/ghelper"                           "ghelper config dir"
+    _safe_remove "$DESKTOP_DEST"                          "desktop entry (system)"
 
     # User-local desktop entry
     if [[ -n "$REAL_USER" ]]; then
@@ -289,6 +289,7 @@ echo "${GREEN}  ▸ ROOT ACCESS${RESET} ${DIM}........................${RESET} $
 echo "${GREEN}  ▸ USER${RESET} ${DIM}..............................${RESET} ${CYAN}${REAL_USER:-unknown}${RESET}"
 if [[ "$MODE" == "install" ]]; then
     echo "${GREEN}  ▸ SOURCE${RESET} ${DIM}............................${RESET} ${CYAN}$DIST_DIR/${RESET}"
+    echo "${GREEN}  ▸ TARGET${RESET} ${DIM}............................${RESET} ${CYAN}$INSTALL_DIR/${RESET}"
 fi
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -298,15 +299,19 @@ fi
 if [[ "$MODE" == "install" ]]; then
     _step 1 "SCANNING LOCAL BUILD ARTIFACTS"
 
-    if [[ ! -f "$DIST_DIR/ghelper" ]]; then
-        echo ""
-        echo "${RED}${BOLD}  ╔══[ BUILD NOT FOUND ]═════════════════════════════════╗${RESET}"
-        echo "${RED}${BOLD}  ║${RESET}  ${RED}No binary at:${RESET} $DIST_DIR/ghelper"
-        echo "${RED}${BOLD}  ║${RESET}  ${YELLOW}Run ./build.sh first${RESET}"
-        echo "${RED}${BOLD}  ║${RESET}  ${DIM}...or use install.sh to download latest release${RESET}"
-        echo "${RED}${BOLD}  ╚═════════════════════════════════════════════════════╝${RESET}"
-        exit 1
-    fi
+    # Binary + native libs are all required — loader expects the two .so files
+    # next to the binary, or it falls back to stale cache / system libs.
+    for f in ghelper libSkiaSharp.so libHarfBuzzSharp.so; do
+        if [[ ! -f "$DIST_DIR/$f" ]]; then
+            echo ""
+            echo "${RED}${BOLD}  ╔══[ BUILD NOT FOUND ]═════════════════════════════════╗${RESET}"
+            echo "${RED}${BOLD}  ║${RESET}  ${RED}Missing artifact:${RESET} $DIST_DIR/$f"
+            echo "${RED}${BOLD}  ║${RESET}  ${YELLOW}Run ./build.sh first${RESET}"
+            echo "${RED}${BOLD}  ║${RESET}  ${DIM}...or use install.sh to download latest release${RESET}"
+            echo "${RED}${BOLD}  ╚═════════════════════════════════════════════════════╝${RESET}"
+            exit 1
+        fi
+    done
 
     BINARY_SIZE=$(du -sh "$DIST_DIR/ghelper" | cut -f1)
     _info "Binary located: ${BOLD}$DIST_DIR/ghelper${RESET} ${DIM}(${BINARY_SIZE})${RESET}"
@@ -317,13 +322,31 @@ if [[ "$MODE" == "install" ]]; then
 fi
 
 # ══════════════════════════════════════════════════════════════════════════════
-#  [0x02] INJECT BINARY (install mode only)
+#  [0x02] INJECT BINARIES (install mode only)
 # ══════════════════════════════════════════════════════════════════════════════
 
 if [[ "$MODE" == "install" ]]; then
-    _step 2 "INJECTING BINARY INTO PATH"
+    _step 2 "INJECTING BINARIES INTO TARGET"
 
-    _install_file "$DIST_DIR/ghelper" "$BINARY_DEST" 755 "ghelper binary" || true
+    mkdir -p "$INSTALL_DIR"
+
+    _install_file "$DIST_DIR/ghelper"             "$INSTALL_DIR/ghelper"             755 "ghelper binary" || true
+    _install_file "$DIST_DIR/libSkiaSharp.so"     "$INSTALL_DIR/libSkiaSharp.so"     755 "libSkiaSharp.so" || true
+    _install_file "$DIST_DIR/libHarfBuzzSharp.so" "$INSTALL_DIR/libHarfBuzzSharp.so" 755 "libHarfBuzzSharp.so" || true
+
+    # Symlink (ln -sf is already idempotent but we report status)
+    if [[ "$(readlink -f /usr/local/bin/ghelper 2>/dev/null)" == "$INSTALL_DIR/ghelper" ]]; then
+        _skip "symlink → /usr/local/bin/ghelper already targets $INSTALL_DIR/ghelper"
+    else
+        ln -sf "$INSTALL_DIR/ghelper" /usr/local/bin/ghelper
+        _inject "symlink → /usr/local/bin/ghelper"
+    fi
+
+    # Fix ownership so the real user can run ghelper without root
+    if [[ -n "$REAL_USER" ]]; then
+        chown -R "$REAL_USER:$REAL_USER" "$INSTALL_DIR"
+        _info "ownership → ${BOLD}$REAL_USER:$REAL_USER${RESET} on $INSTALL_DIR/"
+    fi
 else
     _info "${DIM}AppImage mode — skipping binary installation${RESET}"
 fi
@@ -606,10 +629,11 @@ else
     echo "${GREEN}${BOLD}  ║                                                                ║${RESET}"
     echo "${GREEN}${BOLD}  ╠════════════════════════════════════════════════════════════════╣${RESET}"
     echo "${GREEN}${BOLD}  ║                                                                ║${RESET}"
-    echo "${GREEN}${BOLD}  ║${RESET}  ${CYAN}0xF0${RESET}  Binary    → $BINARY_DEST"
-    echo "${GREEN}${BOLD}  ║${RESET}  ${CYAN}0xF1${RESET}  udev      → $UDEV_DEST"
-    echo "${GREEN}${BOLD}  ║${RESET}  ${CYAN}0xF2${RESET}  Desktop   → $DESKTOP_DEST"
-    echo "${GREEN}${BOLD}  ║${RESET}  ${CYAN}0xF3${RESET}  Autostart → ~/.config/autostart/ghelper.desktop"
+    echo "${GREEN}${BOLD}  ║${RESET}  ${CYAN}0xF0${RESET}  Binary    → $INSTALL_DIR/ghelper"
+    echo "${GREEN}${BOLD}  ║${RESET}  ${CYAN}0xF1${RESET}  Symlink   → /usr/local/bin/ghelper"
+    echo "${GREEN}${BOLD}  ║${RESET}  ${CYAN}0xF2${RESET}  udev      → $UDEV_DEST"
+    echo "${GREEN}${BOLD}  ║${RESET}  ${CYAN}0xF3${RESET}  Desktop   → $DESKTOP_DEST"
+    echo "${GREEN}${BOLD}  ║${RESET}  ${CYAN}0xF4${RESET}  Autostart → ~/.config/autostart/ghelper.desktop"
     echo "${GREEN}${BOLD}  ║                                                                ║${RESET}"
     echo "${GREEN}${BOLD}  ╠════════════════════════════════════════════════════════════════╣${RESET}"
     echo "${GREEN}${BOLD}  ║                                                                ║${RESET}"
