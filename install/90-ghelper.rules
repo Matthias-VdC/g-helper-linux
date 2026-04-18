@@ -189,6 +189,13 @@ ACTION=="add|change", SUBSYSTEM=="module", KERNEL=="asus_armoury", \
 ACTION=="add|change", SUBSYSTEM=="module", KERNEL=="ryzen_smu", \
   RUN+="/bin/sh -c 'chmod 0666 /sys/kernel/ryzen_smu_drv/rsmu_cmd /sys/kernel/ryzen_smu_drv/smu_args 2>/dev/null || true'"
 
+# Fallback via CPU device tree — module events don't re-fire on `udevadm trigger`
+# (installer path), so the rule above can miss on fresh install if ryzen_smu was
+# loaded at boot. CPU events fire on trigger (unlike module events); add|change
+# covers both boot-time add and the default `change` action trigger sends.
+SUBSYSTEM=="cpu", ACTION=="add|change", \
+  RUN+="/bin/sh -c '[ -f /sys/kernel/ryzen_smu_drv/rsmu_cmd ] && chmod 0666 /sys/kernel/ryzen_smu_drv/rsmu_cmd /sys/kernel/ryzen_smu_drv/smu_args'"
+
 # ── CPU online/offline (core toggling) ──
 SUBSYSTEM=="cpu", ACTION=="add", \
   RUN+="/bin/sh -c 'for f in /sys/devices/system/cpu/cpu*/online; do [ -f \"$f\" ] && chmod 0666 \"$f\"; done'"
