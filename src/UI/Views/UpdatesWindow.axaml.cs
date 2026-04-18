@@ -364,6 +364,29 @@ public partial class UpdatesWindow : Window
                 UnixFileMode.OtherRead | UnixFileMode.OtherExecute);
 #pragma warning restore CA1416
 
+            // Bare-binary mode: also download companion native libs so the new binary
+            // doesn't load stale libSkiaSharp.so / libHarfBuzzSharp.so next to it after
+            // a Skia/HarfBuzz version bump. AppImage ships libs inside the bundle.
+            // Downloaded before the swap — any failure leaves the existing install untouched.
+            var libTmpPaths = new List<(string name, string tmp)>();
+            if (!IsAppImage)
+            {
+                var urlBase = downloadUrl.Substring(0, downloadUrl.LastIndexOf('/') + 1);
+                Helpers.Logger.WriteLine($"Self-update: downloading 2 native libs from {urlBase}");
+                foreach (var libName in new[] { "libSkiaSharp.so", "libHarfBuzzSharp.so" })
+                {
+                    var libTmp = Path.Combine(Path.GetTempPath(), "ghelper-update-" + libName);
+                    using (var resp = await http.GetAsync(urlBase + libName, HttpCompletionOption.ResponseHeadersRead))
+                    {
+                        resp.EnsureSuccessStatusCode();
+                        using var s = await resp.Content.ReadAsStreamAsync();
+                        using var fs = File.Create(libTmp);
+                        await s.CopyToAsync(fs);
+                    }
+                    libTmpPaths.Add((libName, libTmp));
+                }
+            }
+
             if (targetPath != null && File.Exists(targetPath))
             {
                 // Rename-then-place: Linux allows renaming a running executable
@@ -374,6 +397,15 @@ public partial class UpdatesWindow : Window
                     File.Delete(backupPath);
                 File.Move(targetPath, backupPath);  // rename running file → .bak (allowed)
                 File.Move(tmpPath, targetPath);      // place new file at original path
+
+                // Place native libs next to the new binary (.so files are mmap'd;
+                // overwrite is safe while the old process is still running).
+                var binaryDir = Path.GetDirectoryName(targetPath);
+                if (binaryDir != null)
+                {
+                    foreach (var (libName, libTmp) in libTmpPaths)
+                        File.Move(libTmp, Path.Combine(binaryDir, libName), overwrite: true);
+                }
 
                 var restartPath = targetPath;
 
@@ -391,7 +423,8 @@ public partial class UpdatesWindow : Window
                 });
 
                 var mode = IsAppImage ? "AppImage" : "binary";
-                Helpers.Logger.WriteLine($"Self-update: downloaded and replaced {mode} at {targetPath}. Restart required.");
+                var libSuffix = libTmpPaths.Count > 0 ? $" (+{libTmpPaths.Count} native libs)" : "";
+                Helpers.Logger.WriteLine($"Self-update: downloaded and replaced {mode} at {targetPath}{libSuffix}. Restart required.");
             }
             else
             {
