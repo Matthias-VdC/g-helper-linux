@@ -304,6 +304,12 @@ public static class Dutch
         ["firmware_control"] = "Firmwarebesturing",
         ["fan_sensor_format"] = "CPU: {0} / GPU: {1} Belasting: {2}   Midden: {3} RPM",
 
+        // UNDERVOLTING
+        ["undervolt_header"] = "Undervolting (Experimenteel)",
+        ["undervolt_desc"] = "Curve Optimizer-offset. Negatiever = lagere spanning. Te lage waarden kunnen instabiliteit of datacorruptie veroorzaken. Begin klein. Wordt gereset bij herstart.",
+        ["undervolt_cpu"] = "CPU",
+        ["undervolt_auto_apply"] = "Automatisch toepassen bij moduswissel",
+
         // BATTERY INFO WINDOW
         ["battery_info_title"] = "Accu-informatie",
         ["health_header"] = "Gezondheid",

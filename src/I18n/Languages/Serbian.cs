@@ -307,6 +307,12 @@ public static class Serbian
         ["firmware_control"] = "Контрола фирмвера",
         ["fan_sensor_format"] = "CPU: {0} / GPU: {1} Оптерећење: {2}   Средњи: {3} RPM",
 
+        // UNDERVOLTING
+        ["undervolt_header"] = "Андерволтинг (експериментално)",
+        ["undervolt_desc"] = "Curve Optimizer офсет. Негативније = нижи напон. Превише ниске вредности могу изазвати нестабилност или оштећење података. Почните са малим. Ресетује се при рестарту.",
+        ["undervolt_cpu"] = "CPU",
+        ["undervolt_auto_apply"] = "Аутоматски примени при промени режима",
+
         // BATTERY INFO WINDOW
         ["battery_info_title"] = "Информације о батерији",
         ["health_header"] = "Здравље",

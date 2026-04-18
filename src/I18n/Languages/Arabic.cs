@@ -307,6 +307,12 @@ public static class Arabic
         ["firmware_control"] = "التحكم بالبرنامج الثابت",
         ["fan_sensor_format"] = "CPU: {0} / GPU: {1} الحمل: {2}   الوسطى: {3} RPM",
 
+        // UNDERVOLTING
+        ["undervolt_header"] = "خفض الجهد (تجريبي)",
+        ["undervolt_desc"] = "إزاحة Curve Optimizer. القيم الأكثر سلبية = جهد أقل. القيم المنخفضة جداً قد تسبب عدم استقرار أو تلف البيانات. ابدأ بقيم صغيرة. يُعاد الضبط عند إعادة التشغيل.",
+        ["undervolt_cpu"] = "CPU",
+        ["undervolt_auto_apply"] = "تطبيق تلقائي عند تغيير الوضع",
+
         // BATTERY INFO WINDOW
         ["battery_info_title"] = "معلومات البطارية",
         ["health_header"] = "الصحة",

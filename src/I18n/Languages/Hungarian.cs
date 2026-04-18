@@ -304,6 +304,12 @@ public static class Hungarian
         ["firmware_control"] = "Firmware vezérlés",
         ["fan_sensor_format"] = "CPU: {0} / GPU: {1} Terhelés: {2}   Közép: {3} RPM",
 
+        // UNDERVOLTING
+        ["undervolt_header"] = "Alulfeszültség (kísérleti)",
+        ["undervolt_desc"] = "Curve Optimizer eltolás. Negatívabb = alacsonyabb feszültség. Túl alacsony értékek instabilitást vagy adatsérülést okozhatnak. Kis értékkel kezdje. Újraindításkor visszaáll.",
+        ["undervolt_cpu"] = "CPU",
+        ["undervolt_auto_apply"] = "Automatikus alkalmazás módváltáskor",
+
         // BATTERY INFO WINDOW
         ["battery_info_title"] = "Akkumulátor információ",
         ["health_header"] = "Állapot",

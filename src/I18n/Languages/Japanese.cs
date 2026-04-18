@@ -307,6 +307,12 @@ public static class Japanese
         ["firmware_control"] = "ファームウェア制御",
         ["fan_sensor_format"] = "CPU: {0} / GPU: {1} 負荷: {2}   中間: {3} RPM",
 
+        // UNDERVOLTING
+        ["undervolt_header"] = "アンダーボルト（実験的）",
+        ["undervolt_desc"] = "Curve Optimizer オフセット。より負の値 = より低い電圧。値が低すぎると不安定やデータ破損の原因になります。小さな値から始めてください。再起動でリセットされます。",
+        ["undervolt_cpu"] = "CPU",
+        ["undervolt_auto_apply"] = "モード変更時に自動適用",
+
         // BATTERY INFO WINDOW
         ["battery_info_title"] = "バッテリー情報",
         ["health_header"] = "健康状態",

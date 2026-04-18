@@ -18,6 +18,7 @@ public partial class FansWindow : Window
     private readonly DispatcherTimer _sensorTimer;
     private System.Timers.Timer? _plDebounce;
     private bool _updatingPLSliders;
+    private bool _updatingUV;
 
     public FansWindow()
     {
@@ -41,6 +42,7 @@ public partial class FansWindow : Window
         {
             LoadFanCurves();
             LoadPowerLimits();
+            LoadUV();
             RefreshBoostButton();
             RefreshSensors();
             _sensorTimer.Start();
@@ -68,6 +70,12 @@ public partial class FansWindow : Window
         chartCPU.FanLabel = Labels.Get("cpu_fan");
         chartGPU.FanLabel = Labels.Get("gpu_fan");
         chartMid.FanLabel = Labels.Get("mid_fan");
+        headerUndervolt.Text = Labels.Get("undervolt_header");
+        labelUndervoltDesc.Text = Labels.Get("undervolt_desc");
+        labelUndervoltCpu.Text = Labels.Get("undervolt_cpu");
+        buttonApplyUV.Content = Labels.Get("apply");
+        buttonResetUV.Content = Labels.Get("reset");
+        checkApplyUV.Content = Labels.Get("undervolt_auto_apply");
     }
 
     // Fan Curves
@@ -510,5 +518,75 @@ public partial class FansWindow : Window
                 return true;
         }
         return false;
+    }
+
+    // Ryzen Curve Optimizer undervolt (mirrors Windows Fans.cs: trackUV / checkApplyUV)
+
+    private void LoadUV()
+    {
+        var smu = App.Smu;
+        if (smu == null || !smu.IsAvailable)
+        {
+            panelUV.IsVisible = false;
+            return;
+        }
+
+        panelUV.IsVisible = true;
+
+        // Suppress ValueChanged/Checked handlers while programmatically populating controls —
+        // otherwise setting checkApplyUV.IsChecked would call AutoRyzen and apply UV to
+        // hardware just because the user opened the window.
+        _updatingUV = true;
+        try
+        {
+            // Config stores negative cpu_uv (matches Windows); slider is 0..40 positive intensity.
+            int cpuUV = Helpers.AppConfig.GetMode("cpu_uv", 0);
+            cpuUV = Math.Clamp(cpuUV, Platform.Linux.RyzenSmu.MinCPUUV, Platform.Linux.RyzenSmu.MaxCPUUV);
+            sliderCpuUV.Value = -cpuUV;
+            labelCpuUV.Text = cpuUV.ToString();
+            checkApplyUV.IsChecked = Helpers.AppConfig.IsMode("auto_uv");
+        }
+        finally
+        {
+            _updatingUV = false;
+        }
+    }
+
+    private void SliderCpuUV_ValueChanged(object? sender,
+        Avalonia.Controls.Primitives.RangeBaseValueChangedEventArgs e)
+    {
+        if (_updatingUV)
+            return;
+        // Slider value is positive intensity (0..40); config stores negated (−40..0).
+        int intensity = Math.Clamp((int)e.NewValue, 0, -Platform.Linux.RyzenSmu.MinCPUUV);
+        int cpuUV = -intensity;
+        labelCpuUV.Text = cpuUV.ToString();
+        Helpers.AppConfig.SetMode("cpu_uv", cpuUV);
+    }
+
+    private void ButtonApplyUV_Click(object? sender, RoutedEventArgs e) => App.Mode?.SetRyzen();
+
+    private void ButtonResetUV_Click(object? sender, RoutedEventArgs e)
+    {
+        _updatingUV = true;
+        try
+        {
+            sliderCpuUV.Value = 0;
+            labelCpuUV.Text = "0";
+        }
+        finally
+        {
+            _updatingUV = false;
+        }
+        Helpers.AppConfig.SetMode("cpu_uv", 0);
+        App.Mode?.ResetRyzen();
+    }
+
+    private void CheckApplyUV_Changed(object? sender, RoutedEventArgs e)
+    {
+        if (_updatingUV)
+            return;
+        Helpers.AppConfig.SetMode("auto_uv", checkApplyUV.IsChecked == true ? 1 : 0);
+        App.Mode?.AutoRyzen();
     }
 }

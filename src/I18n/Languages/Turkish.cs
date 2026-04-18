@@ -304,6 +304,12 @@ public static class Turkish
         ["firmware_control"] = "Firmware kontrolü",
         ["fan_sensor_format"] = "CPU: {0} / GPU: {1} Yük: {2}   Orta: {3} RPM",
 
+        // UNDERVOLTING
+        ["undervolt_header"] = "Undervolting (Deneysel)",
+        ["undervolt_desc"] = "Curve Optimizer ofseti. Daha negatif = daha düşük voltaj. Çok düşük değerler kararsızlığa veya veri bozulmasına yol açabilir. Küçük başlayın. Yeniden başlatmada sıfırlanır.",
+        ["undervolt_cpu"] = "CPU",
+        ["undervolt_auto_apply"] = "Mod değişiminde otomatik uygula",
+
         // BATTERY INFO WINDOW
         ["battery_info_title"] = "Batarya Bilgisi",
         ["health_header"] = "Sağlık",

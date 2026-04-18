@@ -307,6 +307,12 @@ public static class Indonesian
         ["firmware_control"] = "Kontrol firmware",
         ["fan_sensor_format"] = "CPU: {0} / GPU: {1} Beban: {2}   Tengah: {3} RPM",
 
+        // UNDERVOLTING
+        ["undervolt_header"] = "Undervolting (Eksperimental)",
+        ["undervolt_desc"] = "Offset Curve Optimizer. Lebih negatif = voltase lebih rendah. Nilai terlalu rendah bisa menyebabkan ketidakstabilan atau kerusakan data. Mulai dari kecil. Direset saat reboot.",
+        ["undervolt_cpu"] = "CPU",
+        ["undervolt_auto_apply"] = "Terapkan otomatis saat ganti mode",
+
         // BATTERY INFO WINDOW
         ["battery_info_title"] = "Informasi Baterai",
         ["health_header"] = "Kesehatan",
