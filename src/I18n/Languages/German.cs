@@ -304,6 +304,12 @@ public static class German
         ["firmware_control"] = "Firmware-Steuerung",
         ["fan_sensor_format"] = "CPU: {0} / GPU: {1} Last: {2}   Mittel: {3} RPM",
 
+        // UNDERVOLTING
+        ["undervolt_header"] = "Undervolting (Experimentell)",
+        ["undervolt_desc"] = "Curve-Optimizer-Offset. Negativer = niedrigere Spannung. Zu niedrige Werte können Instabilität oder Datenverlust verursachen. Klein anfangen. Setzt sich beim Neustart zurück.",
+        ["undervolt_cpu"] = "CPU",
+        ["undervolt_auto_apply"] = "Bei Moduswechsel automatisch anwenden",
+
         // BATTERY INFO WINDOW
         ["battery_info_title"] = "Akku-Informationen",
         ["health_header"] = "Zustand",

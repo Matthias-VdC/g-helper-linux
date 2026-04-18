@@ -307,6 +307,12 @@ public static class Thai
         ["firmware_control"] = "ควบคุมเฟิร์มแวร์",
         ["fan_sensor_format"] = "CPU: {0} / GPU: {1} โหลด: {2}   กลาง: {3} RPM",
 
+        // UNDERVOLTING
+        ["undervolt_header"] = "Undervolting (ทดลอง)",
+        ["undervolt_desc"] = "ออฟเซ็ต Curve Optimizer ค่ายิ่งลบ = แรงดันยิ่งต่ำ ค่าที่ต่ำเกินไปอาจทำให้ระบบไม่เสถียรหรือข้อมูลเสียหาย เริ่มจากค่าน้อยก่อน รีเซ็ตเมื่อรีบูต",
+        ["undervolt_cpu"] = "CPU",
+        ["undervolt_auto_apply"] = "ใช้อัตโนมัติเมื่อเปลี่ยนโหมด",
+
         // BATTERY INFO WINDOW
         ["battery_info_title"] = "ข้อมูลแบตเตอรี่",
         ["health_header"] = "สุขภาพ",

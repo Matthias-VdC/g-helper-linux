@@ -25,6 +25,7 @@ public class App : Application
     public static IAudioControl? Audio { get; private set; }
     public static IDisplayControl? Display { get; private set; }
     public static IGpuControl? GpuControl { get; private set; }
+    public static RyzenSmu? Smu { get; private set; }
 
     // GPU mode switching controller (safety checks, driver detection, reboot scheduling)
     public static GpuModeController? GpuModeCtrl { get; private set; }
@@ -281,6 +282,11 @@ public class App : Application
         Input = new LinuxInputHandler();
         Audio = new LinuxAudioControl();
         Display = new LinuxDisplayControl();
+
+        Smu = new RyzenSmu();
+        Logger.WriteLine(Smu.IsAvailable
+            ? "Ryzen Curve Optimizer: available via ryzen_smu driver"
+            : $"Ryzen Curve Optimizer: unavailable ({Smu.UnavailableReason})");
 
         // Create mode controller (uses App.Wmi, App.Power, etc.)
         Mode = new ModeControl();

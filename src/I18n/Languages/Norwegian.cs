@@ -307,6 +307,12 @@ public static class Norwegian
         ["firmware_control"] = "Firmware-kontroll",
         ["fan_sensor_format"] = "CPU: {0} / GPU: {1} Last: {2}   Midt: {3} RPM",
 
+        // UNDERVOLTING
+        ["undervolt_header"] = "Undervolting (eksperimentelt)",
+        ["undervolt_desc"] = "Curve Optimizer-forskyvning. Mer negativt = lavere spenning. For lave verdier kan forårsake ustabilitet eller datakorrupsjon. Start lite. Tilbakestilles ved omstart.",
+        ["undervolt_cpu"] = "CPU",
+        ["undervolt_auto_apply"] = "Bruk automatisk ved modusendring",
+
         // BATTERY INFO WINDOW
         ["battery_info_title"] = "Batteriinformasjon",
         ["health_header"] = "Helse",

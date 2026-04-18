@@ -304,6 +304,12 @@ public static class Romanian
         ["firmware_control"] = "Control firmware",
         ["fan_sensor_format"] = "CPU: {0} / GPU: {1} Încărcare: {2}   Mijloc: {3} RPM",
 
+        // UNDERVOLTING
+        ["undervolt_header"] = "Undervolting (experimental)",
+        ["undervolt_desc"] = "Offset Curve Optimizer. Mai negativ = tensiune mai mică. Valorile prea mici pot cauza instabilitate sau coruperea datelor. Începe cu valori mici. Se resetează la repornire.",
+        ["undervolt_cpu"] = "CPU",
+        ["undervolt_auto_apply"] = "Aplică automat la schimbarea modului",
+
         // BATTERY INFO WINDOW
         ["battery_info_title"] = "Informații baterie",
         ["health_header"] = "Sănătate",

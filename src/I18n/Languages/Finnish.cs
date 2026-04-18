@@ -307,6 +307,12 @@ public static class Finnish
         ["firmware_control"] = "Firmware-ohjaus",
         ["fan_sensor_format"] = "CPU: {0} / GPU: {1} Kuorma: {2}   Keski: {3} RPM",
 
+        // UNDERVOLTING
+        ["undervolt_header"] = "Alijännite (kokeellinen)",
+        ["undervolt_desc"] = "Curve Optimizer -siirtymä. Negatiivisempi = matalampi jännite. Liian matalat arvot voivat aiheuttaa epävakautta tai tietojen vioittumista. Aloita pienestä. Palautuu uudelleenkäynnistyksessä.",
+        ["undervolt_cpu"] = "CPU",
+        ["undervolt_auto_apply"] = "Käytä automaattisesti tilan vaihtuessa",
+
         // BATTERY INFO WINDOW
         ["battery_info_title"] = "Akkutiedot",
         ["health_header"] = "Kunto",

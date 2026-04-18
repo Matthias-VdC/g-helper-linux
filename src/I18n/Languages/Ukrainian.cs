@@ -304,6 +304,12 @@ public static class Ukrainian
         ["firmware_control"] = "Контроль прошивки",
         ["fan_sensor_format"] = "CPU: {0} / GPU: {1} Навант.: {2}   Серед.: {3} RPM",
 
+        // UNDERVOLTING
+        ["undervolt_header"] = "Андервольтинг (експериментально)",
+        ["undervolt_desc"] = "Зсув Curve Optimizer. Більш від'ємне = нижча напруга. Надто низькі значення можуть спричинити нестабільність або пошкодження даних. Починайте з малого. Скидається при перезавантаженні.",
+        ["undervolt_cpu"] = "CPU",
+        ["undervolt_auto_apply"] = "Автоматично застосовувати при зміні режиму",
+
         // BATTERY INFO WINDOW
         ["battery_info_title"] = "Інформація про батарею",
         ["health_header"] = "Здоров'я",

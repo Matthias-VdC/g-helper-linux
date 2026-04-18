@@ -307,6 +307,12 @@ public static class ChineseSimplified
         ["firmware_control"] = "固件控制",
         ["fan_sensor_format"] = "CPU：{0} / GPU：{1} 负载：{2}   中间：{3} RPM",
 
+        // UNDERVOLTING
+        ["undervolt_header"] = "降压（实验性）",
+        ["undervolt_desc"] = "Curve Optimizer 偏移。值越负 = 电压越低。值过低可能导致不稳定或数据损坏。从小值开始。重启后重置。",
+        ["undervolt_cpu"] = "CPU",
+        ["undervolt_auto_apply"] = "模式切换时自动应用",
+
         // BATTERY INFO WINDOW
         ["battery_info_title"] = "电池信息",
         ["health_header"] = "健康状况",

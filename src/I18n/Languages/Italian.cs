@@ -304,6 +304,12 @@ public static class Italian
         ["firmware_control"] = "Controllo firmware",
         ["fan_sensor_format"] = "CPU: {0} / GPU: {1} Carico: {2}   Centrale: {3} RPM",
 
+        // UNDERVOLTING
+        ["undervolt_header"] = "Undervolting (Sperimentale)",
+        ["undervolt_desc"] = "Offset Curve Optimizer. Più negativo = voltaggio più basso. Valori troppo bassi possono causare instabilità o corruzione dei dati. Inizia con valori piccoli. Si azzera al riavvio.",
+        ["undervolt_cpu"] = "CPU",
+        ["undervolt_auto_apply"] = "Applica automaticamente al cambio modalità",
+
         // BATTERY INFO WINDOW
         ["battery_info_title"] = "Informazioni batteria",
         ["health_header"] = "Salute",

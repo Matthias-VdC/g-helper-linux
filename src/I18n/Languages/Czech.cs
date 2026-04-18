@@ -304,6 +304,12 @@ public static class Czech
         ["firmware_control"] = "Ovládání firmwaru",
         ["fan_sensor_format"] = "CPU: {0} / GPU: {1} Zátěž: {2}   Střed.: {3} RPM",
 
+        // UNDERVOLTING
+        ["undervolt_header"] = "Podpětí (experimentální)",
+        ["undervolt_desc"] = "Offset Curve Optimizeru. Více záporné = nižší napětí. Příliš nízké hodnoty mohou způsobit nestabilitu nebo poškození dat. Začněte s malými. Resetuje se při restartu.",
+        ["undervolt_cpu"] = "CPU",
+        ["undervolt_auto_apply"] = "Automaticky použít při změně režimu",
+
         // BATTERY INFO WINDOW
         ["battery_info_title"] = "Informace o baterii",
         ["health_header"] = "Zdraví",

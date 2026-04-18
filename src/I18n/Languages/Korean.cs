@@ -307,6 +307,12 @@ public static class Korean
         ["firmware_control"] = "펌웨어 제어",
         ["fan_sensor_format"] = "CPU: {0} / GPU: {1} 부하: {2}   중간: {3} RPM",
 
+        // UNDERVOLTING
+        ["undervolt_header"] = "언더볼팅 (실험적)",
+        ["undervolt_desc"] = "Curve Optimizer 오프셋. 더 음수 = 더 낮은 전압. 너무 낮은 값은 불안정 또는 데이터 손상을 일으킬 수 있습니다. 작은 값부터 시작하세요. 재부팅 시 초기화됩니다.",
+        ["undervolt_cpu"] = "CPU",
+        ["undervolt_auto_apply"] = "모드 변경 시 자동 적용",
+
         // BATTERY INFO WINDOW
         ["battery_info_title"] = "배터리 정보",
         ["health_header"] = "건강 상태",
