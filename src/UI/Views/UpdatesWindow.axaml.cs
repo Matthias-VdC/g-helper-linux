@@ -368,10 +368,11 @@ public partial class UpdatesWindow : Window
             // doesn't load stale libSkiaSharp.so / libHarfBuzzSharp.so next to it after
             // a Skia/HarfBuzz version bump. AppImage ships libs inside the bundle.
             // Downloaded before the swap — any failure leaves the existing install untouched.
-            var libTmpPaths = new List<(string Name, string Tmp)>();
+            var libTmpPaths = new List<(string name, string tmp)>();
             if (!IsAppImage)
             {
                 var urlBase = downloadUrl.Substring(0, downloadUrl.LastIndexOf('/') + 1);
+                Helpers.Logger.WriteLine($"Self-update: downloading 2 native libs from {urlBase}");
                 foreach (var libName in new[] { "libSkiaSharp.so", "libHarfBuzzSharp.so" })
                 {
                     var libTmp = Path.Combine(Path.GetTempPath(), "ghelper-update-" + libName);
@@ -422,7 +423,8 @@ public partial class UpdatesWindow : Window
                 });
 
                 var mode = IsAppImage ? "AppImage" : "binary";
-                Helpers.Logger.WriteLine($"Self-update: downloaded and replaced {mode} at {targetPath}. Restart required.");
+                var libSuffix = libTmpPaths.Count > 0 ? $" (+{libTmpPaths.Count} native libs)" : "";
+                Helpers.Logger.WriteLine($"Self-update: downloaded and replaced {mode} at {targetPath}{libSuffix}. Restart required.");
             }
             else
             {
