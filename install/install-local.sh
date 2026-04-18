@@ -330,8 +330,8 @@ if [[ "$MODE" == "install" ]]; then
 
     mkdir -p "$INSTALL_DIR"
 
-    _install_file "$DIST_DIR/ghelper"             "$INSTALL_DIR/ghelper"             755 "ghelper binary"     || true
-    _install_file "$DIST_DIR/libSkiaSharp.so"     "$INSTALL_DIR/libSkiaSharp.so"     755 "libSkiaSharp.so"    || true
+    _install_file "$DIST_DIR/ghelper"             "$INSTALL_DIR/ghelper"             755 "ghelper binary" || true
+    _install_file "$DIST_DIR/libSkiaSharp.so"     "$INSTALL_DIR/libSkiaSharp.so"     755 "libSkiaSharp.so" || true
     _install_file "$DIST_DIR/libHarfBuzzSharp.so" "$INSTALL_DIR/libHarfBuzzSharp.so" 755 "libHarfBuzzSharp.so" || true
 
     # Symlink (ln -sf is already idempotent but we report status)
@@ -342,7 +342,7 @@ if [[ "$MODE" == "install" ]]; then
         _inject "symlink → /usr/local/bin/ghelper"
     fi
 
-    # Fix ownership so the real user can run ghelper and self-update without root
+    # Fix ownership so the real user can run ghelper without root
     if [[ -n "$REAL_USER" ]]; then
         chown -R "$REAL_USER:$REAL_USER" "$INSTALL_DIR"
         _info "ownership → ${BOLD}$REAL_USER:$REAL_USER${RESET} on $INSTALL_DIR/"
