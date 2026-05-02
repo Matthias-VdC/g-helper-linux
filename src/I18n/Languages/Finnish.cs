@@ -58,7 +58,10 @@ public static class Finnish
         // KEYBOARD
         ["keyboard_header"] = "Kannettavan näppäimistö",
         ["backlight"] = "Taustavalo",
-        ["extra"] = "Lisä",
+        ["tuning_button"] = "Tuning",
+        ["tuning_header"] = "Tuning",
+        ["cpu_tab"] = "CPU",
+        ["gpu_tab"] = "GPU",
         ["backlight_off"] = "Pois",
         ["backlight_low"] = "Matala",
         ["backlight_medium"] = "Keskitaso",

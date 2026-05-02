@@ -58,7 +58,10 @@ public static class Serbian
         // KEYBOARD
         ["keyboard_header"] = "Тастатура лаптопа",
         ["backlight"] = "Позадинско осветљење",
-        ["extra"] = "Додатно",
+        ["tuning_button"] = "Tuning",
+        ["tuning_header"] = "Tuning",
+        ["cpu_tab"] = "CPU",
+        ["gpu_tab"] = "GPU",
         ["backlight_off"] = "Искључено",
         ["backlight_low"] = "Ниско",
         ["backlight_medium"] = "Средње",

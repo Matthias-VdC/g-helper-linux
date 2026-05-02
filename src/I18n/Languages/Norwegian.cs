@@ -58,7 +58,10 @@ public static class Norwegian
         // KEYBOARD
         ["keyboard_header"] = "Bærbart tastatur",
         ["backlight"] = "Bakbelysning",
-        ["extra"] = "Ekstra",
+        ["tuning_button"] = "Tuning",
+        ["tuning_header"] = "Tuning",
+        ["cpu_tab"] = "CPU",
+        ["gpu_tab"] = "GPU",
         ["backlight_off"] = "Av",
         ["backlight_low"] = "Lav",
         ["backlight_medium"] = "Middels",

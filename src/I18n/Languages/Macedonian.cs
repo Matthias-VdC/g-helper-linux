@@ -58,7 +58,10 @@ public static class Macedonian
         // KEYBOARD
         ["keyboard_header"] = "Тастатура на лаптоп",
         ["backlight"] = "Позадинско осветлување",
-        ["extra"] = "Дополнително",
+        ["tuning_button"] = "Tuning",
+        ["tuning_header"] = "Tuning",
+        ["cpu_tab"] = "CPU",
+        ["gpu_tab"] = "GPU",
         ["backlight_off"] = "Исклучено",
         ["backlight_low"] = "Ниско",
         ["backlight_medium"] = "Средно",

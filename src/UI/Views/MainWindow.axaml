@@ -124,6 +124,19 @@
                 </StackPanel>
             </Border>
 
+            <!-- TUNING BUTTON -->
+            <Border Classes="panel">
+                <Button x:Name="buttonTuning" Classes="ghelper"
+                        Click="ButtonTuning_Click"
+                        Height="36"
+                        HorizontalAlignment="Stretch">
+                    <StackPanel Orientation="Horizontal" Spacing="4" HorizontalAlignment="Center">
+                        <ctrl:Icon IconName="bolt" Width="14" Height="14" VerticalAlignment="Center" />
+                        <TextBlock Text="Tuning" FontSize="11" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
+            </Border>
+
             <!-- SCREEN SECTION -->
             <Border Classes="panel">
                 <StackPanel>
@@ -178,22 +191,13 @@
                                    Text="" VerticalAlignment="Center" />
                     </Grid>
 
-                    <!-- Row 1: Backlight cycle + Extra settings -->
-                    <UniformGrid Rows="1" Columns="2" Margin="0,0,0,4">
-                        <Button x:Name="buttonKeyboard" Classes="ghelper"
-                                Margin="0,0,3,0" Click="ButtonKeyboard_Click"
-                                Height="36">
-                            <TextBlock Text="Backlight" HorizontalAlignment="Center" FontSize="11" />
-                        </Button>
-                        <Button x:Name="buttonExtra" Classes="ghelper"
-                                Margin="3,0,0,0" Click="ButtonExtra_Click"
-                                Height="36">
-                            <StackPanel Orientation="Horizontal" Spacing="4" HorizontalAlignment="Center">
-                                <ctrl:Icon IconName="gear" Width="14" Height="14" VerticalAlignment="Center" />
-                                <TextBlock Text="Extra" FontSize="11" VerticalAlignment="Center" />
-                            </StackPanel>
-                        </Button>
-                    </UniformGrid>
+                    <!-- Backlight cycle (keyboard-related, stays in this panel) -->
+                    <Button x:Name="buttonKeyboard" Classes="ghelper"
+                            Margin="0,0,0,4" Click="ButtonKeyboard_Click"
+                            Height="36"
+                            HorizontalAlignment="Stretch">
+                        <TextBlock Text="Backlight" HorizontalAlignment="Center" FontSize="11" />
+                    </Button>
 
                     <!-- Row 2: AURA Mode + Speed + Color1 + Color2 -->
                     <Grid ColumnDefinitions="*,90,44,44" Margin="0,0" x:Name="panelAura">
@@ -298,8 +302,8 @@
                     <TextBlock x:Name="labelVersion" Classes="label-dim" Cursor="Hand"
                                Text="G-Helper Linux v1.0.0" FontSize="12" Margin="0,0,0,6" />
 
-                    <!-- Donate + Updates + Quit -->
-                    <Grid ColumnDefinitions="Auto,*,Auto,Auto">
+                    <!-- Donate + Settings + Updates + Quit -->
+                    <Grid ColumnDefinitions="Auto,*,Auto,Auto,Auto">
                         <Button Grid.Column="0" x:Name="buttonDonate" Classes="ghelper-coin"
                                 Margin="0,0,6,0" Height="36" MinWidth="140"
                                 Click="ButtonDonate_Click">
@@ -333,7 +337,15 @@
                                 </Border>
                             </Grid>
                         </Button>
-                        <Button Grid.Column="2" x:Name="buttonUpdates" Classes="ghelper"
+                        <Button Grid.Column="2" x:Name="buttonExtra" Classes="ghelper"
+                                Margin="0,0,4,0" Height="32"
+                                Click="ButtonExtra_Click">
+                            <StackPanel Orientation="Horizontal" Spacing="4" HorizontalAlignment="Center">
+                                <ctrl:Icon IconName="gear" Width="14" Height="14" VerticalAlignment="Center" />
+                                <TextBlock Text="Settings" FontSize="11" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                        <Button Grid.Column="3" x:Name="buttonUpdates" Classes="ghelper"
                                 Margin="0,0,4,0" Height="32"
                                 Click="ButtonUpdates_Click">
                             <StackPanel Orientation="Horizontal" Spacing="4" HorizontalAlignment="Center">
@@ -341,7 +353,7 @@
                                 <TextBlock Text="Updates" FontSize="11" VerticalAlignment="Center" />
                             </StackPanel>
                         </Button>
-                        <Button Grid.Column="3" x:Name="buttonQuit" Classes="ghelper"
+                        <Button Grid.Column="4" x:Name="buttonQuit" Classes="ghelper"
                                 Height="32"
                                 Click="ButtonQuit_Click">
                             <StackPanel Orientation="Horizontal" Spacing="4" HorizontalAlignment="Center">

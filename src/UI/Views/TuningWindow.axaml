@@ -1,0 +1,181 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="GHelper.Linux.UI.Views.TuningWindow"
+        Title="Tuning"
+        Width="560"
+        Height="640"
+        MinWidth="460"
+        MinHeight="480"
+        WindowStartupLocation="CenterScreen"
+        Background="#1C1C1C"
+        Icon="avares://ghelper/UI/Assets/standard.ico">
+
+    <TabControl Margin="6">
+
+        <!-- CPU: Power Limits + Undervolt -->
+        <TabItem x:Name="tabCpu">
+            <TabItem.Header>
+                <TextBlock x:Name="labelCpuTab" Text="CPU" />
+            </TabItem.Header>
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel Margin="6">
+
+                    <!-- Power Limits (PPT) -->
+                    <Border x:Name="panelPowerLimits" Classes="panel" Margin="0,0,0,6">
+                        <StackPanel>
+                            <TextBlock x:Name="headerPowerLimits" Classes="header" Text="Power Limits" Margin="0,0,0,8" />
+
+                            <!-- PPT SPL (PL1) -->
+                            <Grid ColumnDefinitions="120,*,50" Margin="0,4">
+                                <TextBlock Grid.Column="0" x:Name="labelPL1Label" Text="CPU PL1 (SPL)"
+                                           Classes="label-dim" VerticalAlignment="Center" />
+                                <Slider Grid.Column="1" x:Name="sliderPL1"
+                                        Minimum="5" Maximum="120" Value="45"
+                                        TickFrequency="5"
+                                        ValueChanged="SliderPL1_ValueChanged" />
+                                <TextBlock Grid.Column="2" x:Name="labelPL1" Classes="value"
+                                           Text="45W" HorizontalAlignment="Center"
+                                           VerticalAlignment="Center" />
+                            </Grid>
+
+                            <!-- PPT SPPT (PL2) -->
+                            <Grid ColumnDefinitions="120,*,50" Margin="0,4">
+                                <TextBlock Grid.Column="0" x:Name="labelPL2Label" Text="CPU PL2 (SPPT)"
+                                           Classes="label-dim" VerticalAlignment="Center" />
+                                <Slider Grid.Column="1" x:Name="sliderPL2"
+                                        Minimum="5" Maximum="150" Value="65"
+                                        TickFrequency="5"
+                                        ValueChanged="SliderPL2_ValueChanged" />
+                                <TextBlock Grid.Column="2" x:Name="labelPL2" Classes="value"
+                                           Text="65W" HorizontalAlignment="Center"
+                                           VerticalAlignment="Center" />
+                            </Grid>
+
+                            <!-- PPT fPPT (fast boost) -->
+                            <Grid x:Name="gridFppt" ColumnDefinitions="120,*,50" Margin="0,4" IsVisible="False">
+                                <TextBlock Grid.Column="0" x:Name="labelFpptLabel" Text="CPU fPPT (Fast)"
+                                           Classes="label-dim" VerticalAlignment="Center" />
+                                <Slider Grid.Column="1" x:Name="sliderFppt"
+                                        Minimum="5" Maximum="150" Value="65"
+                                        TickFrequency="5"
+                                        ValueChanged="SliderFppt_ValueChanged" />
+                                <TextBlock Grid.Column="2" x:Name="labelFppt" Classes="value"
+                                           Text="65W" HorizontalAlignment="Center"
+                                           VerticalAlignment="Center" />
+                            </Grid>
+
+                            <!-- CPU Boost -->
+                            <Grid ColumnDefinitions="120,*" Margin="0,8,0,0">
+                                <TextBlock Grid.Column="0" x:Name="labelCpuBoostLabel" Text="CPU Boost"
+                                           Classes="label-dim" VerticalAlignment="Center" />
+                                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="4">
+                                    <Button x:Name="buttonBoostOff" Classes="ghelper"
+                                            Content="Off" Click="ButtonBoostOff_Click" />
+                                    <Button x:Name="buttonBoostOn" Classes="ghelper"
+                                            Content="On" Click="ButtonBoostOn_Click" />
+                                </StackPanel>
+                            </Grid>
+
+                            <!-- Auto-apply power -->
+                            <CheckBox x:Name="checkApplyPower"
+                                      Content="Auto-apply power limits on mode change" Margin="0,8,0,0"
+                                      IsCheckedChanged="CheckApplyPower_Changed" />
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Undervolt (Ryzen Curve Optimizer) -->
+                    <Border x:Name="panelUV" Classes="panel" Margin="0,0,0,6">
+                        <StackPanel>
+                            <TextBlock x:Name="headerUndervolt" Classes="header" Text="Undervolting (Experimental)" Margin="0,0,0,4" />
+                            <TextBlock x:Name="labelUndervoltDesc" Classes="label-dim" TextWrapping="Wrap" Margin="0,0,0,8"
+                                       Text="Curve Optimizer offset. More negative = lower voltage. Too-low values can cause instability or data corruption. Start small. Resets on reboot." />
+
+                            <Grid ColumnDefinitions="120,*,50" Margin="0,4">
+                                <TextBlock Grid.Column="0" x:Name="labelUndervoltCpu" Text="CPU"
+                                           Classes="label-dim" VerticalAlignment="Center" />
+                                <!-- Slider is positive 0..40 (intensity) so the fill bar grows
+                                     left-to-right with UV strength; value is negated when stored. -->
+                                <Slider Grid.Column="1" x:Name="sliderCpuUV"
+                                        Minimum="0" Maximum="40" Value="0"
+                                        TickFrequency="1" IsSnapToTickEnabled="True"
+                                        ValueChanged="SliderCpuUV_ValueChanged" />
+                                <TextBlock Grid.Column="2" x:Name="labelCpuUV" Classes="value"
+                                           Text="0" HorizontalAlignment="Center"
+                                           VerticalAlignment="Center" />
+                            </Grid>
+
+                            <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,8,0,0">
+                                <Button x:Name="buttonApplyUV" Classes="ghelper"
+                                        Content="Apply" Click="ButtonApplyUV_Click" />
+                                <Button x:Name="buttonResetUV" Classes="ghelper"
+                                        Content="Reset" Click="ButtonResetUV_Click" />
+                                <CheckBox x:Name="checkApplyUV"
+                                          Content="Auto-apply on mode change"
+                                          VerticalAlignment="Center"
+                                          IsCheckedChanged="CheckApplyUV_Changed" />
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                </StackPanel>
+            </ScrollViewer>
+        </TabItem>
+
+        <!-- GPU: Power Limit + Clock Lock -->
+        <TabItem x:Name="tabGpu">
+            <TabItem.Header>
+                <TextBlock x:Name="labelGpuTab" Text="GPU" />
+            </TabItem.Header>
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel Margin="6">
+                    <Border x:Name="panelGpuTuning" Classes="panel" Margin="0,0,0,6">
+                        <StackPanel>
+                            <Border Classes="panel-header" Margin="0,0,0,8">
+                                <TextBlock x:Name="headerGpuTuning" Classes="header" Text="GPU Tuning" />
+                            </Border>
+
+                            <TextBlock x:Name="labelGpuTuningInfo" Classes="label-dim"
+                                       Text="NVIDIA GPU" Margin="0,0,0,6" />
+
+                            <!-- Power Limit slider -->
+                            <Grid ColumnDefinitions="110,*,50" Margin="0,4">
+                                <TextBlock Grid.Column="0" x:Name="labelPowerLimitLabel" Text="Power Limit"
+                                           Classes="label-dim" VerticalAlignment="Center" />
+                                <Slider Grid.Column="1" x:Name="sliderGpuPowerLimit"
+                                        Minimum="5" Maximum="115" Value="55"
+                                        TickFrequency="5" IsSnapToTickEnabled="True"
+                                        ValueChanged="SliderGpuPowerLimit_ValueChanged" />
+                                <TextBlock Grid.Column="2" x:Name="labelGpuPowerLimit"
+                                           Classes="value" Text="55W"
+                                           HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Grid>
+
+                            <!-- Clock Lock -->
+                            <Grid ColumnDefinitions="110,Auto,*,50" Margin="0,4">
+                                <TextBlock Grid.Column="0" x:Name="labelClockLockLabel" Text="Clock Lock"
+                                           Classes="label-dim" VerticalAlignment="Center" />
+                                <CheckBox Grid.Column="1" x:Name="checkGpuClockLock"
+                                          Margin="0,0,8,0" VerticalAlignment="Center"
+                                          IsCheckedChanged="CheckGpuClockLock_Changed" />
+                                <Slider Grid.Column="2" x:Name="sliderGpuClockLock"
+                                        Minimum="200" Maximum="3000" Value="2400"
+                                        TickFrequency="50" IsSnapToTickEnabled="True"
+                                        IsEnabled="False"
+                                        ValueChanged="SliderGpuClockLock_ValueChanged" />
+                                <TextBlock Grid.Column="3" x:Name="labelGpuClockLock"
+                                           Classes="value" Text="--"
+                                           HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Grid>
+
+                            <Button x:Name="buttonGpuApply" Classes="ghelper"
+                                    Content="Apply GPU Settings" Margin="0,8,0,0"
+                                    Click="ButtonGpuApply_Click" />
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
+        </TabItem>
+
+    </TabControl>
+
+</Window>

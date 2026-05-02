@@ -55,7 +55,10 @@ public static class Italian
         // KEYBOARD
         ["keyboard_header"] = "Tastiera del portatile",
         ["backlight"] = "Retroilluminazione",
-        ["extra"] = "Extra",
+        ["tuning_button"] = "Tuning",
+        ["tuning_header"] = "Tuning",
+        ["cpu_tab"] = "CPU",
+        ["gpu_tab"] = "GPU",
         ["backlight_off"] = "Spento",
         ["backlight_low"] = "Bassa",
         ["backlight_medium"] = "Media",

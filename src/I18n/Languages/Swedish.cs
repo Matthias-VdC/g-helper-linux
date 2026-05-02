@@ -58,7 +58,10 @@ public static class Swedish
         // KEYBOARD
         ["keyboard_header"] = "Bärbart tangentbord",
         ["backlight"] = "Bakgrundsbelysning",
-        ["extra"] = "Extra",
+        ["tuning_button"] = "Tuning",
+        ["tuning_header"] = "Tuning",
+        ["cpu_tab"] = "CPU",
+        ["gpu_tab"] = "GPU",
         ["backlight_off"] = "Av",
         ["backlight_low"] = "Låg",
         ["backlight_medium"] = "Medel",

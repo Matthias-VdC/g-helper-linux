@@ -55,7 +55,10 @@ public static class Dutch
         // KEYBOARD
         ["keyboard_header"] = "Laptoptoetsenbord",
         ["backlight"] = "Verlichting",
-        ["extra"] = "Extra",
+        ["tuning_button"] = "Tuning",
+        ["tuning_header"] = "Tuning",
+        ["cpu_tab"] = "CPU",
+        ["gpu_tab"] = "GPU",
         ["backlight_off"] = "Uit",
         ["backlight_low"] = "Laag",
         ["backlight_medium"] = "Gemiddeld",

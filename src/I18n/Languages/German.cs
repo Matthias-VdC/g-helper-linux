@@ -55,7 +55,10 @@ public static class German
         // KEYBOARD
         ["keyboard_header"] = "Laptop-Tastatur",
         ["backlight"] = "Beleuchtung",
-        ["extra"] = "Extras",
+        ["tuning_button"] = "Tuning",
+        ["tuning_header"] = "Tuning",
+        ["cpu_tab"] = "CPU",
+        ["gpu_tab"] = "GPU",
         ["backlight_off"] = "Aus",
         ["backlight_low"] = "Niedrig",
         ["backlight_medium"] = "Mittel",

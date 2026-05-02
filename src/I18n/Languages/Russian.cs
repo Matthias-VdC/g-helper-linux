@@ -55,7 +55,10 @@ public static class Russian
         // KEYBOARD
         ["keyboard_header"] = "Клавиатура ноутбука",
         ["backlight"] = "Подсветка",
-        ["extra"] = "Дополнительно",
+        ["tuning_button"] = "Tuning",
+        ["tuning_header"] = "Tuning",
+        ["cpu_tab"] = "CPU",
+        ["gpu_tab"] = "GPU",
         ["backlight_off"] = "Выкл",
         ["backlight_low"] = "Низкая",
         ["backlight_medium"] = "Средняя",

@@ -58,7 +58,10 @@ public static class Greek
         // KEYBOARD
         ["keyboard_header"] = "Πληκτρολόγιο φορητού",
         ["backlight"] = "Οπίσθιος φωτισμός",
-        ["extra"] = "Επιπλέον",
+        ["tuning_button"] = "Tuning",
+        ["tuning_header"] = "Tuning",
+        ["cpu_tab"] = "CPU",
+        ["gpu_tab"] = "GPU",
         ["backlight_off"] = "Κλειστό",
         ["backlight_low"] = "Χαμηλό",
         ["backlight_medium"] = "Μεσαίο",

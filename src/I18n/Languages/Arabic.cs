@@ -58,7 +58,10 @@ public static class Arabic
         // KEYBOARD
         ["keyboard_header"] = "لوحة مفاتيح الحاسوب المحمول",
         ["backlight"] = "الإضاءة الخلفية",
-        ["extra"] = "إضافي",
+        ["tuning_button"] = "Tuning",
+        ["tuning_header"] = "Tuning",
+        ["cpu_tab"] = "CPU",
+        ["gpu_tab"] = "GPU",
         ["backlight_off"] = "إيقاف",
         ["backlight_low"] = "منخفض",
         ["backlight_medium"] = "متوسط",

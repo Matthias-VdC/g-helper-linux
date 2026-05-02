@@ -58,7 +58,10 @@ public static class Thai
         // KEYBOARD
         ["keyboard_header"] = "แป้นพิมพ์แล็ปท็อป",
         ["backlight"] = "ไฟส่องสว่าง",
-        ["extra"] = "เพิ่มเติม",
+        ["tuning_button"] = "Tuning",
+        ["tuning_header"] = "Tuning",
+        ["cpu_tab"] = "CPU",
+        ["gpu_tab"] = "GPU",
         ["backlight_off"] = "ปิด",
         ["backlight_low"] = "ต่ำ",
         ["backlight_medium"] = "ปานกลาง",

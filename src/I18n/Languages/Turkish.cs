@@ -55,7 +55,10 @@ public static class Turkish
         // KEYBOARD
         ["keyboard_header"] = "Laptop Klavyesi",
         ["backlight"] = "Arka Işık",
-        ["extra"] = "Ekstra",
+        ["tuning_button"] = "Tuning",
+        ["tuning_header"] = "Tuning",
+        ["cpu_tab"] = "CPU",
+        ["gpu_tab"] = "GPU",
         ["backlight_off"] = "Kapalı",
         ["backlight_low"] = "Düşük",
         ["backlight_medium"] = "Orta",

@@ -55,7 +55,10 @@ public static class Hungarian
         // KEYBOARD
         ["keyboard_header"] = "Laptop billentyűzet",
         ["backlight"] = "Háttérvilágítás",
-        ["extra"] = "Extra",
+        ["tuning_button"] = "Tuning",
+        ["tuning_header"] = "Tuning",
+        ["cpu_tab"] = "CPU",
+        ["gpu_tab"] = "GPU",
         ["backlight_off"] = "Ki",
         ["backlight_low"] = "Alacsony",
         ["backlight_medium"] = "Közepes",

@@ -60,7 +60,10 @@ public static class English
         // KEYBOARD
         ["keyboard_header"] = "Laptop Keyboard",
         ["backlight"] = "Backlight",
-        ["extra"] = "Extra",
+        ["tuning_button"] = "Tuning",
+        ["tuning_header"] = "Tuning",
+        ["cpu_tab"] = "CPU",
+        ["gpu_tab"] = "GPU",
         ["backlight_off"] = "Off",
         ["backlight_low"] = "Low",
         ["backlight_medium"] = "Medium",

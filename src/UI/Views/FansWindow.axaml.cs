@@ -16,9 +16,6 @@ public partial class FansWindow : Window
     private static readonly IBrush TransparentBrush = Brushes.Transparent;
 
     private readonly DispatcherTimer _sensorTimer;
-    private System.Timers.Timer? _plDebounce;
-    private bool _updatingPLSliders;
-    private bool _updatingUV;
     private bool _updatingAdvanced;
 
     public FansWindow()
@@ -42,10 +39,7 @@ public partial class FansWindow : Window
         Loaded += (_, _) =>
         {
             LoadFanCurves();
-            LoadPowerLimits();
-            LoadUV();
             LoadAdvanced();
-            RefreshBoostButton();
             RefreshSensors();
             _sensorTimer.Start();
         };
@@ -71,10 +65,7 @@ public partial class FansWindow : Window
             try
             {
                 LoadFanCurves();
-                LoadPowerLimits();
-                LoadUV();
                 LoadAdvanced();
-                RefreshBoostButton();
             }
             catch (Exception ex)
             {
@@ -112,23 +103,9 @@ public partial class FansWindow : Window
         buttonReset.Content = Labels.Get("reset");
         buttonDisable.Content = Labels.Get("disable");
         checkApplyFans.Content = Labels.Get("auto_apply");
-        headerPowerLimits.Text = Labels.Get("power_limits");
-        labelPL1Label.Text = Labels.Get("cpu_pl1");
-        labelPL2Label.Text = Labels.Get("cpu_pl2");
-        labelFpptLabel.Text = Labels.Get("cpu_fppt");
-        labelCpuBoostLabel.Text = Labels.Get("cpu_boost");
-        buttonBoostOff.Content = Labels.Get("off");
-        buttonBoostOn.Content = Labels.Get("on");
-        checkApplyPower.Content = Labels.Get("auto_apply_power_limits");
         chartCPU.FanLabel = Labels.Get("cpu_fan");
         chartGPU.FanLabel = Labels.Get("gpu_fan");
         chartMid.FanLabel = Labels.Get("mid_fan");
-        headerUndervolt.Text = Labels.Get("undervolt_header");
-        labelUndervoltDesc.Text = Labels.Get("undervolt_desc");
-        labelUndervoltCpu.Text = Labels.Get("undervolt_cpu");
-        buttonApplyUV.Content = Labels.Get("apply");
-        buttonResetUV.Content = Labels.Get("reset");
-        checkApplyUV.Content = Labels.Get("undervolt_auto_apply");
         headerAdvanced.Text = Labels.Get("advanced_header");
         labelModeCmd.Text = Labels.Get("mode_command_label");
         labelModeCmdHint.Text = Labels.Get("mode_command_hint");
@@ -333,183 +310,6 @@ public partial class FansWindow : Window
         Helpers.AppConfig.SetMode("auto_apply_fans", enabled ? 1 : 0);
     }
 
-    private void CheckApplyPower_Changed(object? sender, RoutedEventArgs e)
-    {
-        bool enabled = checkApplyPower.IsChecked ?? false;
-        Helpers.AppConfig.SetMode("auto_apply_power", enabled ? 1 : 0);
-    }
-
-    // Power Limits
-
-    private void LoadPowerLimits()
-    {
-        var wmi = App.Wmi;
-        if (wmi == null)
-            return;
-
-        _updatingPLSliders = true;
-
-        // Read from hardware, fall back to saved config
-        int pl1 = wmi.GetPptLimit(Platform.Linux.AsusAttributes.PptPl1Spl);
-        if (pl1 <= 0)
-            pl1 = Helpers.AppConfig.GetMode("limit_slow");
-
-        int pl2 = wmi.GetPptLimit(Platform.Linux.AsusAttributes.PptPl2Sppt);
-        if (pl2 <= 0)
-            pl2 = Helpers.AppConfig.GetMode("limit_fast");
-
-        if (pl1 > 0)
-        {
-            sliderPL1.Value = pl1;
-            labelPL1.Text = $"{pl1}W";
-        }
-
-        if (pl2 > 0)
-        {
-            sliderPL2.Value = pl2;
-            labelPL2.Text = $"{pl2}W";
-        }
-
-        // fPPT (fast boost) - only show if supported
-        bool hasFppt = wmi.IsFeatureSupported(Platform.Linux.AsusAttributes.PptFppt);
-        gridFppt.IsVisible = hasFppt;
-        if (hasFppt)
-        {
-            int fppt = wmi.GetPptLimit(Platform.Linux.AsusAttributes.PptFppt);
-            if (fppt <= 0)
-                fppt = Helpers.AppConfig.GetMode("limit_fppt");
-            if (fppt > 0)
-            {
-                sliderFppt.Value = fppt;
-                labelFppt.Text = $"{fppt}W";
-            }
-        }
-
-        _updatingPLSliders = false;
-        checkApplyPower.IsChecked = Helpers.AppConfig.IsMode("auto_apply_power");
-    }
-
-    private void SliderPL1_ValueChanged(object? sender,
-        Avalonia.Controls.Primitives.RangeBaseValueChangedEventArgs e)
-    {
-        if (_updatingPLSliders)
-            return;
-        labelPL1.Text = $"{(int)e.NewValue}W";
-        // Enforce PL1 ≤ PL2 ≤ fPPT (matches Windows G-Helper coupling)
-        if (sliderPL1.Value > sliderPL2.Value)
-            sliderPL2.Value = sliderPL1.Value;
-        if (sliderPL1.Value > sliderFppt.Value)
-            sliderFppt.Value = sliderPL1.Value;
-        SchedulePLWrite();
-    }
-
-    private void SliderPL2_ValueChanged(object? sender,
-        Avalonia.Controls.Primitives.RangeBaseValueChangedEventArgs e)
-    {
-        if (_updatingPLSliders)
-            return;
-        labelPL2.Text = $"{(int)e.NewValue}W";
-        if (sliderPL2.Value < sliderPL1.Value)
-            sliderPL1.Value = sliderPL2.Value;
-        if (sliderPL2.Value > sliderFppt.Value)
-            sliderFppt.Value = sliderPL2.Value;
-        SchedulePLWrite();
-    }
-
-    private void SliderFppt_ValueChanged(object? sender,
-        Avalonia.Controls.Primitives.RangeBaseValueChangedEventArgs e)
-    {
-        if (_updatingPLSliders)
-            return;
-        labelFppt.Text = $"{(int)e.NewValue}W";
-        if (sliderFppt.Value < sliderPL2.Value)
-            sliderPL2.Value = sliderFppt.Value;
-        if (sliderFppt.Value < sliderPL1.Value)
-            sliderPL1.Value = sliderFppt.Value;
-        SchedulePLWrite();
-    }
-
-    /// <summary>Debounce PL slider writes - only write 300ms after the user stops dragging.</summary>
-    private void SchedulePLWrite()
-    {
-        _plDebounce?.Stop();
-        _plDebounce ??= new System.Timers.Timer(300) { AutoReset = false };
-        _plDebounce.Elapsed -= PLDebounce_Elapsed;
-        _plDebounce.Elapsed += PLDebounce_Elapsed;
-        _plDebounce.Start();
-    }
-
-    private void PLDebounce_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
-    {
-        Dispatcher.UIThread.Post(() =>
-        {
-            var wmi = App.Wmi;
-            if (wmi == null)
-                return;
-
-            int pl1 = (int)sliderPL1.Value;
-            int pl2 = (int)sliderPL2.Value;
-            int fppt = (int)sliderFppt.Value;
-
-            wmi.SetPptLimit(Platform.Linux.AsusAttributes.PptPl1Spl, pl1);
-            Helpers.AppConfig.SetMode("limit_slow", pl1);
-
-            wmi.SetPptLimit(Platform.Linux.AsusAttributes.PptPl2Sppt, pl2);
-            Helpers.AppConfig.SetMode("limit_fast", pl2);
-
-            if (gridFppt.IsVisible)
-            {
-                wmi.SetPptLimit(Platform.Linux.AsusAttributes.PptFppt, fppt);
-                Helpers.AppConfig.SetMode("limit_fppt", fppt);
-            }
-
-            // Mirror to secondary PPT - prevents stale APU/Platform SPPT
-            // from bottlenecking. Value = max(PL1, PL2).
-            int ceiling = Math.Max(pl1, pl2);
-            if (ceiling > 0)
-            {
-                if (wmi.IsFeatureSupported(Platform.Linux.AsusAttributes.PptApuSppt))
-                    wmi.SetPptLimit(Platform.Linux.AsusAttributes.PptApuSppt, ceiling);
-                if (wmi.IsFeatureSupported(Platform.Linux.AsusAttributes.PptPlatformSppt))
-                    wmi.SetPptLimit(Platform.Linux.AsusAttributes.PptPlatformSppt, ceiling);
-            }
-        });
-    }
-
-    // CPU Boost
-
-    private void RefreshBoostButton()
-    {
-        var power = App.Power;
-        if (power == null)
-            return;
-
-        bool boostEnabled = power.GetCpuBoost();
-        SetBoostButtonState(boostEnabled);
-    }
-
-    private void SetBoostButtonState(bool boostOn)
-    {
-        buttonBoostOn.BorderBrush = boostOn ? AccentBrush : TransparentBrush;
-        buttonBoostOn.BorderThickness = new Avalonia.Thickness(2);
-        buttonBoostOff.BorderBrush = !boostOn ? AccentBrush : TransparentBrush;
-        buttonBoostOff.BorderThickness = new Avalonia.Thickness(2);
-    }
-
-    private void ButtonBoostOn_Click(object? sender, RoutedEventArgs e)
-    {
-        App.Power?.SetCpuBoost(true);
-        Helpers.AppConfig.SetMode("auto_boost", 1);
-        SetBoostButtonState(true);
-    }
-
-    private void ButtonBoostOff_Click(object? sender, RoutedEventArgs e)
-    {
-        App.Power?.SetCpuBoost(false);
-        Helpers.AppConfig.SetMode("auto_boost", 0);
-        SetBoostButtonState(false);
-    }
-
     // Sensor refresh
 
     private void RefreshSensors()
@@ -577,76 +377,6 @@ public partial class FansWindow : Window
                 return true;
         }
         return false;
-    }
-
-    // Ryzen Curve Optimizer undervolt (mirrors Windows Fans.cs: trackUV / checkApplyUV)
-
-    private void LoadUV()
-    {
-        var smu = App.Smu;
-        if (smu == null || !smu.IsAvailable)
-        {
-            panelUV.IsVisible = false;
-            return;
-        }
-
-        panelUV.IsVisible = true;
-
-        // Suppress ValueChanged/Checked handlers while programmatically populating controls -
-        // otherwise setting checkApplyUV.IsChecked would call AutoRyzen and apply UV to
-        // hardware just because the user opened the window.
-        _updatingUV = true;
-        try
-        {
-            // Config stores negative cpu_uv (matches Windows); slider is 0..40 positive intensity.
-            int cpuUV = Helpers.AppConfig.GetMode("cpu_uv", 0);
-            cpuUV = Math.Clamp(cpuUV, Platform.Linux.RyzenSmu.MinCPUUV, Platform.Linux.RyzenSmu.MaxCPUUV);
-            sliderCpuUV.Value = -cpuUV;
-            labelCpuUV.Text = cpuUV.ToString();
-            checkApplyUV.IsChecked = Helpers.AppConfig.IsMode("auto_uv");
-        }
-        finally
-        {
-            _updatingUV = false;
-        }
-    }
-
-    private void SliderCpuUV_ValueChanged(object? sender,
-        Avalonia.Controls.Primitives.RangeBaseValueChangedEventArgs e)
-    {
-        if (_updatingUV)
-            return;
-        // Slider value is positive intensity (0..40); config stores negated (−40..0).
-        int intensity = Math.Clamp((int)e.NewValue, 0, -Platform.Linux.RyzenSmu.MinCPUUV);
-        int cpuUV = -intensity;
-        labelCpuUV.Text = cpuUV.ToString();
-        Helpers.AppConfig.SetMode("cpu_uv", cpuUV);
-    }
-
-    private void ButtonApplyUV_Click(object? sender, RoutedEventArgs e) => App.Mode?.SetRyzen();
-
-    private void ButtonResetUV_Click(object? sender, RoutedEventArgs e)
-    {
-        _updatingUV = true;
-        try
-        {
-            sliderCpuUV.Value = 0;
-            labelCpuUV.Text = "0";
-        }
-        finally
-        {
-            _updatingUV = false;
-        }
-        Helpers.AppConfig.SetMode("cpu_uv", 0);
-        App.Mode?.ResetRyzen();
-    }
-
-    private void CheckApplyUV_Changed(object? sender, RoutedEventArgs e)
-    {
-        if (_updatingUV)
-            return;
-        Helpers.AppConfig.SetMode("auto_uv", checkApplyUV.IsChecked == true ? 1 : 0);
-        App.Mode?.AutoRyzen();
     }
 
     // Advanced: per-mode shell hook + reapply timer

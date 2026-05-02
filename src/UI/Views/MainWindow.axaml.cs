@@ -127,7 +127,8 @@ public partial class MainWindow : Window
         SetButtonText(buttonUltimate, Labels.Get("gpu_ultimate"));
         SetButtonText(buttonOptimized, Labels.Get("gpu_optimized"));
         SetButtonText(buttonKeyboard, Labels.Get("backlight"));
-        SetButtonText(buttonExtra, Labels.Get("extra"));
+        SetButtonText(buttonExtra, Labels.Get("settings"));
+        SetButtonText(buttonTuning, Labels.Get("tuning_button"));
         SetButtonText(buttonUpdates, Labels.Get("updates"));
         SetButtonText(buttonQuit, Labels.Get("quit"));
         labelDonateText.Text = Labels.Get("donate");
@@ -1267,6 +1268,24 @@ public partial class MainWindow : Window
         else
         {
             _extraWindow.Activate();
+        }
+    }
+
+    private TuningWindow? _tuningWindow;
+
+    private void ButtonTuning_Click(object? sender, RoutedEventArgs e)
+    {
+        if (_tuningWindow == null || !_tuningWindow.IsVisible)
+        {
+            _tuningWindow = new TuningWindow();
+            if (Helpers.AppConfig.Is("topmost"))
+                _tuningWindow.Topmost = true;
+            WindowPositioner.CenterOfMainWindowOrPrimaryMonitor(_tuningWindow);
+            _tuningWindow.Show();
+        }
+        else
+        {
+            _tuningWindow.Activate();
         }
     }
 

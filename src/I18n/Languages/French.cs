@@ -55,7 +55,10 @@ public static class French
         // KEYBOARD
         ["keyboard_header"] = "Clavier du portable",
         ["backlight"] = "Rétroéclairage",
-        ["extra"] = "Supplémentaire",
+        ["tuning_button"] = "Tuning",
+        ["tuning_header"] = "Tuning",
+        ["cpu_tab"] = "CPU",
+        ["gpu_tab"] = "GPU",
         ["backlight_off"] = "Désactivé",
         ["backlight_low"] = "Faible",
         ["backlight_medium"] = "Moyen",

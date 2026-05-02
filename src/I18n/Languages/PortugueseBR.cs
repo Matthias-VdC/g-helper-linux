@@ -55,7 +55,10 @@ public static class PortugueseBR
         // KEYBOARD
         ["keyboard_header"] = "Teclado do notebook",
         ["backlight"] = "Retroiluminação",
-        ["extra"] = "Extra",
+        ["tuning_button"] = "Tuning",
+        ["tuning_header"] = "Tuning",
+        ["cpu_tab"] = "CPU",
+        ["gpu_tab"] = "GPU",
         ["backlight_off"] = "Desligado",
         ["backlight_low"] = "Baixo",
         ["backlight_medium"] = "Médio",

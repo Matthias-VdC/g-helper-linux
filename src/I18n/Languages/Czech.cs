@@ -55,7 +55,10 @@ public static class Czech
         // KEYBOARD
         ["keyboard_header"] = "Klávesnice notebooku",
         ["backlight"] = "Podsvícení",
-        ["extra"] = "Další",
+        ["tuning_button"] = "Tuning",
+        ["tuning_header"] = "Tuning",
+        ["cpu_tab"] = "CPU",
+        ["gpu_tab"] = "GPU",
         ["backlight_off"] = "Vyp.",
         ["backlight_low"] = "Nízké",
         ["backlight_medium"] = "Střední",

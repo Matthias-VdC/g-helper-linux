@@ -58,7 +58,10 @@ public static class ChineseTraditional
         // KEYBOARD
         ["keyboard_header"] = "筆電鍵盤",
         ["backlight"] = "背光",
-        ["extra"] = "更多",
+        ["tuning_button"] = "Tuning",
+        ["tuning_header"] = "Tuning",
+        ["cpu_tab"] = "CPU",
+        ["gpu_tab"] = "GPU",
         ["backlight_off"] = "關",
         ["backlight_low"] = "低",
         ["backlight_medium"] = "中",

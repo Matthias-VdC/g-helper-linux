@@ -55,7 +55,10 @@ public static class Ukrainian
         // KEYBOARD
         ["keyboard_header"] = "Клавіатура ноутбука",
         ["backlight"] = "Підсвічування",
-        ["extra"] = "Додаткове",
+        ["tuning_button"] = "Tuning",
+        ["tuning_header"] = "Tuning",
+        ["cpu_tab"] = "CPU",
+        ["gpu_tab"] = "GPU",
         ["backlight_off"] = "Вимк.",
         ["backlight_low"] = "Низьке",
         ["backlight_medium"] = "Середнє",

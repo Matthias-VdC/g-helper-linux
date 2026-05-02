@@ -55,7 +55,10 @@ public static class Romanian
         // KEYBOARD
         ["keyboard_header"] = "Tastatura laptopului",
         ["backlight"] = "Iluminare",
-        ["extra"] = "Extra",
+        ["tuning_button"] = "Tuning",
+        ["tuning_header"] = "Tuning",
+        ["cpu_tab"] = "CPU",
+        ["gpu_tab"] = "GPU",
         ["backlight_off"] = "Oprit",
         ["backlight_low"] = "Scăzut",
         ["backlight_medium"] = "Mediu",

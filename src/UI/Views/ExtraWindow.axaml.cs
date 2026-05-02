@@ -40,7 +40,6 @@ public partial class ExtraWindow : Window
             InitKeyboardBacklight();
             InitKeyBindings();
             RefreshDisplay();
-            RefreshGpuTuning();
             RefreshOther();
             RefreshTrayIcons();
             RefreshPower();
@@ -171,12 +170,6 @@ public partial class ExtraWindow : Window
         checkOverdrive.Content = Labels.Get("panel_overdrive_check");
         labelGammaLabel.Text = Labels.Get("gamma");
 
-        // GPU Tuning
-        headerGpuTuning.Text = Labels.Get("gpu_tuning_header");
-        labelPowerLimitLabel.Text = Labels.Get("power_limit");
-        labelClockLockLabel.Text = Labels.Get("clock_lock");
-        buttonGpuApply.Content = Labels.Get("apply_gpu_settings");
-
         // Other
         headerOther.Text = Labels.Get("other_header");
         checkBootSound.Content = Labels.Get("boot_sound");
@@ -234,7 +227,6 @@ public partial class ExtraWindow : Window
         // Refresh dynamic content with new labels
         RefreshSystemInfo();
         RefreshPower();
-        RefreshGpuTuning();
     }
 
     /// <summary>Rebuild keyboard speed combo with current language strings.</summary>
@@ -1045,86 +1037,116 @@ public partial class ExtraWindow : Window
     }
 
 
-    private LinuxNvidiaGpuControl? _nvidiaGpu;
+    // ADVANCED
 
-    private void RefreshGpuTuning()
+    private void RefreshAdvanced()
     {
-        _nvidiaGpu = App.GpuControl as LinuxNvidiaGpuControl;
-        if (_nvidiaGpu == null || !_nvidiaGpu.IsAvailable())
+        checkAutoApplyPower.IsChecked = Helpers.AppConfig.IsMode("auto_apply_power");
+        checkScreenAuto.IsChecked = Helpers.AppConfig.Is("screen_auto");
+        checkRawWmi.IsChecked = Helpers.AppConfig.Is("raw_wmi");
+
+        // CPU cores
+        int total = LinuxSystemIntegration.GetCpuCount();
+        int online = LinuxSystemIntegration.GetOnlineCpuCount();
+
+        if (total > 1)
         {
-            panelGpuTuning.IsVisible = false;
-            return;
+            panelCpuCores.IsVisible = true;
+            sliderCpuCores.Maximum = total;
+            sliderCpuCores.Value = online;
+            labelCpuCores.Text = Labels.Format("cpu_cores_format", online, total);
+            labelCpuCoresInfo.Text = Labels.Format("cpu_cores_info", online, total);
         }
-
-        panelGpuTuning.IsVisible = true;
-        labelGpuTuningInfo.Text = _nvidiaGpu.GetGpuName() ?? Labels.Get("nvidia_gpu");
-
-        var limits = _nvidiaGpu.GetPowerLimits();
-        if (limits != null)
+        else
         {
-            var (defW, minW, maxW, enfW) = limits.Value;
-            sliderGpuPowerLimit.Minimum = minW;
-            sliderGpuPowerLimit.Maximum = maxW;
-            sliderGpuPowerLimit.Value = enfW > 0 ? enfW : defW;
-            labelGpuPowerLimit.Text = $"{(int)sliderGpuPowerLimit.Value}W";
-            labelGpuTuningInfo.Text += Labels.Format("gpu_info_format", defW, minW, maxW);
+            panelCpuCores.IsVisible = false;
         }
-
-        checkGpuClockLock.IsChecked = false;
-        sliderGpuClockLock.IsEnabled = false;
-        labelGpuClockLock.Text = Labels.Get("off");
     }
 
-    private void SliderGpuPowerLimit_ValueChanged(object? sender,
+    private void CheckAutoApplyPower_Changed(object? sender, RoutedEventArgs e)
+    {
+        if (_suppressEvents)
+            return;
+        bool enabled = checkAutoApplyPower.IsChecked ?? false;
+        Helpers.AppConfig.SetMode("auto_apply_power", enabled ? 1 : 0);
+    }
+
+    private void CheckScreenAuto_Changed(object? sender, RoutedEventArgs e)
+    {
+        if (_suppressEvents)
+            return;
+        bool enabled = checkScreenAuto.IsChecked ?? false;
+        Helpers.AppConfig.Set("screen_auto", enabled ? 1 : 0);
+        Helpers.Logger.WriteLine($"Screen auto refresh → {enabled}");
+        if (enabled)
+            (App.Current as App)?.AutoScreen();
+        App.MainWindowInstance?.RefreshScreenPublic();
+    }
+
+    private void CheckRawWmi_Changed(object? sender, RoutedEventArgs e)
+    {
+        if (_suppressEvents)
+            return;
+        bool enabled = checkRawWmi.IsChecked ?? false;
+        // Idempotency guard
+        if (enabled == Helpers.AppConfig.Is("raw_wmi"))
+            return;
+
+        Helpers.AppConfig.Set("raw_wmi", enabled ? 1 : 0);
+        Helpers.AppConfig.Flush();
+        Helpers.Logger.WriteLine($"Raw WMI mode → {enabled}, restarting app");
+
+        // Restart app so the new setting takes effect immediately
+        var exePath = Environment.ProcessPath;
+        if (exePath != null)
+        {
+            System.Diagnostics.Process.Start(exePath);
+            Environment.Exit(0);
+        }
+    }
+
+    private void SliderCpuCores_ValueChanged(object? sender,
         Avalonia.Controls.Primitives.RangeBaseValueChangedEventArgs e)
     {
         if (_suppressEvents)
             return;
-        labelGpuPowerLimit.Text = $"{(int)e.NewValue}W";
+        int target = (int)e.NewValue;
+        int total = LinuxSystemIntegration.GetCpuCount();
+        labelCpuCores.Text = Labels.Format("cpu_cores_format", target, total);
+        labelCpuCoresInfo.Text = Labels.Format("cpu_cores_info", target, total);
+
+        // Apply in background to avoid UI stall
+        Task.Run(() => LinuxSystemIntegration.SetOnlineCpuCount(target));
     }
 
-    private void CheckGpuClockLock_Changed(object? sender, RoutedEventArgs e)
+    private void ButtonOpenLog_Click(object? sender, RoutedEventArgs e)
     {
-        if (_suppressEvents)
-            return;
-        bool enabled = checkGpuClockLock.IsChecked ?? false;
-        sliderGpuClockLock.IsEnabled = enabled;
-        labelGpuClockLock.Text = enabled ? $"{(int)sliderGpuClockLock.Value} MHz" : Labels.Get("off");
-    }
-
-    private void SliderGpuClockLock_ValueChanged(object? sender,
-        Avalonia.Controls.Primitives.RangeBaseValueChangedEventArgs e)
-    {
-        if (_suppressEvents)
-            return;
-        labelGpuClockLock.Text = $"{(int)e.NewValue} MHz";
-    }
-
-    private void ButtonGpuApply_Click(object? sender, RoutedEventArgs e)
-    {
-        if (_nvidiaGpu == null)
-            return;
-
-        buttonGpuApply.IsEnabled = false;
-        buttonGpuApply.Content = Labels.Get("applying");
-
-        int powerW = (int)sliderGpuPowerLimit.Value;
-        bool clockLock = checkGpuClockLock.IsChecked ?? false;
-        int clockMhz = (int)sliderGpuClockLock.Value;
-
-        Task.Run(() =>
+        // Logger is stdout-only; open a terminal showing the app's output
+        try
         {
-            _nvidiaGpu.ApplyGpuSettings(powerW, clockLock ? clockMhz : 0);
-
-            Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+            // Try to find the config dir for any saved logs
+            var configDir = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+                ".config", "ghelper");
+            if (Directory.Exists(configDir))
             {
-                buttonGpuApply.Content = Labels.Get("apply_gpu_settings");
-                buttonGpuApply.IsEnabled = true;
-                App.System?.ShowNotification(Labels.Get("gpu_tuning_notify"),
-                    Labels.Format("gpu_power_format", powerW) + (clockLock ? Labels.Format("gpu_clock_format", clockMhz) : ""),
-                    "dialog-information");
-            });
-        });
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = "xdg-open",
+                    Arguments = configDir,
+                    UseShellExecute = false,
+                });
+            }
+            else
+            {
+                Helpers.Logger.WriteLine("Logs are written to stdout - run the app from a terminal to see output");
+                App.System?.ShowNotification(Labels.Get("ghelper"), Labels.Get("log_stdout"), "dialog-information");
+            }
+        }
+        catch (Exception ex)
+        {
+            Helpers.Logger.WriteLine("Failed to open config dir", ex);
+        }
     }
 
     // POWER MANAGEMENT
@@ -1281,115 +1303,4 @@ public partial class ExtraWindow : Window
         }
     }
 
-    // ADVANCED
-
-    private void RefreshAdvanced()
-    {
-        checkAutoApplyPower.IsChecked = Helpers.AppConfig.IsMode("auto_apply_power");
-        checkScreenAuto.IsChecked = Helpers.AppConfig.Is("screen_auto");
-        checkRawWmi.IsChecked = Helpers.AppConfig.Is("raw_wmi");
-
-        // CPU cores
-        int total = LinuxSystemIntegration.GetCpuCount();
-        int online = LinuxSystemIntegration.GetOnlineCpuCount();
-
-        if (total > 1)
-        {
-            panelCpuCores.IsVisible = true;
-            sliderCpuCores.Maximum = total;
-            sliderCpuCores.Value = online;
-            labelCpuCores.Text = Labels.Format("cpu_cores_format", online, total);
-            labelCpuCoresInfo.Text = Labels.Format("cpu_cores_info", online, total);
-        }
-        else
-        {
-            panelCpuCores.IsVisible = false;
-        }
-    }
-
-    private void CheckAutoApplyPower_Changed(object? sender, RoutedEventArgs e)
-    {
-        if (_suppressEvents)
-            return;
-        bool enabled = checkAutoApplyPower.IsChecked ?? false;
-        Helpers.AppConfig.SetMode("auto_apply_power", enabled ? 1 : 0);
-    }
-
-    private void CheckScreenAuto_Changed(object? sender, RoutedEventArgs e)
-    {
-        if (_suppressEvents)
-            return;
-        bool enabled = checkScreenAuto.IsChecked ?? false;
-        Helpers.AppConfig.Set("screen_auto", enabled ? 1 : 0);
-        Helpers.Logger.WriteLine($"Screen auto refresh → {enabled}");
-        if (enabled)
-            (App.Current as App)?.AutoScreen();
-        App.MainWindowInstance?.RefreshScreenPublic();
-    }
-
-    private void CheckRawWmi_Changed(object? sender, RoutedEventArgs e)
-    {
-        if (_suppressEvents)
-            return;
-        bool enabled = checkRawWmi.IsChecked ?? false;
-        // Idempotency guard
-        if (enabled == Helpers.AppConfig.Is("raw_wmi"))
-            return;
-
-        Helpers.AppConfig.Set("raw_wmi", enabled ? 1 : 0);
-        Helpers.AppConfig.Flush();
-        Helpers.Logger.WriteLine($"Raw WMI mode → {enabled}, restarting app");
-
-        // Restart app so the new setting takes effect immediately
-        var exePath = Environment.ProcessPath;
-        if (exePath != null)
-        {
-            System.Diagnostics.Process.Start(exePath);
-            Environment.Exit(0);
-        }
-    }
-
-    private void SliderCpuCores_ValueChanged(object? sender,
-        Avalonia.Controls.Primitives.RangeBaseValueChangedEventArgs e)
-    {
-        if (_suppressEvents)
-            return;
-        int target = (int)e.NewValue;
-        int total = LinuxSystemIntegration.GetCpuCount();
-        labelCpuCores.Text = Labels.Format("cpu_cores_format", target, total);
-        labelCpuCoresInfo.Text = Labels.Format("cpu_cores_info", target, total);
-
-        // Apply in background to avoid UI stall
-        Task.Run(() => LinuxSystemIntegration.SetOnlineCpuCount(target));
-    }
-
-    private void ButtonOpenLog_Click(object? sender, RoutedEventArgs e)
-    {
-        // Logger is stdout-only; open a terminal showing the app's output
-        try
-        {
-            // Try to find the config dir for any saved logs
-            var configDir = Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
-                ".config", "ghelper");
-            if (Directory.Exists(configDir))
-            {
-                Process.Start(new ProcessStartInfo
-                {
-                    FileName = "xdg-open",
-                    Arguments = configDir,
-                    UseShellExecute = false,
-                });
-            }
-            else
-            {
-                Helpers.Logger.WriteLine("Logs are written to stdout - run the app from a terminal to see output");
-                App.System?.ShowNotification(Labels.Get("ghelper"), Labels.Get("log_stdout"), "dialog-information");
-            }
-        }
-        catch (Exception ex)
-        {
-            Helpers.Logger.WriteLine("Failed to open config dir", ex);
-        }
-    }
 }

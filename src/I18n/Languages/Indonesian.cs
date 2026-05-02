@@ -58,7 +58,10 @@ public static class Indonesian
         // KEYBOARD
         ["keyboard_header"] = "Keyboard Laptop",
         ["backlight"] = "Lampu Latar",
-        ["extra"] = "Ekstra",
+        ["tuning_button"] = "Tuning",
+        ["tuning_header"] = "Tuning",
+        ["cpu_tab"] = "CPU",
+        ["gpu_tab"] = "GPU",
         ["backlight_off"] = "Mati",
         ["backlight_low"] = "Rendah",
         ["backlight_medium"] = "Sedang",

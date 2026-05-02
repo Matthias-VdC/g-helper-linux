@@ -55,7 +55,10 @@ public static class Spanish
         // KEYBOARD
         ["keyboard_header"] = "Teclado del portátil",
         ["backlight"] = "Retroiluminación",
-        ["extra"] = "Extra",
+        ["tuning_button"] = "Tuning",
+        ["tuning_header"] = "Tuning",
+        ["cpu_tab"] = "CPU",
+        ["gpu_tab"] = "GPU",
         ["backlight_off"] = "Apagado",
         ["backlight_low"] = "Bajo",
         ["backlight_medium"] = "Medio",

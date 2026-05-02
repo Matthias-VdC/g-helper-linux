@@ -55,7 +55,10 @@ public static class Vietnamese
         // KEYBOARD
         ["keyboard_header"] = "Bàn phím laptop",
         ["backlight"] = "Đèn nền",
-        ["extra"] = "Thêm",
+        ["tuning_button"] = "Tuning",
+        ["tuning_header"] = "Tuning",
+        ["cpu_tab"] = "CPU",
+        ["gpu_tab"] = "GPU",
         ["backlight_off"] = "Tắt",
         ["backlight_low"] = "Thấp",
         ["backlight_medium"] = "Trung bình",

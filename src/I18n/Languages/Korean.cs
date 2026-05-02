@@ -58,7 +58,10 @@ public static class Korean
         // KEYBOARD
         ["keyboard_header"] = "노트북 키보드",
         ["backlight"] = "백라이트",
-        ["extra"] = "추가",
+        ["tuning_button"] = "Tuning",
+        ["tuning_header"] = "Tuning",
+        ["cpu_tab"] = "CPU",
+        ["gpu_tab"] = "GPU",
         ["backlight_off"] = "끄기",
         ["backlight_low"] = "낮음",
         ["backlight_medium"] = "중간",

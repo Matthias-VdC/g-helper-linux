@@ -58,7 +58,10 @@ public static class Japanese
         // KEYBOARD
         ["keyboard_header"] = "ノートPCキーボード",
         ["backlight"] = "バックライト",
-        ["extra"] = "その他",
+        ["tuning_button"] = "Tuning",
+        ["tuning_header"] = "Tuning",
+        ["cpu_tab"] = "CPU",
+        ["gpu_tab"] = "GPU",
         ["backlight_off"] = "オフ",
         ["backlight_low"] = "低",
         ["backlight_medium"] = "中",

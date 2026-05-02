@@ -55,7 +55,10 @@ public static class Polish
         // KEYBOARD
         ["keyboard_header"] = "Klawiatura laptopa",
         ["backlight"] = "Podświetlenie",
-        ["extra"] = "Dodatkowe",
+        ["tuning_button"] = "Tuning",
+        ["tuning_header"] = "Tuning",
+        ["cpu_tab"] = "CPU",
+        ["gpu_tab"] = "GPU",
         ["backlight_off"] = "Wył.",
         ["backlight_low"] = "Niskie",
         ["backlight_medium"] = "Średnie",
