@@ -230,7 +230,7 @@
                     </Grid>
 
                     <!-- Clock Lock -->
-                    <Grid ColumnDefinitions="110,Auto,*,50" Margin="0,4">
+                    <Grid ColumnDefinitions="110,Auto,*,70" Margin="0,4">
                         <TextBlock Grid.Column="0" x:Name="labelClockLockLabel" Text="Clock Lock"
                                    Classes="label-dim" VerticalAlignment="Center" />
                         <CheckBox Grid.Column="1" x:Name="checkGpuClockLock"
@@ -245,6 +245,44 @@
                                    Classes="value" Text="--"
                                    HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Grid>
+
+                    <!-- Core Clock Offset -->
+                    <Grid ColumnDefinitions="110,Auto,*,70" Margin="0,4">
+                        <TextBlock Grid.Column="0" x:Name="labelGpuCoreOffsetLabel" Text="Core Offset"
+                                   Classes="label-dim" VerticalAlignment="Center" />
+                        <CheckBox Grid.Column="1" x:Name="checkGpuCoreOffset"
+                                  Margin="0,0,8,0" VerticalAlignment="Center"
+                                  IsCheckedChanged="CheckGpuCoreOffset_Changed" />
+                        <Slider Grid.Column="2" x:Name="sliderGpuCoreOffset"
+                                Minimum="-200" Maximum="400" Value="0"
+                                TickFrequency="5" IsSnapToTickEnabled="True"
+                                IsEnabled="False"
+                                ValueChanged="SliderGpuCoreOffset_ValueChanged" />
+                        <TextBlock Grid.Column="3" x:Name="labelGpuCoreOffset"
+                                   Classes="value" Text="--"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Grid>
+
+                    <!-- Memory Clock Offset -->
+                    <Grid ColumnDefinitions="110,Auto,*,70" Margin="0,4">
+                        <TextBlock Grid.Column="0" x:Name="labelGpuMemOffsetLabel" Text="Memory Offset"
+                                   Classes="label-dim" VerticalAlignment="Center" />
+                        <CheckBox Grid.Column="1" x:Name="checkGpuMemOffset"
+                                  Margin="0,0,8,0" VerticalAlignment="Center"
+                                  IsCheckedChanged="CheckGpuMemOffset_Changed" />
+                        <Slider Grid.Column="2" x:Name="sliderGpuMemOffset"
+                                Minimum="-500" Maximum="4000" Value="0"
+                                TickFrequency="25" IsSnapToTickEnabled="True"
+                                IsEnabled="False"
+                                ValueChanged="SliderGpuMemOffset_ValueChanged" />
+                        <TextBlock Grid.Column="3" x:Name="labelGpuMemOffset"
+                                   Classes="value" Text="--"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Grid>
+
+                    <TextBlock x:Name="labelGpuOffsetHint" Classes="label-dim"
+                               Text="Offsets reset on reboot."
+                               FontSize="10" Margin="0,2,0,0" />
 
                     <Button x:Name="buttonGpuApply" Classes="ghelper"
                             Content="Apply GPU Settings" Margin="0,8,0,0"

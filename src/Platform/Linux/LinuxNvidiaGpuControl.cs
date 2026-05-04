@@ -5,15 +5,15 @@ namespace GHelper.Linux.Platform.Linux;
 
 /// <summary>
 /// Linux NVIDIA GPU control using:
-///   - nvidia-smi CLI for monitoring and clock limits
+///   - nvidia-smi CLI for monitoring, power limit, and clock lock
 ///   - /sys/class/hwmon/ nvidia hwmon for temperature
-///   - nvidia-settings for clock offsets (requires X11)
-/// 
+///   - NVML (libnvidia-ml.so.1) via the --apply-gpu-oc worker for clock offsets
+///
 /// Requires nvidia proprietary driver to be installed.
 /// nvidia-smi is the most reliable cross-version approach on Linux.
-/// 
-/// NVML P/Invoke is possible but nvidia-smi is always present when the driver is
-/// installed and handles version compatibility automatically.
+///
+/// Clock offsets need NVML rather than nvidia-settings because nvidia-settings
+/// is X11-only - it does not work under Wayland.
 /// </summary>
 public class LinuxNvidiaGpuControl : IGpuControl
 {
@@ -106,44 +106,20 @@ public class LinuxNvidiaGpuControl : IGpuControl
     }
 
     // Clock Offsets
+    //
+    // The IGpuControl interface requires SetCoreClockOffset / SetMemoryClockOffset, but
+    // applying offsets on Linux Nvidia needs root + NVML. The atomic single-pkexec path
+    // is ApplyGpuSettings(powerW, clockLockMhz, coreOffsetMhz, memOffsetMhz) which chains
+    // a self-respawn into the privileged --apply-gpu-oc worker (Program.cs -> Nvml.ApplyOffsets).
+    // These per-call setters would require a separate pkexec prompt each, so they are
+    // intentionally no-ops.
 
     public void SetCoreClockOffset(int offsetMhz)
     {
-        if (!_available)
-            return;
-
-        // nvidia-settings requires X11. On X11, this works:
-        // nvidia-settings -a "[gpu:0]/GPUGraphicsClockOffsetAllPerformanceLevels=<offset>"
-        // On Wayland, we need nvidia-smi or coolbits
-        var result = SysfsHelper.RunCommand("nvidia-settings",
-            $"-a \"[gpu:0]/GPUGraphicsClockOffsetAllPerformanceLevels={offsetMhz}\"");
-
-        if (result == null)
-        {
-            // Fallback: try nvidia-smi lock-gpu-clocks with offset
-            // This is less precise but works on Wayland
-            Helpers.Logger.WriteLine($"NVIDIA: nvidia-settings not available, GPU core offset not set");
-            return;
-        }
-
-        Helpers.Logger.WriteLine($"NVIDIA: Set core clock offset to {offsetMhz} MHz");
     }
 
     public void SetMemoryClockOffset(int offsetMhz)
     {
-        if (!_available)
-            return;
-
-        var result = SysfsHelper.RunCommand("nvidia-settings",
-            $"-a \"[gpu:0]/GPUMemoryTransferRateOffsetAllPerformanceLevels={offsetMhz}\"");
-
-        if (result == null)
-        {
-            Helpers.Logger.WriteLine($"NVIDIA: nvidia-settings not available, GPU memory offset not set");
-            return;
-        }
-
-        Helpers.Logger.WriteLine($"NVIDIA: Set memory clock offset to {offsetMhz} MHz");
     }
 
     /// <summary>
@@ -181,10 +157,12 @@ public class LinuxNvidiaGpuControl : IGpuControl
     }
 
     /// <summary>
-    /// Apply power limit and clock lock in a single pkexec call.
-    /// clockLockMhz &lt;= 0 means reset clock lock.
+    /// Apply power limit, clock lock, and core/memory clock offsets in a single pkexec call.
+    /// clockLockMhz &lt;= 0 resets the clock lock. Offsets of 0 clear any prior offset
+    /// (NVML treats offset=0 as "remove offset", so the OC step is a no-op when both are 0).
+    /// The offset step re-invokes this same binary with --apply-gpu-oc CORE MEM as root.
     /// </summary>
-    public void ApplyGpuSettings(int powerW, int clockLockMhz)
+    public void ApplyGpuSettings(int powerW, int clockLockMhz, int coreOffsetMhz, int memOffsetMhz)
     {
         if (!_available)
             return;
@@ -193,9 +171,33 @@ public class LinuxNvidiaGpuControl : IGpuControl
             ? $"nvidia-smi -lgc 0,{Math.Clamp(clockLockMhz, 200, 3000)}"
             : "nvidia-smi -rgc";
 
-        SysfsHelper.RunPkexecBash($"nvidia-smi -pl {powerW} && {clockCmd}");
-        Helpers.Logger.WriteLine($"NVIDIA: Applied power={powerW}W, clock={(clockLockMhz > 0 ? $"{clockLockMhz}MHz" : "unlocked")} (single pkexec)");
+        string selfPath = Environment.ProcessPath ?? "ghelper";
+        string ocCmd = $"{ShellQuote(selfPath)} --apply-gpu-oc {coreOffsetMhz} {memOffsetMhz}";
+
+        string? pkexecOutput = SysfsHelper.RunPkexecBash(
+            $"nvidia-smi -pl {powerW} && {clockCmd} && {ocCmd}");
+
+        string summary =
+            $"power={powerW}W, " +
+            $"lock={(clockLockMhz > 0 ? $"{clockLockMhz}MHz" : "unlocked")}, " +
+            $"coreOffset={coreOffsetMhz}MHz, memOffset={memOffsetMhz}MHz";
+
+        if (pkexecOutput == null)
+        {
+            Helpers.Logger.WriteLine(
+                $"NVIDIA: Apply FAILED ({summary}) — pkexec chain returned null " +
+                "(non-zero exit, timeout, or auth cancel)");
+        }
+        else
+        {
+            Helpers.Logger.WriteLine(
+                $"NVIDIA: Applied {summary} (single pkexec)" +
+                (string.IsNullOrWhiteSpace(pkexecOutput) ? "" : $" stdout={pkexecOutput.Trim()}"));
+        }
     }
+
+    /// <summary>POSIX shell single-quote escape: 'foo' bar' -> ''\''foo'\'' bar'\'''.</summary>
+    private static string ShellQuote(string s) => "'" + s.Replace("'", "'\\''") + "'";
 
     // Extended queries (not in interface but useful)
 

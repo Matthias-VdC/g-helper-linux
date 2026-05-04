@@ -176,6 +176,9 @@ public partial class ExtraWindow : Window
         headerGpuTuning.Text = Labels.Get("gpu_tuning_header");
         labelPowerLimitLabel.Text = Labels.Get("power_limit");
         labelClockLockLabel.Text = Labels.Get("clock_lock");
+        labelGpuCoreOffsetLabel.Text = Labels.Get("core_clock_offset");
+        labelGpuMemOffsetLabel.Text = Labels.Get("memory_clock_offset");
+        labelGpuOffsetHint.Text = Labels.Get("gpu_offsets_reset_hint");
         buttonGpuApply.Content = Labels.Get("apply_gpu_settings");
 
         // Other
@@ -1147,6 +1150,7 @@ public partial class ExtraWindow : Window
 
 
     private LinuxNvidiaGpuControl? _nvidiaGpu;
+    private bool _gpuOffsetsReadback;
 
     private void RefreshGpuTuning()
     {
@@ -1174,6 +1178,73 @@ public partial class ExtraWindow : Window
         checkGpuClockLock.IsChecked = false;
         sliderGpuClockLock.IsEnabled = false;
         labelGpuClockLock.Text = Labels.Get("off");
+
+        checkGpuCoreOffset.IsChecked = false;
+        sliderGpuCoreOffset.IsEnabled = false;
+        sliderGpuCoreOffset.Value = 0;
+        labelGpuCoreOffset.Text = Labels.Get("off");
+
+        checkGpuMemOffset.IsChecked = false;
+        sliderGpuMemOffset.IsEnabled = false;
+        sliderGpuMemOffset.Value = 0;
+        labelGpuMemOffset.Text = Labels.Get("off");
+
+        // Async readback of current GPU offsets via unprivileged NVML.
+        // Sentinel keeps this one-shot per window instance so language-change
+        // re-fires of RefreshGpuTuning don't stomp the user's slider drag.
+        if (_gpuOffsetsReadback)
+            return;
+        _gpuOffsetsReadback = true;
+
+        Task.Run(() =>
+        {
+            var offsets = Nvml.GetCurrentOffsets();
+            if (offsets.core is null && offsets.mem is null)
+                return;
+
+            Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+            {
+                bool prev = _suppressEvents;
+                _suppressEvents = true;
+                try
+                {
+                    ApplyReadbackOffset(offsets.core, checkGpuCoreOffset, sliderGpuCoreOffset, labelGpuCoreOffset, "core");
+                    ApplyReadbackOffset(offsets.mem, checkGpuMemOffset, sliderGpuMemOffset, labelGpuMemOffset, "mem");
+                }
+                finally
+                {
+                    _suppressEvents = prev;
+                }
+            });
+        });
+    }
+
+    /// <summary>
+    /// Apply a single readback offset to its UI triplet. Null offset = leave defaults.
+    /// Zero offset = treat as "off". Out-of-range values are clamped to slider range
+    /// and logged.
+    /// </summary>
+    private void ApplyReadbackOffset(int? offsetMhz, CheckBox check, Slider slider,
+        TextBlock label, string clockName)
+    {
+        if (offsetMhz is not int actual)
+            return;
+        if (actual == 0)
+            return;
+
+        int min = (int)slider.Minimum;
+        int max = (int)slider.Maximum;
+        int clamped = Math.Clamp(actual, min, max);
+
+        if (clamped != actual)
+            Helpers.Logger.WriteLine(
+                $"NVIDIA: {clockName} offset {actual}MHz on GPU is outside slider [{min},{max}], " +
+                $"clamped to {clamped}MHz; Apply will overwrite the GPU's value.");
+
+        check.IsChecked = true;
+        slider.IsEnabled = true;
+        slider.Value = clamped;
+        label.Text = Labels.Format("offset_mhz_format", clamped);
     }
 
     private void SliderGpuPowerLimit_ValueChanged(object? sender,
@@ -1201,6 +1272,44 @@ public partial class ExtraWindow : Window
         labelGpuClockLock.Text = $"{(int)e.NewValue} MHz";
     }
 
+    private void CheckGpuCoreOffset_Changed(object? sender, RoutedEventArgs e)
+    {
+        if (_suppressEvents)
+            return;
+        bool enabled = checkGpuCoreOffset.IsChecked ?? false;
+        sliderGpuCoreOffset.IsEnabled = enabled;
+        labelGpuCoreOffset.Text = enabled
+            ? Labels.Format("offset_mhz_format", (int)sliderGpuCoreOffset.Value)
+            : Labels.Get("off");
+    }
+
+    private void SliderGpuCoreOffset_ValueChanged(object? sender,
+        Avalonia.Controls.Primitives.RangeBaseValueChangedEventArgs e)
+    {
+        if (_suppressEvents)
+            return;
+        labelGpuCoreOffset.Text = Labels.Format("offset_mhz_format", (int)e.NewValue);
+    }
+
+    private void CheckGpuMemOffset_Changed(object? sender, RoutedEventArgs e)
+    {
+        if (_suppressEvents)
+            return;
+        bool enabled = checkGpuMemOffset.IsChecked ?? false;
+        sliderGpuMemOffset.IsEnabled = enabled;
+        labelGpuMemOffset.Text = enabled
+            ? Labels.Format("offset_mhz_format", (int)sliderGpuMemOffset.Value)
+            : Labels.Get("off");
+    }
+
+    private void SliderGpuMemOffset_ValueChanged(object? sender,
+        Avalonia.Controls.Primitives.RangeBaseValueChangedEventArgs e)
+    {
+        if (_suppressEvents)
+            return;
+        labelGpuMemOffset.Text = Labels.Format("offset_mhz_format", (int)e.NewValue);
+    }
+
     private void ButtonGpuApply_Click(object? sender, RoutedEventArgs e)
     {
         if (_nvidiaGpu == null)
@@ -1212,18 +1321,28 @@ public partial class ExtraWindow : Window
         int powerW = (int)sliderGpuPowerLimit.Value;
         bool clockLock = checkGpuClockLock.IsChecked ?? false;
         int clockMhz = (int)sliderGpuClockLock.Value;
+        bool coreOn = checkGpuCoreOffset.IsChecked ?? false;
+        int coreOffset = coreOn ? (int)sliderGpuCoreOffset.Value : 0;
+        bool memOn = checkGpuMemOffset.IsChecked ?? false;
+        int memOffset = memOn ? (int)sliderGpuMemOffset.Value : 0;
 
         Task.Run(() =>
         {
-            _nvidiaGpu.ApplyGpuSettings(powerW, clockLock ? clockMhz : 0);
+            _nvidiaGpu.ApplyGpuSettings(powerW, clockLock ? clockMhz : 0, coreOffset, memOffset);
 
             Avalonia.Threading.Dispatcher.UIThread.Post(() =>
             {
                 buttonGpuApply.Content = Labels.Get("apply_gpu_settings");
                 buttonGpuApply.IsEnabled = true;
+
+                string body = Labels.Format("gpu_power_format", powerW);
+                if (clockLock)
+                    body += Labels.Format("gpu_clock_format", clockMhz);
+                if (coreOn || memOn)
+                    body += Labels.Format("gpu_offset_format", coreOffset, memOffset);
+
                 App.System?.ShowNotification(Labels.Get("gpu_tuning_notify"),
-                    Labels.Format("gpu_power_format", powerW) + (clockLock ? Labels.Format("gpu_clock_format", clockMhz) : ""),
-                    "dialog-information");
+                    body, "dialog-information");
             });
         });
     }
